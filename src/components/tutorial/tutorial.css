@@ -1,0 +1,153 @@
+/* ── The guided tour: the strip, the prose, the live view ─────────────────── */
+
+.tutorial {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tutorial__body {
+  display: grid;
+  align-items: start;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* The prose reads at a column width; the view takes the rest. Below this the
+   two stack, because a 3D canvas in half a phone is not a view. */
+@media (min-width: 900px) {
+  .tutorial__body {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  }
+}
+
+.tutorial__prose,
+.tutorial__stage {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.step-text__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.step-text__heading h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.step-text__position {
+  color: var(--text-faint);
+  font-size: 0.8125rem;
+}
+
+.step-text__prose {
+  max-width: 42rem;
+  margin: 0;
+}
+
+.step-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── The two plane drawings, side by side while there is room ─────────────── */
+
+.plane-stage {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 620px) {
+  .plane-stage:has(> * + *) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.plane-stage__drawing {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+/* ── Tables: characters, products, positions ──────────────────────────────── */
+
+.product-table {
+  overflow-x: auto;
+}
+
+.product-table table {
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+.positions-panel__count {
+  margin: 0 0 4px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.positions-panel__list {
+  display: grid;
+  margin: 0;
+  padding-left: 1.5rem;
+  gap: 2px 12px;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+}
+
+/* ── The flowchart, answered ──────────────────────────────────────────────── */
+
+.flow-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flow-panel__list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  gap: 6px;
+  list-style: none;
+}
+
+.flow-panel__step {
+  display: flex;
+  align-items: start;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  gap: 8px;
+}
+
+.flow-panel__hint {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+/* ── A glossary example, which opens what it is about ─────────────────────── */
+
+.glossary-example {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 2px;
+}
+
+.glossary-example__note {
+  font-size: 0.8125rem;
+  opacity: 0.85;
+}

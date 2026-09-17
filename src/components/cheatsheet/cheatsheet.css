@@ -1,0 +1,105 @@
+/*
+ * The printable reference.
+ *
+ * Two audiences, one page: on screen the sheet carries a heading, a legend and
+ * a print button; on paper it carries none of them and three flowing columns,
+ * which is what puts eleven blocks on two sides at most.
+ */
+
+.sheet-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.sheet-head h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.sheet-lead {
+  max-width: 62ch;
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.sheet-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sheet-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  gap: 10px;
+}
+
+.sheet-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sheet-legend__swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+/* The line that exists only on paper: it says whose sheet this is and what the
+   three heading colours mean, which the legend on screen says instead. */
+.sheet-print-line {
+  display: none;
+}
+
+@page {
+  margin: 10mm;
+}
+
+@media print {
+  .sheet-print-line {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--text-muted);
+    font-size: 10px;
+  }
+
+  /*
+   * Three rules, each measured against the printed PDF rather than guessed.
+   * Without them the sheet comes off the printer as seven sides.
+   *
+   * 1. Flowing columns, not a grid. `ReferenceGrid` writes `display: grid` as
+   *    an inline style, which only `!important` reaches, and at three columns
+   *    the description column is ~130px wide: every line wraps five times and
+   *    a block grows taller than the page.
+   * 2. A block may continue in the next column. The shared component sets
+   *    `break-inside: avoid`, which is right on screen and ruinous here — a
+   *    block that does not fit leaves the rest of its column blank, and the
+   *    seventeen-line one alone cost two sides.
+   * 3. The whole sheet at 85 %, which is ~10px body text: what a reference
+   *    card is normally set in, and what brings 121 lines onto two sides.
+   */
+  .reference-grid {
+    display: block !important;
+    columns: 2;
+    column-gap: 14px;
+    zoom: 0.85;
+  }
+
+  .reference-grid > .reference-section {
+    break-inside: auto !important;
+    margin-bottom: 8px;
+  }
+
+  .reference-section h4 {
+    break-after: avoid;
+  }
+}

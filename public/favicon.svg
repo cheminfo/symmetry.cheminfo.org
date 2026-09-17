@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="SymmeTry">
+  <title>SymmeTry</title>
+  <!-- A tetrahedron seen from slightly above, four balls at its corners: the
+       first shape a chemist meets symmetry in. The apex carries the answering
+       colour, which is also the C3 axis every base triangle turns about. Same
+       geometry as the mark in react-cheminfo's glyphs.tsx, with the colours
+       written out: a file served on its own cannot read the page's tokens. -->
+  <rect width="32" height="32" rx="7" fill="#9f1239" />
+  <g stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none">
+    <path d="M16 6.4 6.6 24.4M16 6.4 25.4 24.4M16 6.4 16 17.6" />
+    <path d="M6.6 24.4 25.4 24.4" />
+    <path d="M6.6 24.4 16 17.6M25.4 24.4 16 17.6" opacity="0.5" />
+  </g>
+  <circle cx="16" cy="17.6" r="2.5" fill="#ffffff" opacity="0.55" />
+  <circle cx="6.6" cy="24.4" r="3.2" fill="#ffffff" />
+  <circle cx="25.4" cy="24.4" r="3.2" fill="#ffffff" />
+  <circle cx="16" cy="6.4" r="3.6" fill="#f59e0b" />
+</svg>

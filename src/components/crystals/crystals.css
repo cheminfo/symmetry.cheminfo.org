@@ -1,0 +1,245 @@
+/* ── The crystal workbench ────────────────────────────────────────────────── */
+
+/*
+ * Every colour here is a family token. The one colour that carries a meaning of
+ * its own is an element's family swatch, which comes from react-cheminfo's
+ * periodic table as data and is never written here.
+ */
+
+.xtl-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.xtl-panel__title {
+  color: var(--text-faint);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.xtl-note {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.xtl-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+}
+
+/* ── The library ──────────────────────────────────────────────────────────── */
+
+.xtl-library {
+  display: flex;
+  max-height: 16rem;
+  flex-direction: column;
+  overflow-y: auto;
+  gap: 1px;
+}
+
+.xtl-library__item {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+  padding: 0.25rem 0.45rem;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--text);
+  font-size: 0.8125rem;
+  gap: 0.4rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.xtl-library__item:hover {
+  background: var(--surface-sunken);
+}
+
+.xtl-library__item[aria-selected='true'] {
+  background: color-mix(in oklab, var(--accent) 12%, white);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.xtl-library__formula {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.xtl-library__item[aria-selected='true'] .xtl-library__formula {
+  color: inherit;
+}
+
+/* ── The cell form ────────────────────────────────────────────────────────── */
+
+.xtl-cell-grid {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.xtl-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.xtl-field__label {
+  color: var(--text-faint);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+/* A parameter the setting forces is not a field: it is a value, and it says so
+   by not being one. Deleting what a student typed is what the old site did. */
+.xtl-field__derived {
+  display: flex;
+  height: 1.875rem;
+  align-items: center;
+  padding: 0 0.55rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+/* ── The atom table ───────────────────────────────────────────────────────── */
+
+.xtl-atoms {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.xtl-atoms th {
+  padding: 0 0.2rem 2px;
+  color: var(--text-faint);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.xtl-atoms td {
+  padding: 1px 0.1rem;
+}
+
+.xtl-atoms input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.15rem 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.8125rem;
+}
+
+.xtl-atoms input:focus {
+  border-color: var(--accent);
+}
+
+.xtl-atoms input.xtl-atoms__number {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  text-align: right;
+}
+
+.xtl-swatch {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  vertical-align: -1px;
+}
+
+/* ── Readouts ─────────────────────────────────────────────────────────────── */
+
+.xtl-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.xtl-fact {
+  display: flex;
+  flex-direction: column;
+}
+
+.xtl-fact__label {
+  color: var(--text-faint);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.xtl-fact__value {
+  color: var(--text);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.xtl-rows {
+  display: flex;
+  max-height: 18rem;
+  flex-direction: column;
+  overflow-y: auto;
+  gap: 1px;
+}
+
+.xtl-row {
+  display: flex;
+  align-items: baseline;
+  padding: 0.1rem 0.3rem;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  gap: 0.5rem;
+}
+
+.xtl-row:nth-child(odd) {
+  background: var(--surface-sunken);
+}
+
+.xtl-row__index {
+  width: 1.75rem;
+  flex: none;
+  color: var(--text-faint);
+  font-size: 0.6875rem;
+  text-align: right;
+}
+
+.xtl-row__detail {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+/* ── The CIF drop target ──────────────────────────────────────────────────── */
+
+.xtl-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.6rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  gap: 4px;
+  text-align: center;
+}
+
+.xtl-drop--over {
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 8%, white);
+  color: var(--accent);
+}

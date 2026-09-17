@@ -1,0 +1,174 @@
+/*
+ * The plane workbench.
+ *
+ * Every colour is a family token or one of the two this site owns. The drawing
+ * pad borrows the pattern's own colours on purpose: what you draw there is
+ * exactly what the group repeats beside it.
+ */
+
+.plane-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  margin: 0 0 8px;
+  gap: 4px 10px;
+}
+
+.plane-head h1 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.plane-head p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* ── The group picker ─────────────────────────────────────────────────────── */
+
+.plane-groups {
+  display: grid;
+  gap: 4px;
+  grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
+}
+
+.plane-groups .chip {
+  justify-content: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* ── The drawing pad ──────────────────────────────────────────────────────── */
+
+.motif-pad {
+  display: block;
+  width: 100%;
+  max-width: 14rem;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.motif-pad__grid {
+  stroke: var(--border);
+  stroke-width: 0.5;
+}
+
+.motif-pad__shape {
+  fill: var(--brand);
+  stroke: var(--brand);
+  stroke-linejoin: round;
+  stroke-width: 1;
+}
+
+.motif-pad__vertex {
+  fill: var(--surface);
+  stroke: var(--brand-alt);
+  stroke-width: 1.5;
+}
+
+.motif-pad__lead {
+  fill: none;
+  stroke: var(--brand-alt);
+  stroke-dasharray: 3 3;
+  stroke-width: 1;
+}
+
+/* ── The two figures ──────────────────────────────────────────────────────── */
+
+.plane-count {
+  min-width: 1.25rem;
+  color: var(--text);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.plane-figure {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Which copy is under the pointer, said without inventing a colour. */
+.plane-figure .pattern-copy:hover {
+  opacity: 0.5;
+}
+
+.plane-caption {
+  min-height: 2.4rem;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.plane-caption b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ── The readout ──────────────────────────────────────────────────────────── */
+
+/* Four blocks in one card: without a rule between them the general positions
+   run straight into the element list and read as one list of triplets. */
+.plane-readout section + section {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.plane-panel-title {
+  margin: 0 0 4px;
+  color: var(--text-faint);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.plane-facts {
+  display: grid;
+  align-items: baseline;
+  gap: 2px 10px;
+  grid-template-columns: max-content minmax(0, 1fr);
+}
+
+.plane-facts dt {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.plane-facts dd {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.plane-element-list {
+  margin: 0;
+  padding: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  list-style: none;
+}
+
+.plane-element-list li {
+  padding: 1px 0;
+  border-top: 1px solid var(--border);
+}
+
+.plane-note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.plane-triplets {
+  overflow-wrap: anywhere;
+  margin: 0;
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+}

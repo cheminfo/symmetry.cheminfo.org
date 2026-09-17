@@ -1,0 +1,135 @@
+/*
+ * The two-dimensional renderers.
+ *
+ * Every colour is a family token: the pattern wears the site's two colours, and
+ * the diagrams are drawn in ink on the page, the way the International Tables
+ * print them. The stroke widths and the dash are the subject matter — a mirror
+ * is heavy and a glide is dashed — not decoration.
+ */
+
+.plane-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+
+/* ── The tiling ───────────────────────────────────────────────────────────── */
+
+.pattern-copy {
+  --pattern-accent: var(--brand-alt);
+
+  color: var(--brand);
+}
+
+/* A copy reached by an operation of determinant −1 is the mirror image of the
+   motif, not a turn of it. Swapping the two colours says so without inventing a
+   third. */
+.pattern-copy--mirrored {
+  --pattern-accent: var(--brand);
+
+  color: var(--brand-alt);
+}
+
+.pattern-cell {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+.pattern-domain {
+  fill: none;
+  stroke: var(--text-faint);
+  stroke-dasharray: 4 3;
+  stroke-width: 1;
+}
+
+/* ── The symmetry-element diagram ─────────────────────────────────────────── */
+
+.element-cell {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+.element-cell--primary {
+  stroke: var(--text-faint);
+  stroke-width: 1.5;
+}
+
+.element-line {
+  stroke: var(--text);
+  stroke-width: 2.5;
+}
+
+.element-line--glide {
+  stroke-dasharray: 7 5;
+}
+
+.element-glyph {
+  fill: var(--text);
+}
+
+/* ── The stereogram ───────────────────────────────────────────────────────── */
+
+.stereo-primitive {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 1;
+}
+
+/* A horizontal mirror is drawn as the primitive circle itself, heavy. */
+.stereo-primitive--mirror {
+  stroke-width: 2.5;
+}
+
+.stereo-mirror {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2.5;
+}
+
+/* The glyph sits over the mirror traces, so it carries a halo of the page: a
+   lens at the centre of a diagram is otherwise lost in the lines crossing it. */
+.stereo-axis {
+  fill: var(--text);
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 3;
+}
+
+/* An improper axis takes the same glyph, left open. */
+.stereo-axis--improper {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 1.5;
+}
+
+.stereo-point {
+  fill: var(--brand);
+  stroke: var(--brand);
+  stroke-width: 1.5;
+}
+
+/* Open means the lower hemisphere. */
+.stereo-point--lower {
+  fill: var(--surface);
+}
+
+.stereo-comma {
+  fill: var(--surface);
+  stroke: var(--brand);
+  stroke-width: 0.6;
+}
+
+.stereo-comma--lower {
+  fill: var(--brand);
+  stroke: var(--brand);
+}
+
+.stereo-inversion {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 1.5;
+}

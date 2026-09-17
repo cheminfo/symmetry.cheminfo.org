@@ -1,0 +1,21 @@
+# Diamond, C. Origin choice 2, so the carbon sits at (1/8, 1/8, 1/8)
+# and the inversion centre is at the origin.
+# Cell: Hom, Kiszenick and Post, J. Appl. Cryst. 8 (1975) 457.
+data_diamond
+_chemical_formula_sum            'C'
+_cell_length_a                   3.56712
+_cell_length_b                   3.56712
+_cell_length_c                   3.56712
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_space_group_IT_number           227
+_space_group_name_H-M_alt        'F d -3 m :2'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+C1 C 0.125 0.125 0.125 1

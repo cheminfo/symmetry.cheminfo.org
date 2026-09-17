@@ -1,0 +1,187 @@
+/* ── The deck ─────────────────────────────────────────────────────────────── */
+
+.exercise-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.exercise-deck__list {
+  display: flex;
+  overflow: auto;
+  max-height: 32rem;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.exercise-deck__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 5px 7px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  gap: 6px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.exercise-deck__item:hover {
+  background: var(--surface-sunken);
+  color: var(--text);
+}
+
+/* The brand tint says which question is open, exactly as it does in the bar. */
+.exercise-deck__item--active,
+.exercise-deck__item--active:hover {
+  border-color: color-mix(in oklab, var(--accent) 30%, white);
+  background: color-mix(in oklab, var(--accent) 12%, white);
+  color: var(--accent);
+}
+
+.exercise-deck__title {
+  flex: 1 1 auto;
+  font-weight: 600;
+}
+
+/* ── The open question ────────────────────────────────────────────────────── */
+
+.exercises-open {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.exercise-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.exercise-card__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.exercise-card__heading h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.exercise-card__prose {
+  max-width: 44rem;
+  margin: 0;
+}
+
+.exercise-verdict {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── The forms ────────────────────────────────────────────────────────────── */
+
+.answer-field {
+  display: flex;
+  min-width: 9rem;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.answer-field__label {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.answer-field__hint {
+  color: var(--text-faint);
+  font-size: 0.75rem;
+}
+
+.answer-checks {
+  display: grid;
+  gap: 0 16px;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+}
+
+.answer-fields {
+  display: grid;
+  gap: 10px 14px;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+}
+
+.answer-products {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.answer-products__order {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.answer-products__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.answer-products__term {
+  min-width: 9rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.answer-reduce {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* The row being filled in, so it reads as the blank of the table above it. */
+.answer-row > th,
+.answer-row > td {
+  background: var(--surface-sunken);
+}
+
+.answer-row input {
+  width: 4.5rem;
+  text-align: center;
+}
+
+.answer-atoms {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.answer-atoms__given,
+.answer-atoms__hint {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.answer-atoms__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.answer-atoms__element {
+  min-width: 2.5rem;
+  font-weight: 700;
+}
+
+.answer-atoms__row .bp6-input-group {
+  width: 6rem;
+}

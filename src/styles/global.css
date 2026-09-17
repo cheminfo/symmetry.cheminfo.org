@@ -1,0 +1,216 @@
+:root {
+  /* The neutrals, the geometry and the type come from react-cheminfo's
+     chrome.css, and the two colours this site owns from <SiteTheme />. */
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/*
+ * Blueprint's own focus selectors (.bp6-tag:focus and friends) out-specify a
+ * plain universal rule, so an interactive tag keeps a blue ring on click
+ * without the !important here.
+ */
+*:focus,
+*:focus-visible {
+  outline: none !important;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+/* The 15px goes on `body`, never on `html`: `rem` resolves against the root, so
+   putting it there would shrink every shared measurement by 6.25%. */
+body {
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* A form control does not inherit the page font: it would otherwise be set in
+   the UA's Helvetica beside text in ours. */
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+}
+
+a {
+  color: var(--accent);
+}
+
+/* The tool fills the screen it is opened on and grows past it when what is on
+   the page needs more room. A fixed height would instead let flex shrink the
+   panels below their own content, and a Blueprint callout compressed to a few
+   pixels paints its text over whatever follows it. */
+.app-screen {
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+}
+
+.app-screen > main {
+  flex: 1 1 auto;
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+}
+
+/* ── The three-pane workbenches: Molecules, Crystals and Plane ────────────── */
+
+/*
+ * One pane holds what the student edits, one holds the view, one reads it back.
+ * The three are one layout, written once here rather than as three grids that
+ * drift apart.
+ */
+.pane-grid {
+  display: grid;
+  min-height: 0;
+  flex: 1 1 auto;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* A pane scrolls inside itself rather than stretching the page. */
+.pane {
+  display: flex;
+  overflow: auto;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Two panes side by side, with the panel that reads them across the full width
+   rather than in a half-empty half-column. */
+@media (min-width: 760px) {
+  .pane-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .pane-grid > .pane--wide {
+    grid-column: 1 / -1;
+  }
+}
+
+/*
+ * Three panes, and the page takes the screen rather than the document: the
+ * height is definite, so each pane scrolls on its own and all three stay on
+ * screen at once. Below `min-height` the panes would be unusable, so the page
+ * grows again and the document scrolls.
+ *
+ * The view is the widest of the three — it is what the page is for.
+ */
+@media (min-width: 1100px) {
+  .app-screen--panes {
+    height: 100dvh;
+    min-height: min-content;
+  }
+
+  .app-screen > .app-main--panes {
+    overflow: auto;
+    min-height: 34rem;
+    flex: 1 1 1px;
+  }
+
+  .pane-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr);
+  }
+
+  .pane-grid > .pane--wide {
+    grid-column: auto;
+  }
+}
+
+/* ── The Exercises page: the deck beside the open exercise ────────────────── */
+
+.exercises-layout {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.exercises-sidebar {
+  display: flex;
+  width: 380px;
+  flex: 0 0 380px;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* A 380px deck beside the exercise leaves the exercise a sliver on a phone, so
+   the exercise goes under the deck instead. */
+@media (max-width: 759px) {
+  .exercises-layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .exercises-sidebar {
+    width: auto;
+    flex: none;
+  }
+}
+
+/* A phone has no width to spend on nested gutters: the page and its cards keep
+   just enough to separate an edge from a line of text. */
+@media (max-width: 600px) {
+  .app-main {
+    padding: 4px;
+  }
+
+  .app-main .bp6-card {
+    padding: 8px;
+  }
+}
+
+/*
+ * A help icon inside a Blueprint label sits ~2px low because
+ * `label.bp6-label:not(.bp6-inline) .bp6-popover-target` forces display:block
+ * at specificity (0,3,1) — `:not()` counts its argument. Only !important beats
+ * it; vertical-align does not, because it drifts with the font baseline.
+ */
+.help-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.help-label .help-icon.bp6-popover-target {
+  display: flex !important;
+  align-items: center;
+  margin-top: 0;
+}
+
+/* Students print the cheatsheet. Let them, without the chrome. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: var(--surface);
+  }
+
+  a[href]::after {
+    content: '';
+  }
+}

@@ -1,0 +1,21 @@
+# Graphite, 2H polytype.
+# Cell from Trucano & Chen, Nature 258 (1975) 136.
+data_graphite_2h
+_chemical_formula_sum            C
+_cell_length_a                   2.4612
+_cell_length_b                   2.4612
+_cell_length_c                   6.7090
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                120
+_space_group_IT_number           194
+_space_group_name_H-M_alt        'P 63/m m c'
+_space_group_name_Hall           '-P 6c 2c'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+C1 C 0 0 0.25
+C2 C 0.333333 0.666667 0.25

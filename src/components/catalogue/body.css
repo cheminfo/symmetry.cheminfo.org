@@ -1,0 +1,116 @@
+/*
+ * The five shapes a section of an entry takes: a note, a row of tokens, a
+ * table, a character table, a list of links. Drawn once by `EntryBodyView`, so
+ * the four catalogues cannot drift apart on how an operation list looks.
+ *
+ * Every colour is a family token. A table scrolls sideways rather than wrapping
+ * a symbol, because `F 4/m -3 2/m` split over two lines is not that symbol.
+ */
+
+.catalogue-tokens {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+  gap: 0.3rem;
+  list-style: none;
+}
+
+.catalogue-tokens li {
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.catalogue-links {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.catalogue-links li {
+  padding: 0.25rem 0;
+}
+
+.catalogue-links span {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.catalogue-links span::before {
+  content: ' — ';
+}
+
+.catalogue-note p {
+  max-width: 46rem;
+  margin: 0 0 0.4rem;
+  color: var(--text-muted);
+}
+
+.catalogue-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.catalogue-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.catalogue-table caption {
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-faint);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.catalogue-table th,
+.catalogue-table td {
+  padding: 0.3rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.catalogue-table thead th {
+  color: var(--text-faint);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.catalogue-table tbody tr:last-child th,
+.catalogue-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.catalogue-table--characters .catalogue-cell--number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.catalogue-cell--symbol {
+  font-weight: 700;
+}
+
+.catalogue-pair {
+  margin-left: 0.35rem;
+  color: var(--text-faint);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.catalogue-mono,
+.catalogue-tokens li,
+.catalogue-table td:first-child {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}

@@ -1,0 +1,92 @@
+cff-version: 1.2.0
+message: 'If you use this software, please cite it as below.'
+type: software
+title: 'SymmeTry — molecular point groups, the 230 space groups and the 17 wallpaper groups'
+abstract: "A web application for the symmetry of molecules, crystals and repeating patterns. It detects the point group of a molecule from its coordinates, walks the assignment flowchart question by question, animates every operation of the group on the structure in 3D, and reads out the character table, the reducible representation and the infrared and Raman selection rules. It builds a unit cell in any of the 230 space groups from the general positions of the International Tables, reports the multiplicity and site symmetry of a position as the orbit and the stabiliser rather than as a tabulated Wyckoff letter, derives the systematic absences, and reads and writes CIF. It draws a motif under any of the 17 wallpaper groups and 7 frieze groups with the mirrors, glides and rotation centres derived from the operations. A guided tutorial, checked exercises and a printable cheatsheet teach the subject, and every view is shareable and embeddable as a link. All computation runs in the visitor's browser, so nothing built or dropped is ever uploaded."
+repository-artifact: https://symmetry.cheminfo.org
+repository-code: https://github.com/cheminfo/symmetry.cheminfo.org
+authors:
+  - family-names: 'Patiny'
+    given-names: 'Luc'
+    affiliation: 'Ecole Polytechnique Fédérale de Lausanne (EPFL), Switzerland'
+    orcid: 'https://orcid.org/0000-0002-4943-2643'
+  - name: 'The cheminfo team'
+license: MIT
+keywords:
+  - Molecular symmetry
+  - Point groups
+  - Space groups
+  - Wallpaper groups
+  - Character tables
+  - Group theory
+  - Crystallography
+  - Chemistry education
+references:
+  - type: article
+    title: 'Unlocking the Potential of Browser-Based Scientific Data Analysis: A 20-Year Journey of Expertise'
+    authors:
+      - family-names: 'Patiny'
+        given-names: 'Luc'
+    journal: 'CHIMIA'
+    volume: 79
+    issue: '1-2'
+    start: 66
+    end: 69
+    year: 2025
+    doi: '10.2533/chimia.2025.66'
+  - type: article
+    title: 'Two Decades of Online Teaching: Trends, Challenges, and Future Directions'
+    authors:
+      - family-names: 'Turin'
+        given-names: 'Régis'
+      - family-names: 'Patiny'
+        given-names: 'Luc'
+    journal: 'CHIMIA'
+    volume: 77
+    issue: '10'
+    start: 683
+    end: 687
+    year: 2023
+    doi: '10.2533/chimia.2023.683'
+  - type: book
+    title: 'International Tables for Crystallography, Volume A: Space-group symmetry'
+    authors:
+      - name: 'International Union of Crystallography'
+    editors:
+      - family-names: 'Aroyo'
+        given-names: 'Mois I.'
+    publisher:
+      name: 'Wiley'
+    edition: '6th'
+    year: 2016
+    url: 'https://it.iucr.org/A/'
+  - type: article
+    title: 'Mol* Viewer: modern web app for 3D visualization and analysis of large biomolecular structures'
+    authors:
+      - family-names: 'Sehnal'
+        given-names: 'David'
+      - family-names: 'Bittrich'
+        given-names: 'Sebastian'
+      - family-names: 'Deshpande'
+        given-names: 'Mandar'
+      - family-names: 'Svobodová'
+        given-names: 'Radka'
+      - family-names: 'Berka'
+        given-names: 'Karel'
+      - family-names: 'Bazgier'
+        given-names: 'Václav'
+      - family-names: 'Velankar'
+        given-names: 'Sameer'
+      - family-names: 'Burley'
+        given-names: 'Stephen K.'
+      - family-names: 'Koča'
+        given-names: 'Jaroslav'
+      - family-names: 'Rose'
+        given-names: 'Alexander S.'
+    journal: 'Nucleic Acids Research'
+    volume: 49
+    issue: 'W1'
+    start: 'W431'
+    end: 'W437'
+    year: 2021
+    doi: '10.1093/nar/gkab314'

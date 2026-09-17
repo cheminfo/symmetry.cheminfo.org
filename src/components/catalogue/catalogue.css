@@ -1,0 +1,139 @@
+/*
+ * The four catalogues.
+ *
+ * Every colour is a family token: these pages are reference material, so the
+ * only thing that carries the brand is the link and the pressed capsule, and
+ * the rest is ink on the page. The grid and the rail collapse on a phone,
+ * because a space-group symbol handed out in a lecture is opened on one.
+ */
+
+.catalogue-index,
+.catalogue-entry {
+  display: flex;
+  width: 100%;
+  max-width: var(--page-max);
+  flex-direction: column;
+  margin: 0 auto;
+  gap: 1rem;
+}
+
+.catalogue-index__head h1,
+.catalogue-entry__head h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+}
+
+.catalogue-index__head p {
+  max-width: 46rem;
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+}
+
+/* ── The index ────────────────────────────────────────────────────────────── */
+
+.catalogue-controls {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  gap: 0.5rem;
+}
+
+.catalogue-search {
+  width: 100%;
+  max-width: 26rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9375rem;
+}
+
+.catalogue-search:focus {
+  border-color: var(--accent);
+}
+
+.catalogue-block h2 {
+  display: flex;
+  align-items: baseline;
+  margin: 0 0 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  gap: 0.5rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.catalogue-block__count {
+  color: var(--text-faint);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.catalogue-grid {
+  display: grid;
+  padding: 0;
+  margin: 0;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  list-style: none;
+}
+
+.catalogue-cell > a {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  gap: 0.2rem;
+  text-decoration: none;
+}
+
+.catalogue-cell > a:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-sunken);
+}
+
+.catalogue-cell__head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.catalogue-cell__symbol {
+  color: var(--accent);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.catalogue-cell__badge {
+  padding: 0 0.35rem;
+  border-radius: 6px;
+  background: var(--surface-sunken);
+  color: var(--text-faint);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.catalogue-cell__detail {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.catalogue-missing {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  margin: 0;
+  background: var(--surface);
+  color: var(--text-muted);
+}
