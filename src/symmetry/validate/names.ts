@@ -10,7 +10,7 @@ import { FRIEZE_GROUPS } from '../../data/friezeGroups.ts';
 import { WALLPAPER_GROUPS } from '../../data/planeGroups.ts';
 import { POINT_GROUPS } from '../../data/pointGroups.ts';
 import type { PointOperation } from '../operations.ts';
-import { operationSituation } from '../point/labels.ts';
+import { operationDisplayNames } from '../point/naming.ts';
 import { operationsOf } from '../pointGroups.ts';
 
 /** Subscripts and the other spellings a student types, folded to ASCII. */
@@ -56,30 +56,26 @@ export function canonicalSchoenflies(text: string): string | null {
   return GROUP_BY_KEY.get(key) ?? null;
 }
 
+/** Names are a pure function of the group, and a class partition is not cheap. */
+const NAMES_BY_GROUP = new Map<string, readonly string[]>();
+
 /**
  * One unique name per operation of a group, in the order `operationsOf` gives
  * them.
  *
- * A label that occurs once is the name. A label the group repeats carries the
- * axis it acts about — `σv(xz)` and `σv(yz)` for the two mirrors of C₂ᵥ, whose
- * `label` is `σv` for both.
+ * The spelling is `operationDisplayNames`'s, so an exercise, the workbench and
+ * the catalogue all name an operation the same way: a label the group carries
+ * once is the name, and one it repeats is named from its class — `σv(xz)` and
+ * `σv(yz)` for the two mirrors of C₂ᵥ, `C2(z)` for the principal two-fold of
+ * D₆ₕ against the `C2^′` and `C2^″` in the ring plane.
  * @param group - A `PointGroup.id` with finitely many operations.
  * @returns The names, one per operation.
  */
 export function groupOperationNames(group: string): readonly string[] {
-  const operations = operationsOf(group);
-  const seen = new Map<string, number>();
-  for (const operation of operations) {
-    seen.set(operation.label, (seen.get(operation.label) ?? 0) + 1);
-  }
-  const names: string[] = [];
-  for (const operation of operations) {
-    names.push(
-      (seen.get(operation.label) ?? 0) > 1
-        ? `${operation.label}(${operationSituation(operation)})`
-        : operation.label,
-    );
-  }
+  const known = NAMES_BY_GROUP.get(group);
+  if (known !== undefined) return known;
+  const names = operationDisplayNames(operationsOf(group));
+  NAMES_BY_GROUP.set(group, names);
   return names;
 }
 

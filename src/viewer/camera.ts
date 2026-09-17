@@ -13,6 +13,7 @@ import type { PluginContext } from 'molstar/lib/mol-plugin/context.js';
 
 import type { SceneSphere } from './framing.ts';
 import { framedRadius, unionSpheres } from './framing.ts';
+import type { ViewOrientation } from './orientation.ts';
 import type { Point3 } from './types.ts';
 
 /** Transition length used when the caller does not pick one, milliseconds. */
@@ -54,17 +55,27 @@ export function sceneExtent(plugin: PluginContext): SceneSphere {
  *
  * @param plugin - The molstar context.
  * @param durationMs - Transition length; 0 jumps.
+ * @param orientation - Where to look from, from `sceneOrientation`. Left out,
+ *   the camera keeps the direction it is already pointing, which is what a
+ *   reframe after a reader has turned the scene should do.
  */
 export function resetCamera(
   plugin: PluginContext,
   durationMs = DEFAULT_CAMERA_DURATION,
+  orientation?: ViewOrientation,
 ): void {
   const scene = sceneExtent(plugin);
   if (scene.radius <= 0) {
     plugin.managers.camera.reset(undefined, durationMs);
     return;
   }
-  focusPoint(plugin, scene.centre, framedRadius(scene.radius), durationMs);
+  focusPoint(
+    plugin,
+    scene.centre,
+    framedRadius(scene.radius),
+    durationMs,
+    orientation,
+  );
 }
 
 /**
@@ -74,23 +85,46 @@ export function resetCamera(
  * @param centre - What to frame, Cartesian ångström.
  * @param radius - Radius of the ball to fit, ångström.
  * @param durationMs - Transition length; 0 jumps.
+ * @param orientation - Where to look from; the current direction when absent.
  */
 export function focusPoint(
   plugin: PluginContext,
   centre: Point3,
   radius: number,
   durationMs = DEFAULT_CAMERA_DURATION,
+  orientation?: ViewOrientation,
 ): void {
   // add() only queues, and a queued object belongs to no bounding sphere yet,
   // so framing right after drawing would frame the scene without it.
   plugin.canvas3d?.commit(true);
+  const target = Vec3.create(centre[0], centre[1], centre[2]);
+  const camera = plugin.canvas3d?.camera;
+  if (orientation !== undefined && camera !== undefined) {
+    // `focusSphere` keeps whichever way the camera already points, and the way
+    // it points when a canvas opens is straight down −z. `getInvariantFocus`
+    // is the one that takes a direction and an up and uses both as given —
+    // `getFocus` only matches their sign against the current camera, so half
+    // the scenes would come back looking from the other side.
+    plugin.managers.camera.setSnapshot(
+      camera.getInvariantFocus(
+        target,
+        Math.max(radius, MINIMUM_RADIUS),
+        Vec3.create(...orientation.up),
+        // The direction a camera looks along runs from the eye to what it is
+        // looking at, so it is the opposite of where the eye sits.
+        Vec3.create(...negated(orientation.eye)),
+      ),
+      durationMs,
+    );
+    return;
+  }
   plugin.managers.camera.focusSphere(
-    Sphere3D.create(Vec3.create(centre[0], centre[1], centre[2]), radius),
+    Sphere3D.create(target, radius),
     // `extraRadius` defaults to 4 A, which is the very padding this module
     // measures the scene itself to avoid: it left water filling a twentieth of
     // the canvas and benzene a quarter of it. The margin is already in
     // `framedRadius`, so nothing is added here.
-    { extraRadius: 0, minRadius: 0.5, durationMs },
+    { extraRadius: 0, minRadius: MINIMUM_RADIUS, durationMs },
   );
 }
 
@@ -118,6 +152,14 @@ export function setSpin(
     },
   });
 }
+
+/** The other way round, so a direction can be turned into a camera place. */
+function negated(vector: Point3): Point3 {
+  return [-vector[0], -vector[1], -vector[2]];
+}
+
+/** Never frame tighter than this, ångström, so one atom does not fill the view. */
+const MINIMUM_RADIUS = 0.5;
 
 /** What each part of the scene reaches, per plugin. */
 const extents = new WeakMap<PluginContext, Map<string, SceneSphere>>();

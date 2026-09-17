@@ -35,6 +35,12 @@ export {
   primitivesExtent,
   unionSpheres,
 } from './framing.ts';
+export type { OrientedScene, ViewOrientation } from './orientation.ts';
+export {
+  principalAxisOf,
+  sceneOrientation,
+  threeQuarterView,
+} from './orientation.ts';
 export type { Matrix4 } from './operationMatrix.ts';
 export {
   IDENTITY_MATRIX4,

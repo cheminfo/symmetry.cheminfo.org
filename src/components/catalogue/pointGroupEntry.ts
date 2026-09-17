@@ -14,7 +14,7 @@ import { moleculesOfGroup } from '../../data/molecules.ts';
 import type { PointGroup } from '../../data/pointGroups.ts';
 import { pointGroupBySlug } from '../../data/pointGroups.ts';
 import { count } from '../../seo/describe.ts';
-import { operationDisplayNames } from '../../symmetry/point/labels.ts';
+import { operationDisplayNames } from '../../symmetry/point/naming.ts';
 import { operationsOf } from '../../symmetry/pointGroups.ts';
 
 import { factsOf, subtitleOf } from './pointGroupFacts.ts';
@@ -126,9 +126,10 @@ function operationSection(group: PointGroup): EntrySection {
     part: 'operations',
     body: {
       kind: 'operations',
-      // Named, not labelled: C2v holds two operations a chemist writes `σv`,
-      // and Oh twelve written `C3`. The name says which one, in the plane, the
-      // direction indices or the prime a textbook writes it with.
+      // Named from its class, not labelled: C2v holds two operations a chemist
+      // writes `σv`, and D6h seven written `C2`. The class says which one — the
+      // axis letter, the direction indices, or the prime the table heads its
+      // column with — so the list below and the classes under it agree.
       names: operationDisplayNames(operationsOf(group.id)),
       note: `Every one of the ${count(group.order, 'operation')}, closed from the generators, with the principal axis along z.`,
     },

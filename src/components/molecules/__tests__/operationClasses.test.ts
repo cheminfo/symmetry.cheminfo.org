@@ -46,9 +46,10 @@ test('two classes that would print alike are told apart by a prime', () => {
     '2C3',
     '3C2',
     '3C2′',
-    // The principal C2 is C6³ and stands alone; the seven C2 of D6h are
-    // numbered as one label, so it is the fifth of them.
-    'C2(5)',
+    // The principal C2 is C6³ and is a class of its own, so the header is its
+    // own name: the axis it turns about, which is what tells it from the six
+    // lying in the ring plane.
+    'C2(z)',
     'i',
     '2S6',
     '2S3',

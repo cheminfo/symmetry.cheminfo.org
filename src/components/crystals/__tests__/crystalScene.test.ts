@@ -4,17 +4,17 @@ import { draftOf } from '../../../crystal/draft.ts';
 import { structureOf } from '../../../data/structures/index.ts';
 import { spaceGroup, spaceGroupsWhere } from '../../../symmetry/spaceGroups.ts';
 import {
+  crystalDrawings,
+  crystalElementStyle,
+} from '../crystalElementLayers.ts';
+import {
   CRYSTAL_LAYERS,
   elementLabel,
   elementTally,
   sceneCaption,
   settingLabel,
 } from '../crystalLabels.ts';
-import {
-  analyseCrystal,
-  crystalAtoms,
-  crystalDrawings,
-} from '../crystalScene.ts';
+import { analyseCrystal, crystalAtoms } from '../crystalScene.ts';
 
 const NOTHING = {
   axes: false,
@@ -92,6 +92,28 @@ test('a layer that is off draws nothing, and one that is on draws its kind', () 
   expect(new Set(everything.map((drawing) => drawing.id)).size).toBe(
     everything.length,
   );
+});
+
+test('the elements are drawn as a fraction of the shortest cell edge', () => {
+  const style = crystalElementStyle(halite());
+  // Halite's 5.6402 A edge: an axis 1.2 % of it thick, a name a quarter of it.
+  expect(style.axisRadius).toBeCloseTo(0.0676824, 7);
+  expect(style.rimRadius).toBeCloseTo(0.0394814, 7);
+  expect(style.arrowRadius).toBeCloseTo(0.1804864, 7);
+  expect(style.arrowLength).toBeCloseTo(0.451216, 7);
+  expect(style.centreRadius).toBeCloseTo(0.225608, 7);
+  expect(style.labelSize).toBeCloseTo(1.466452, 6);
+  expect(style.labelGap).toBeCloseTo(0.507618, 6);
+
+  // Calcite is 4.99 A across and 17.0615 A tall. The short edge sets the
+  // scale, so the rods stay rods instead of becoming girders.
+  const setting = spaceGroup(167, 0);
+  const calcite = analyseCrystal(
+    draftOf(structureOf('calcite'), setting),
+    setting,
+  );
+  expect(calcite.lattice.cell.c).toBeCloseTo(17.0615, 4);
+  expect(crystalElementStyle(calcite).axisRadius).toBeCloseTo(0.05988, 7);
 });
 
 test('an element is named by its symbol and the direction it runs in', () => {

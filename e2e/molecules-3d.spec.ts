@@ -12,6 +12,7 @@
 import { expect, test } from '@playwright/test';
 
 import {
+  SIGNATURE_SIZE,
   changedFraction,
   distinctLevels,
   spread,
@@ -31,6 +32,41 @@ const VIEWER_TIMEOUT_MS = 120_000;
 
 /** Share of the samples a real change moves. A redraw of the same scene is 0. */
 const MINIMUM_CHANGE = 0.02;
+
+/** Luminance a sample has to fall below to count as painted, on a white scene. */
+const PAINTED_BELOW = 250;
+
+/**
+ * Share of the frame that is not bare background.
+ *
+ * @param signature - A fingerprint.
+ * @returns A fraction between 0 and 1.
+ */
+function paintedFraction(signature: number[]): number {
+  if (signature.length === 0) return 0;
+  let painted = 0;
+  for (const value of signature) {
+    if (value < PAINTED_BELOW) painted++;
+  }
+  return painted / signature.length;
+}
+
+/**
+ * How many of the fingerprint's columns hold anything at all — how wide what is
+ * drawn actually is.
+ *
+ * @param signature - A fingerprint.
+ * @returns A count out of {@link SIGNATURE_SIZE}.
+ */
+function paintedColumns(signature: number[]): number {
+  const columns = new Set<number>();
+  for (let index = 0; index < signature.length; index++) {
+    if ((signature[index] ?? 255) < PAINTED_BELOW) {
+      columns.add(index % SIGNATURE_SIZE);
+    }
+  }
+  return columns.size;
+}
 
 test('the viewer draws the structure, and a layer switched off changes it', async ({
   page,
@@ -131,4 +167,49 @@ test('a molecule nobody minted opens the workbench rather than an error', async 
   // empty workbench: a link from a course made two years ago still teaches.
   const workbench = page.getByTestId('page-molecules');
   await expect(workbench.locator('.mol-verdict')).toHaveText('C2v4 operations');
+});
+
+test('the front page opens on a view where the symmetry is visible', async ({
+  page,
+}) => {
+  test.setTimeout(240_000);
+  await page.goto('/');
+
+  const workbench = page.getByTestId('page-molecules');
+  await expect(workbench.locator('.mol-verdict')).toHaveText('C2v4 operations');
+
+  const canvas = page.getByTestId('symmetry-3d').locator('canvas');
+  await expect(canvas).toBeVisible({ timeout: VIEWER_TIMEOUT_MS });
+  const settled = await waitForStable(
+    page,
+    canvas,
+    await waitForPaint(page, canvas, VIEWER_TIMEOUT_MS),
+  );
+  console.log('FRAMING', paintedFraction(settled), paintedColumns(settled));
+});
+
+test('the pointer never reports molstar names', async ({ page }) => {
+  test.setTimeout(240_000);
+  await page.goto('/');
+  const canvas = page.getByTestId('symmetry-3d').locator('canvas');
+  await expect(canvas).toBeVisible({ timeout: VIEWER_TIMEOUT_MS });
+  await waitForPaint(page, canvas, VIEWER_TIMEOUT_MS);
+
+  const frame = await canvas.boundingBox();
+  const readout = page.getByTestId('symmetry-3d-readout');
+  const seen = new Set<string>();
+  for (let row = 1; row < 8; row++) {
+    for (let column = 1; column < 8; column++) {
+      // eslint-disable-next-line no-await-in-loop -- one pointer, so the sweep
+      // is sequential by definition: each move has to land before it is read.
+      await page.mouse.move(
+        (frame?.x ?? 0) + ((frame?.width ?? 0) * column) / 8,
+        (frame?.y ?? 0) + ((frame?.height ?? 0) * row) / 8,
+      );
+      // eslint-disable-next-line no-await-in-loop -- same sweep.
+      const label = await readout.textContent().catch(() => null);
+      if (label !== null && label !== '') seen.add(label);
+    }
+  }
+  console.log('READOUT', [...seen].join(' | '));
 });

@@ -9,7 +9,7 @@
 import { expect, test } from 'vitest';
 
 import { POINT_GROUPS } from '../../data/pointGroups.ts';
-import { operationDisplayNames, operationPlace } from '../point/labels.ts';
+import { operationDisplayNames, operationPlace } from '../point/naming.ts';
 import { operationsOf } from '../pointGroups.ts';
 
 /** The names of one group, by its `PointGroup.id`. */
@@ -66,9 +66,59 @@ test('a class of six with no rational direction is numbered, never vectorised', 
   expect(d6d).toContain('C3^2');
 });
 
+test('the principal two-fold of D6h is named for its axis, not for a position', () => {
+  // Seven operations of D6h are labelled C2, and numbering them 1 to 7 across
+  // the group loses the one fact a chemist reads off them: one is the axis the
+  // ring turns about and the other six lie in the ring plane.
+  const d6h = names('D6h');
+  expect(d6h.filter((name) => name.startsWith('C2')).toSorted()).toStrictEqual([
+    'C2(z)',
+    'C2^′(1)',
+    'C2^′(2)',
+    'C2^′(3)',
+    'C2^″(1)',
+    'C2^″(2)',
+    'C2^″(3)',
+  ]);
+  // Six planes, in two classes of three, and the numbers restart in each.
+  expect(d6h.filter((name) => name.startsWith('σv')).toSorted()).toStrictEqual([
+    'σv(1)',
+    'σv(2)',
+    'σv(3)',
+    'σv^′(1)',
+    'σv^′(2)',
+    'σv^′(3)',
+  ]);
+});
+
+test('a class takes the prime where two of them carry one label', () => {
+  // D6 has the same seven two-folds as D6h and names them the same way; C6v has
+  // no two-fold off its axis, so its six planes are the pair of classes there.
+  expect(
+    names('D6')
+      .filter((name) => name.startsWith('C2'))
+      .toSorted(),
+  ).toStrictEqual([
+    'C2(z)',
+    'C2^′(1)',
+    'C2^′(2)',
+    'C2^′(3)',
+    'C2^″(1)',
+    'C2^″(2)',
+    'C2^″(3)',
+  ]);
+  expect(
+    names('C6v')
+      .filter((name) => name.startsWith('σ'))
+      .toSorted(),
+  ).toStrictEqual(['σv(1)', 'σv(2)', 'σv(3)', 'σv^′(1)', 'σv^′(2)', 'σv^′(3)']);
+});
+
 test('no name of any group carries a Cartesian component, and none repeats', () => {
+  let checked = 0;
   for (const group of POINT_GROUPS) {
     if (!Number.isFinite(group.order)) continue;
+    checked++;
     const written = names(group.id);
     expect(written, group.id).toHaveLength(group.order);
     expect(new Set(written).size, group.id).toBe(group.order);
@@ -77,6 +127,8 @@ test('no name of any group carries a Cartesian component, and none repeats', () 
       expect(name.includes('.'), `${group.id}: ${name}`).toBe(false);
     }
   }
+  // 53 groups, less the two linear ones, which have no operation list at all.
+  expect(checked).toBe(51);
 });
 
 test('a place is the plane, the direction indices, or nothing at all', () => {

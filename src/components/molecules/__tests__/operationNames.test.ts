@@ -1,9 +1,12 @@
 import { expect, test } from 'vitest';
 
-import { MOLECULES } from '../../../data/molecules.ts';
+import { MOLECULES, moleculeById } from '../../../data/molecules.ts';
+import { POINT_GROUPS } from '../../../data/pointGroups.ts';
 import { detectPointGroup } from '../../../symmetry/detect.ts';
 import { axisLetter } from '../../../symmetry/point/labels.ts';
+import { operationDisplayNames } from '../../../symmetry/point/naming.ts';
 import { operationsOf } from '../../../symmetry/pointGroups.ts';
+import { groupOperationNames } from '../../../symmetry/validate.ts';
 import {
   indexOfName,
   operationLabelParts,
@@ -52,6 +55,69 @@ test('every molecule of the library names its operations uniquely', () => {
     checked++;
   }
   expect(checked).toBe(56);
+});
+
+test('and never by a Cartesian vector, which is what the 3D labels print', () => {
+  // The buttons of the operations panel and the labels drawn in the scene are
+  // this list. Benzene once carried `σv(⊥[0.866 0.5 0])` on both.
+  const wrong: string[] = [];
+  for (const entry of MOLECULES) {
+    const positions = entry.atoms.map((atom) => atom.position);
+    const elements = entry.atoms.map((atom) => atom.element);
+    for (const name of operationNames(
+      detectPointGroup(positions, elements).operations,
+    )) {
+      if (name.includes('[') || /\d\.\d/.test(name)) {
+        wrong.push(`${entry.id} ${name}`);
+      }
+    }
+  }
+  expect(wrong).toStrictEqual([]);
+});
+
+test('benzene names its principal two-fold C2(z), and the other six otherwise', () => {
+  const entry = moleculeById('benzene');
+  if (entry === undefined) throw new Error('the library has no benzene');
+  const detected = detectPointGroup(
+    entry.atoms.map((atom) => atom.position),
+    entry.atoms.map((atom) => atom.element),
+  );
+  const twoFolds = operationNames(detected.operations).filter((name) =>
+    name.startsWith('C2'),
+  );
+
+  expect(twoFolds).toHaveLength(7);
+  expect(twoFolds.filter((name) => name === 'C2(z)')).toHaveLength(1);
+  // The other six are the ring plane's, in two classes of three, and no
+  // operation of D6h turns one kind into the other.
+  expect(twoFolds.toSorted()).toStrictEqual([
+    'C2(z)',
+    'C2^′(1)',
+    'C2^′(2)',
+    'C2^′(3)',
+    'C2^″(1)',
+    'C2^″(2)',
+    'C2^″(3)',
+  ]);
+});
+
+test('the workbench, the catalogue and the exercise validator name alike', () => {
+  // An exercise answer, a `?operation=` link and a catalogue listing are three
+  // spellings of one name, so they are one function.
+  let checked = 0;
+  for (const group of POINT_GROUPS) {
+    if (!Number.isFinite(group.order)) continue;
+    const expected = groupOperationNames(group.id);
+    expect(operationNames(operationsOf(group.id)), group.id).toStrictEqual(
+      expected,
+    );
+    expect(
+      operationDisplayNames(operationsOf(group.id)),
+      group.id,
+    ).toStrictEqual(expected);
+    checked++;
+  }
+  expect(checked).toBe(51);
 });
 
 test('a name the molecule has not got is -1, so a stale link still opens', () => {

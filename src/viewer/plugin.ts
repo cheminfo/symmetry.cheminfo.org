@@ -25,6 +25,7 @@ import {
   setSpin,
 } from './camera.ts';
 import { subscribeHover } from './hover.ts';
+import type { ViewOrientation } from './orientation.ts';
 import type { Point3 } from './types.ts';
 
 /** Settings fixed for the life of a viewer. */
@@ -98,10 +99,15 @@ export class ViewerPlugin {
    * Frame everything on screen.
    *
    * @param durationMs - Transition length; 0 jumps.
+   * @param orientation - Where to look from, from `sceneOrientation`. Left out,
+   *   the camera keeps the direction it is already pointing.
    */
-  resetCamera(durationMs = DEFAULT_CAMERA_DURATION): Promise<void> {
+  resetCamera(
+    durationMs = DEFAULT_CAMERA_DURATION,
+    orientation?: ViewOrientation,
+  ): Promise<void> {
     return this.run((plugin) => {
-      resetCamera(plugin, durationMs);
+      resetCamera(plugin, durationMs, orientation);
     });
   }
 
@@ -111,14 +117,16 @@ export class ViewerPlugin {
    * @param centre - What to frame, Cartesian ångström.
    * @param radius - Radius of the ball to fit, ångström.
    * @param durationMs - Transition length; 0 jumps.
+   * @param orientation - Where to look from; the current direction when absent.
    */
   focus(
     centre: Point3,
     radius: number,
     durationMs = DEFAULT_CAMERA_DURATION,
+    orientation?: ViewOrientation,
   ): Promise<void> {
     return this.run((plugin) => {
-      focusPoint(plugin, centre, radius, durationMs);
+      focusPoint(plugin, centre, radius, durationMs, orientation);
     });
   }
 

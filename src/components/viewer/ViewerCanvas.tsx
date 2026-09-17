@@ -12,10 +12,10 @@
  */
 
 import type { ReactElement } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { Viewer } from '../../viewer/index.ts';
-import { createViewer } from '../../viewer/index.ts';
+import { createViewer, sceneOrientation } from '../../viewer/index.ts';
 
 import type { ViewerScene } from './viewerScene.ts';
 
@@ -63,6 +63,22 @@ export function ViewerCanvas(props: ViewerCanvasProps): ReactElement {
   // effect, and every draw would then cost an extra render.
   const held = useRef<Viewer | null>(null);
 
+  // Which way the scene is opened on: measured from its own principal axis, so
+  // a molecule built about z and one built about x both open on a view where a
+  // plane reads as a plane and an axis reads as a rod.
+  const orientation = useMemo(
+    () => sceneOrientation({ cell, elements }),
+    [cell, elements],
+  );
+  // Held in a ref rather than read as a dependency, because only a new
+  // structure reframes: switching a layer off changes which elements are drawn,
+  // and a camera that swung round at that moment would look like the chip had
+  // moved the molecule.
+  const framing = useRef(orientation);
+  useEffect(() => {
+    framing.current = orientation;
+  }, [orientation]);
+
   // Kept in a ref as well, so a page passing an inline callback does not redraw
   // the whole scene on every render.
   const failure = useRef(onFailure);
@@ -102,7 +118,7 @@ export function ViewerCanvas(props: ViewerCanvasProps): ReactElement {
       (async () => {
         await viewer.showStructure(atoms, { representation });
         await viewer.showCell(cell, repeat);
-        await viewer.resetCamera(0);
+        await viewer.resetCamera(0, framing.current);
       })(),
     );
   }, [container, background, atoms, cell, repeat, representation]);
@@ -143,7 +159,11 @@ export function ViewerCanvas(props: ViewerCanvasProps): ReactElement {
   return (
     <div style={rootStyle}>
       <div ref={setContainer} style={canvasStyle} data-testid="symmetry-3d" />
-      {hovered !== null && <div style={readoutStyle}>{hovered}</div>}
+      {hovered !== null && (
+        <div style={readoutStyle} data-testid="symmetry-3d-readout">
+          {hovered}
+        </div>
+      )}
     </div>
   );
 }

@@ -138,7 +138,10 @@ function meta(path: string) {
 
 test('the sentence of an entry is read off that entry, not off a template', () => {
   expect(meta('/point-groups/c2v')?.description).toBe(
-    'The C2v point group has 4 symmetry operations in 4 classes: E, C2, σv(xz), σv′(yz). Hermann-Mauguin mm2, one of the 32 crystal classes, orthorhombic.',
+    'The C2v point group is built on a two-fold axis with two mirror planes through it: 4 symmetry operations in 4 classes. Water (H2O) belongs to it.',
+  );
+  expect(meta('/point-groups/d6d')?.description).toBe(
+    'The D6d point group is built on a six-fold axis, six two-fold axes across it and six mirror planes between them: 24 symmetry operations in 9 classes.',
   );
   expect(meta('/space-groups/225')?.description).toBe(
     'Space group 225, F m -3 m (Fm-3m): cubic, face-centred lattice, class m-3m, 192 general positions. Centrosymmetric and symmorphic. Written F 4/m -3 2/m in full.',

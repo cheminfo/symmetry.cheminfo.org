@@ -15,6 +15,12 @@ export type { CellReadoutProps } from './CellReadout.tsx';
 export { CellReadout } from './CellReadout.tsx';
 export type { CifPanelProps } from './CifPanel.tsx';
 export { CifPanel } from './CifPanel.tsx';
+export type { CrystalLayers } from './crystalElementLayers.ts';
+export {
+  LABEL_LIMIT,
+  crystalDrawings,
+  crystalElementStyle,
+} from './crystalElementLayers.ts';
 export {
   CRYSTAL_LAYERS,
   KIND_ORDER,
@@ -25,13 +31,10 @@ export {
   settingLabel,
 } from './crystalLabels.ts';
 export type { SceneCaption } from './crystalLabels.ts';
-export type { CrystalAnalysis, CrystalLayers } from './crystalScene.ts';
+export type { CrystalAnalysis } from './crystalScene.ts';
 export {
-  LABEL_LIMIT,
   analyseCrystal,
   crystalAtoms,
-  crystalDrawings,
-  crystalElementStyle,
   drawnElementPoint,
 } from './crystalScene.ts';
 export type { CrystalViewProps } from './CrystalView.tsx';

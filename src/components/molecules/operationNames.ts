@@ -2,13 +2,13 @@
  * One unique name per operation of a molecule, and how to set it in type.
  *
  * A label is not a name: C₂ᵥ has two operations labelled `σv`, and a link that
- * says `?operation=σv` would be ambiguous. So a repeated label carries where it
- * acts — `σv(xz)`, `C3(111)`, `σd(1)` — in the one spelling the catalogue and
- * the workbench share, and the spelling a tutorial step names one by.
+ * says `?operation=σv` would be ambiguous. So a repeated label is named from
+ * its conjugacy class — `σv(xz)`, `C3(111)`, `C2^′(1)` — in the one spelling
+ * the catalogue, the workbench and the exercise validator share.
  */
 
 import type { PointOperation } from '../../symmetry/operations.ts';
-import { operationDisplayNames } from '../../symmetry/point/labels.ts';
+import { operationDisplayNames } from '../../symmetry/point/naming.ts';
 
 /** A name split for typesetting: `S4^3` is S, then 4, then 3 above. */
 export interface OperationLabelParts {

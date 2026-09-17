@@ -16,7 +16,7 @@ import {
   wallpaperById,
   wallpaperOperations,
 } from '../../../symmetry/planeGroups.ts';
-import { operationDisplayNames } from '../../../symmetry/point/labels.ts';
+import { operationDisplayNames } from '../../../symmetry/point/naming.ts';
 import { operationsOf } from '../../../symmetry/pointGroups.ts';
 import { analyseMolecule } from '../../molecules/assignment.ts';
 import { CharacterTable, NoCharacterTable } from '../../molecules/index.ts';
