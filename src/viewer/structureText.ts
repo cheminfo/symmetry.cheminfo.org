@@ -34,6 +34,25 @@ export function toXyzText(
   return `${lines.join('\n')}\n`;
 }
 
+/**
+ * What the site calls one atom of the scene.
+ *
+ * molstar upper-cases an element symbol on its way in, so the atom the viewer
+ * hands back from an `Si` it was given is an `SI`, which is not how anybody
+ * writes silicon. The number is which atom of the scene it is, counting from
+ * one, so the two hydrogens of water can be told apart while an operation
+ * swaps them.
+ *
+ * @param element - Its element symbol, in any case.
+ * @param index - Its place in the list the viewer was handed, from zero.
+ * @returns `O 1`, `Si 4`.
+ */
+export function atomName(element: string, index: number): string {
+  const symbol =
+    element.charAt(0).toUpperCase() + element.slice(1).toLowerCase();
+  return `${symbol} ${index + 1}`;
+}
+
 /** Six decimals is a thousandth of the shortest bond, and reads as a number. */
 function format(value: number): string {
   return (value === 0 ? 0 : value).toFixed(6);

@@ -24,6 +24,7 @@ import {
 import { spacedLabels } from './elementLabels.ts';
 import { arrow, planeFace, rodEnds } from './elementShapes.ts';
 import { perpendicularTo } from './frame.ts';
+import { plainName } from './labelText.ts';
 import { drawingColour } from './palette.ts';
 import type { ElementStyle, MeshPrimitive, TextItem } from './primitives.ts';
 import { resolveElementStyle } from './primitives.ts';
@@ -61,7 +62,7 @@ export function elementGroups(
   for (const drawing of drawings) {
     groups.push({
       id: drawing.id,
-      label: drawing.label,
+      label: plainName(drawing.label),
       colour: drawingColour(drawing.kind, drawing.colour),
       primitives: drawingPrimitives(drawing, style),
       labels: withLabels ? spacedLabels(drawing, style, taken) : [],

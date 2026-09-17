@@ -17,6 +17,7 @@ import {
 } from '../symmetry/point/vec3.ts';
 
 import { faceCorners } from './elementShapes.ts';
+import { plainName } from './labelText.ts';
 import type {
   ElementStyle,
   ResolvedElementStyle,
@@ -41,7 +42,7 @@ export function drawingLabels(
   drawing: SymmetryDrawing,
   style: ElementStyle = {},
 ): TextItem[] {
-  const text = drawing.badge ?? drawing.label;
+  const text = plainName(drawing.badge ?? drawing.label);
   if (text === '') return [];
   const sizes = resolveElementStyle(style);
   const size = sizes.labelSize;

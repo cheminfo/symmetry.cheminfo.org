@@ -100,8 +100,8 @@ export function principalAxisOf(
  * @param axis - The direction the view is measured from; need not be
  *   normalised, and its sign does not matter.
  * @param reference - Where the azimuth is measured from — a crystal passes its
- *   a edge, so the same cell always opens the same way round.
- * @default a direction chosen from the axis alone
+ *   a edge, so the same cell always opens the same way round. Left out, one is
+ *   chosen from the axis alone.
  * @returns Where the camera sits, and which way is up.
  * @throws When the axis is too short to have a direction.
  */

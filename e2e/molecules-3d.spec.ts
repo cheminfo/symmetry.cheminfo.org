@@ -185,10 +185,29 @@ test('the front page opens on a view where the symmetry is visible', async ({
     canvas,
     await waitForPaint(page, canvas, VIEWER_TIMEOUT_MS),
   );
-  console.log('FRAMING', paintedFraction(settled), paintedColumns(settled));
+
+  // Measured on this scene, in this browser, at this window size. Opened down
+  // the C2 — molstar's own direction — water is a column of three balls with
+  // both σv exactly edge-on: 3.4% of the samples painted, across 8 of the 32
+  // columns. Opened off the axis, the planes are two broad translucent squares
+  // and the rod crosses them: 14.4%, across 13 columns. The thresholds sit
+  // between the two, so a camera that goes back end-on fails here.
+  expect(
+    paintedColumns(settled),
+    'the scene must be wider than the column an end-on view draws',
+  ).toBeGreaterThanOrEqual(11);
+  expect(
+    paintedFraction(settled),
+    "a plane seen edge-on paints nothing: both of water's must show",
+  ).toBeGreaterThan(0.08);
 });
 
-test('the pointer never reports molstar names', async ({ page }) => {
+/** Everything the front page can name: three atoms, the axis, the two planes. */
+const WATER_LABELS = ['C2', 'σv(xz)', 'σv(yz)', 'O 1', 'H 2', 'H 3'];
+
+test('the pointer names what the site drew, never what molstar parsed', async ({
+  page,
+}) => {
   test.setTimeout(240_000);
   await page.goto('/');
   const canvas = page.getByTestId('symmetry-3d').locator('canvas');
@@ -196,20 +215,35 @@ test('the pointer never reports molstar names', async ({ page }) => {
   await waitForPaint(page, canvas, VIEWER_TIMEOUT_MS);
 
   const frame = await canvas.boundingBox();
-  const readout = page.getByTestId('symmetry-3d-readout');
   const seen = new Set<string>();
-  for (let row = 1; row < 8; row++) {
-    for (let column = 1; column < 8; column++) {
-      // eslint-disable-next-line no-await-in-loop -- one pointer, so the sweep
-      // is sequential by definition: each move has to land before it is read.
+  /* eslint-disable no-await-in-loop -- there is one pointer: a move has to land
+     before whatever it came to rest under can be read. */
+  for (let row = 1; row < 10; row++) {
+    for (let column = 1; column < 10; column++) {
       await page.mouse.move(
-        (frame?.x ?? 0) + ((frame?.width ?? 0) * column) / 8,
-        (frame?.y ?? 0) + ((frame?.height ?? 0) * row) / 8,
+        (frame?.x ?? 0) + ((frame?.width ?? 0) * column) / 10,
+        (frame?.y ?? 0) + ((frame?.height ?? 0) * row) / 10,
       );
-      // eslint-disable-next-line no-await-in-loop -- same sweep.
-      const label = await readout.textContent().catch(() => null);
-      if (label !== null && label !== '') seen.add(label);
+      await page.waitForTimeout(80);
+      const label = await page.evaluate(
+        () =>
+          document.querySelector('[data-testid="symmetry-3d-readout"]')
+            ?.textContent ?? '',
+      );
+      if (label !== '') seen.add(label);
     }
   }
-  console.log('READOUT', [...seen].join(' | '));
+  /* eslint-enable no-await-in-loop */
+
+  // molstar names an atom after the row it parsed — `xyz | Model 0 | Instance
+  // 1_555 | A | MOL 1 | O [idx 1]` — which is what this page used to show.
+  expect(
+    [...seen],
+    'a sweep that rests on nothing would prove nothing',
+  ).not.toHaveLength(0);
+  for (const label of seen) expect(WATER_LABELS).toContain(label);
+  expect(
+    [...seen].some((label) => /^[A-Z][a-z]? \d+$/.test(label)),
+    'the sweep must land on an atom, which is the label that was wrong',
+  ).toBe(true);
 });

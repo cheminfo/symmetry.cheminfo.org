@@ -17,6 +17,8 @@ import {
 import type { PluginContext } from 'molstar/lib/mol-plugin/context.js';
 import { lociLabel } from 'molstar/lib/mol-theme/label.js';
 
+import { atomName } from './structureText.ts';
+
 /**
  * Report the label of whatever the pointer rests on.
  *
@@ -63,24 +65,14 @@ function labelOf(loci: Loci): string | null {
 function atomLabel(loci: StructureElement.Loci): string | null {
   const names: string[] = [];
   StructureElement.Loci.forEachLocation(loci, (location) => {
-    names.push(atomName(location));
+    names.push(
+      atomName(
+        String(StructureProperties.atom.type_symbol(location)),
+        StructureProperties.atom.sourceIndex(location),
+      ),
+    );
   });
   return names.length === 0 ? null : names.join(' — ');
-}
-
-/**
- * One atom: its element, and its place in the scene.
- *
- * @param location - Where in the structure it sits.
- * @returns `O 1`, counting from the first atom the site handed over.
- */
-function atomName(location: StructureElement.Location): string {
-  // molstar upper-cases an element symbol on its way in, and `SI` is not how
-  // anybody writes silicon.
-  const symbol = String(StructureProperties.atom.type_symbol(location));
-  const element =
-    symbol.charAt(0).toUpperCase() + symbol.slice(1).toLowerCase();
-  return `${element} ${StructureProperties.atom.sourceIndex(location) + 1}`;
 }
 
 /** Molstar's label providers return HTML, and the readout is plain text. */

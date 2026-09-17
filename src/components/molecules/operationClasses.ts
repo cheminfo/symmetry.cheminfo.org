@@ -64,7 +64,6 @@ export function operationClasses(
   const classes: OperationClass[] = [];
   for (const group of grouped) {
     const sorted = group.toSorted(compareOperations);
-    const representative = sorted[0] as PointOperation;
     const size = sorted.length;
     const members = sorted.map((operation) => ({
       name: names[operations.indexOf(operation)] ?? operation.label,
@@ -77,7 +76,7 @@ export function operationClasses(
       header:
         size === 1
           ? (members[0] as ClassMember).name
-          : `${size}${representative.label}`,
+          : `${size}${classTag(members.map((member) => member.name))}`,
       size,
       members,
     });
@@ -144,9 +143,52 @@ function planeRank(label: string): number {
 }
 
 /**
- * Two classes of the same kind and order print the same header — benzene has
- * two of three `C₂` each — so the second takes a prime, which is what a
- * textbook does for exactly this reason.
+ * What every name in the class has in common: the part before whatever tells
+ * one member from the next.
+ *
+ * The header is counted off the names rather than off the operation's bare
+ * label, because the two drift apart the moment a third class takes the plain
+ * spelling. Benzene names its ring two-folds `C₂′` and `C₂″` — the axis along
+ * z is a class of its own and keeps `C₂` — so a header counted from the label
+ * would print `3C₂` over three operations each of which reads C₂′, and would
+ * contradict the character table printed under it.
+ *
+ * It is the common prefix and not the first name stripped of its place,
+ * because the two ways a class tells its members apart need opposite cuts: the
+ * three `C₂′` of benzene are numbered and share the prime, while the three
+ * `C₂` of staggered ethane are one class whose members are the ones carrying
+ * the primes, and the header of those is `3C₂`.
+ */
+function classTag(names: readonly string[]): string {
+  let shared = names[0] ?? '';
+  for (const name of names) {
+    let common = 0;
+    while (
+      common < shared.length &&
+      common < name.length &&
+      shared[common] === name[common]
+    ) {
+      common++;
+    }
+    shared = shared.slice(0, common);
+  }
+  return whole(shared);
+}
+
+/** Drop a place the prefix stopped inside, and a caret left raising nothing. */
+function whole(prefix: string): string {
+  const opened = prefix.lastIndexOf('(');
+  const trimmed =
+    opened !== -1 && !prefix.slice(opened).includes(')')
+      ? prefix.slice(0, opened)
+      : prefix;
+  return trimmed.endsWith('^') ? trimmed.slice(0, -1) : trimmed;
+}
+
+/**
+ * Two classes that would still print the same header — six `σ_d` split in two,
+ * where nothing in either name separates them — are told apart by a prime,
+ * which is what a textbook does for exactly this reason.
  */
 function primeDuplicates(
   classes: readonly OperationClass[],

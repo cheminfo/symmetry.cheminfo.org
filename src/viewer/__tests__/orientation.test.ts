@@ -150,6 +150,14 @@ test('a crystal is framed on its cell, and every edge of it reads', () => {
   expect(rodLength(eye, unit(c))).toBeCloseTo(0.906308, 6);
 });
 
+test('a reference along the axis is no reference, and one is chosen instead', () => {
+  // A cell whose a edge somehow lay along c would otherwise leave the azimuth
+  // measured from nothing.
+  expect(threeQuarterView([0, 0, 1], [0, 0, 4])).toStrictEqual(
+    threeQuarterView([0, 0, 1]),
+  );
+});
+
 test('a drawing with no direction at all is skipped', () => {
   const nowhere: SymmetryDrawing = {
     ...AXIS,

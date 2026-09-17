@@ -39,13 +39,17 @@ test('the identity leads, then the rotations, then the planes', () => {
   ]);
 });
 
-test('two classes that would print alike are told apart by a prime', () => {
+test('a header counts the name its members carry, primes included', () => {
   expect(headers('benzene')).toStrictEqual([
     'E',
     '2C6',
     '2C3',
-    '3C2',
-    '3C2′',
+    // The character table under the panel heads these `3C2′` and `3C2″`, and
+    // the operations in them read C₂′ and C₂″: a header counted off the bare
+    // label would print `3C2` over three operations every one of which reads
+    // C₂′.
+    '3C2^′',
+    '3C2^″',
     // The principal C2 is C6³ and is a class of its own, so the header is its
     // own name: the axis it turns about, which is what tells it from the six
     // lying in the ring plane.
@@ -55,7 +59,9 @@ test('two classes that would print alike are told apart by a prime', () => {
     '2S3',
     'σh',
     '3σv',
-    '3σv′',
+    // The caret raises the prime, exactly as it does in the names under it;
+    // the panel typesets both and prints 3σv′.
+    '3σv^′',
   ]);
 });
 
@@ -88,4 +94,26 @@ test('a group has as many classes as its table has columns', () => {
   }
   // The five linear molecules ship no table; the other 51 all do.
   expect(checked).toBe(51);
+});
+
+test('every header names something all of its operations are called', () => {
+  let checked = 0;
+  const offenders: string[] = [];
+  for (const entry of MOLECULES) {
+    for (const one of analyseMolecule(entry).classes) {
+      if (one.size === 1) continue;
+      checked++;
+      // The header is the count, the symbol, and at most a prime taken to tell
+      // it from a class spelled the same way. Strip the first and the last and
+      // what is left has to be a name every operation under it answers to.
+      const symbol = one.header.replace(/^\d+/u, '').replace(/[′″‴]$/u, '');
+      if (!one.members.every((member) => member.name.startsWith(symbol))) {
+        offenders.push(
+          `${entry.id}: ${one.header} over ${one.members[0]?.name}`,
+        );
+      }
+    }
+  }
+  expect(offenders).toStrictEqual([]);
+  expect(checked).toBe(156);
 });

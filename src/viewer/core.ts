@@ -26,6 +26,7 @@ export { mergeDrawings, sameDrawings, withoutDrawings } from './drawingSet.ts';
 export type { ElementGroup } from './elementDrawing.ts';
 export { drawingPrimitives, elementGroups } from './elementDrawing.ts';
 export { drawingLabels } from './elementLabels.ts';
+export { plainName } from './labelText.ts';
 export type { PlaneFrame } from './frame.ts';
 export { perpendicularTo, planeFrame } from './frame.ts';
 export type { SceneSphere } from './framing.ts';
@@ -66,7 +67,7 @@ export {
   primitivePoints,
   resolveElementStyle,
 } from './primitives.ts';
-export { toXyzText } from './structureText.ts';
+export { atomName, toXyzText } from './structureText.ts';
 export { supercellAtoms } from './supercell.ts';
 export type {
   CellRepeat,
