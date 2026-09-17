@@ -40,12 +40,8 @@ export {
   readDraft,
   writeDraft,
 } from './answerState.ts';
-export {
-  NO_LAYERS,
-  hasFigure,
-  moleculeOf,
-  spaceGroupOf,
-} from './figureSubject.ts';
+export { hasFigure, moleculeOf, spaceGroupOf } from './figureSubject.ts';
+export { drawnLayerKey, layerKeysOf, shownLayerKey } from './layerState.ts';
 export type { FieldInput } from './labels.ts';
 export {
   FIELD_LABEL,

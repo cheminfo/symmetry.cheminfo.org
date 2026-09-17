@@ -43,7 +43,7 @@ export function CrystalView(props: CrystalViewProps): ReactElement {
     <>
       <ViewerPanel
         scene={scene}
-        height={380}
+        height={460}
         caption={caption}
         emptyMessage="This cell holds no atoms. Add one in the table."
       />

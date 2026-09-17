@@ -37,6 +37,7 @@ export const POINT_GROUP_CATALOGUE: CatalogueDescriptor = {
   intro:
     'Every point group a molecule can belong to, with its operations, its classes and its character table.',
   searchHint: 'Search a symbol, a molecule or a formula',
+  schoenflies: true,
   rows: POINT_GROUPS.map(rowOf),
   facets: [
     {

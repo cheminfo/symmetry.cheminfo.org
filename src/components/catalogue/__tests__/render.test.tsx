@@ -8,7 +8,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, test } from 'vitest';
 
-import { characterTableOf } from '../../../data/characterTables.ts';
+import { requireCharacterTable } from '../../../symmetry/characterTables.ts';
 import {
   friezeById,
   friezeOperations,
@@ -16,18 +16,30 @@ import {
   wallpaperById,
   wallpaperOperations,
 } from '../../../symmetry/planeGroups.ts';
+import { operationDisplayNames } from '../../../symmetry/point/labels.ts';
 import { operationsOf } from '../../../symmetry/pointGroups.ts';
+import { analyseMolecule } from '../../molecules/assignment.ts';
+import { CharacterTable, NoCharacterTable } from '../../molecules/index.ts';
+import { resolveMolecule } from '../../molecules/library.ts';
 import { CatalogueAnchor } from '../CatalogueAnchor.tsx';
-import { CharacterTableView } from '../CharacterTableView.tsx';
 import { EntryBodyView } from '../EntryBodyView.tsx';
 import { EntryFigureView } from '../EntryFigure.tsx';
 import { FriezeDiagram } from '../FriezeDiagram.tsx';
 import { descriptorFor } from '../descriptors.ts';
-import type { CatalogueDescriptor } from '../types.ts';
+import type { CatalogueDescriptor, EntryBody } from '../types.ts';
 
 /** How many times a tag opens in the markup. */
 function count(markup: string, tag: string): number {
   return markup.split(`<${tag}`).length - 1;
+}
+
+/** The character-table section of one point group, as its page holds it. */
+function charactersOf(slug: string): EntryBody {
+  const view = descriptorFor('point-groups').entry(slug, 0);
+  if (view === null) throw new Error(`no point group ${slug}`);
+  const found = view.sections.find((section) => section.id === 'characters');
+  if (found === undefined) throw new Error(`no character section for ${slug}`);
+  return found.body;
 }
 
 /** Every section body of one entry, rendered. */
@@ -104,7 +116,8 @@ test('a note and a link list draw their own shapes', () => {
         kind: 'links',
         links: [
           {
-            label: 'Water — H2O',
+            label: 'Water',
+            formula: 'H2O',
             detail: 'Two mirrors that cross on the axis.',
             target: { page: 'molecules', moleculeId: 'water' },
           },
@@ -116,29 +129,113 @@ test('a note and a link list draw their own shapes', () => {
   expect(links).toContain('Two mirrors that cross on the axis.');
 });
 
-test('a character table prints one column per class and one row per irrep', () => {
-  const table = characterTableOf('C2v');
-  if (table === undefined) throw new Error('no C2v table');
-  const markup = renderToStaticMarkup(<CharacterTableView table={table} />);
-  // The header row, plus one per irreducible representation.
-  expect(count(markup, 'tr')).toBe(5);
-  expect(markup).toContain('C2v, order 4');
-  expect(markup).toContain('A1');
-  // A character of −1 prints as −1, not as −1.000.
-  expect(markup).toContain('>-1</td>');
-  expect(markup).not.toContain('1.000');
+test('the catalogue prints the character table the workbench prints, byte for byte', () => {
+  // What `/` renders for water, built the way `Molecules.tsx` builds it.
+  const analysis = analyseMolecule(resolveMolecule('water'));
+  const workbench = renderToStaticMarkup(
+    <CharacterTable
+      table={requireCharacterTable(analysis.detection.group)}
+      schoenflies={analysis.group?.schoenflies ?? analysis.detection.group}
+    />,
+  );
+  const catalogue = renderToStaticMarkup(
+    <EntryBodyView body={charactersOf('c2v')} />,
+  );
+
+  expect(catalogue).toBe(workbench);
+  // And it is the typeset table, not a second spelling of it: the order in the
+  // header, the typographic minus, the raised powers of a basis function.
+  expect(catalogue).toContain('<span>C<sub>2v</sub></span> (h = 4)');
+  expect(catalogue).toContain('<td>\u22121</td>');
+  expect(catalogue).toContain(
+    '<td class="mol-table__functions">x², y², z²</td>',
+  );
+  expect(catalogue).not.toContain('catalogue-table--characters');
 });
 
-test('a complex pair prints as the one real row its sum is, and says so', () => {
-  const table = characterTableOf('C3');
-  if (table === undefined) throw new Error('no C3 table');
-  const markup = renderToStaticMarkup(<CharacterTableView table={table} />);
-  expect(markup).toContain('pair');
-  expect(markup).toContain(
-    'A pair of complex representations, printed as the one real row their sum is.',
+test('a complex pair carries the same footnote on both pages', () => {
+  const catalogue = renderToStaticMarkup(
+    <EntryBodyView body={charactersOf('c3')} />,
   );
-  // C3 has 3 classes and 2 display rows: A, and the combined E.
-  expect(count(markup, 'tr')).toBe(3);
+
+  expect(catalogue).toBe(
+    renderToStaticMarkup(
+      <CharacterTable table={requireCharacterTable('C3')} schoenflies="C3" />,
+    ),
+  );
+  expect(catalogue).toContain('<sup>‡</sup>');
+  expect(catalogue).toContain(
+    '‡ Two irreducible representations, complex conjugates of each other, printed as one row.',
+  );
+});
+
+test("a group with no table says so in the site's one sentence", () => {
+  const markup = renderToStaticMarkup(
+    <EntryBodyView body={charactersOf('d6d')} />,
+  );
+
+  expect(markup).toBe(
+    renderToStaticMarkup(<NoCharacterTable group="D6d" schoenflies="D6d" />),
+  );
+  expect(markup).toContain('This site ships no character table for D6d.');
+});
+
+test('an operation is set as a symbol, and never as a Cartesian axis', () => {
+  const markup = renderToStaticMarkup(
+    <EntryBodyView
+      body={{
+        kind: 'operations',
+        names: operationDisplayNames(operationsOf('D6d')),
+      }}
+    />,
+  );
+
+  // S₁₂¹¹ and C₃², with the order below the letter and the power above it.
+  expect(markup).toContain('<span>S<sub>12</sub><sup>11</sup></span>');
+  expect(markup).toContain('<span>C<sub>3</sub><sup>2</sup></span>');
+  // The six σd are numbered, because their axes lie at 15° to the cell and
+  // have no direction indices. What they are never printed as is a vector.
+  expect(markup).toContain('σ<sub>d</sub>');
+  expect(markup).toContain('(6)</span>');
+  expect(markup).not.toContain('0.259');
+  expect(markup).not.toContain('⊥');
+});
+
+test('a cubic group names its axes by their direction indices', () => {
+  const markup = renderToStaticMarkup(
+    <EntryBodyView
+      body={{
+        kind: 'operations',
+        names: operationDisplayNames(operationsOf('Td')),
+      }}
+    />,
+  );
+
+  expect(markup).toContain('>(111)</span>');
+  expect(markup).toContain('>(11\u03040)</span>');
+  expect(markup).not.toContain('0.577');
+});
+
+test('a molecule link sets its formula rather than writing it flat', () => {
+  const markup = renderToStaticMarkup(
+    <EntryBodyView
+      body={{
+        kind: 'links',
+        links: [
+          {
+            label: 'Water',
+            formula: 'H2O',
+            detail: 'Two mirrors that cross on the axis.',
+            target: { page: 'molecules', moleculeId: 'water' },
+          },
+        ],
+      }}
+    />,
+  );
+
+  expect(markup).toContain('Water — ');
+  expect(markup).toContain('<sub>2</sub>');
+  expect(markup).not.toContain('>H2O<');
 });
 
 test('a stereogram is drawn for a point group, with a caption', () => {
@@ -224,4 +321,7 @@ test('every section body of every entry renders without throwing', () => {
     }
   }
   expect(rendered).toBe(307);
-});
+  // Three hundred entries, each building its operations, its elements and its
+  // table: it is the slowest test of the suite and needs longer than the
+  // default when the machine is busy.
+}, 30_000);

@@ -23,6 +23,7 @@ import {
 } from 'react-cheminfo/ui';
 
 import type { Exercise } from '../../data/exercises/types.ts';
+import type { DisplayFlagKey } from '../../state/index.ts';
 import {
   getExerciseProgress,
   resetExercise,
@@ -32,6 +33,7 @@ import {
 } from '../../state/index.ts';
 import type { ExerciseAnswer } from '../../symmetry/validate.ts';
 import { validateExercise } from '../../symmetry/validate.ts';
+import { LayerChips } from '../molecules/LayerChips.tsx';
 
 import { AnswerInput } from './AnswerInput.tsx';
 import { ExerciseFigure } from './ExerciseFigure.tsx';
@@ -44,6 +46,7 @@ import {
 } from './answerState.ts';
 import { hasFigure } from './figureSubject.ts';
 import { KIND_LABEL } from './labels.ts';
+import { layerKeysOf, shownLayerKey } from './layerState.ts';
 
 /** What {@link ExerciseCard} needs. */
 export interface ExerciseCardProps {
@@ -62,7 +65,11 @@ export function ExerciseCard(props: ExerciseCardProps): ReactElement {
   const [answer, setAnswer] = useState(() => readDraft(exercise));
   const [diagram, setDiagram] = useState(false);
   const progress = getExerciseProgress(exercise.id);
-  const result = useMemo(() => mark(exercise, answer), [exercise, answer]);
+  const shown = shownLayerKey();
+  const result = useMemo(
+    () => mark(exercise, answer, layerKeysOf(shown)),
+    [exercise, answer, shown],
+  );
   const blank = answerIsBlank(answer);
   const attempted = progress.status !== 'idle';
 
@@ -84,6 +91,10 @@ export function ExerciseCard(props: ExerciseCardProps): ReactElement {
       <p className="exercise-card__prose">
         <GlossaryText text={exercise.description} />
       </p>
+
+      {exercise.requiredDisplay !== undefined && (
+        <LayerChips keys={exercise.requiredDisplay} />
+      )}
 
       <ExerciseFigure exercise={exercise} detail={diagram} />
 
@@ -147,9 +158,13 @@ export function ExerciseCard(props: ExerciseCardProps): ReactElement {
 }
 
 /** Mark the answer, and report a thrown engine error rather than blanking. */
-function mark(exercise: Exercise, answer: ExerciseAnswer): ValidationResult {
+function mark(
+  exercise: Exercise,
+  answer: ExerciseAnswer,
+  shown: DisplayFlagKey[],
+): ValidationResult {
   try {
-    return validateExercise(exercise, answer);
+    return validateExercise(exercise, answer, shown);
   } catch (error) {
     return failedValidation(
       error instanceof Error ? error.message : 'This answer cannot be marked.',

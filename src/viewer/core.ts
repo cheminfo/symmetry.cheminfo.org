@@ -7,6 +7,10 @@
  * lazy canvas and nowhere else.
  */
 
+export type { CellSegment } from './cellClip.ts';
+export { cellSection, clipLineToCell } from './cellClip.ts';
+export type { CellShift } from './cellElements.ts';
+export { NO_SHIFT, cellShiftFor, cellShifts } from './cellElements.ts';
 export type { CellEdge } from './cellGeometry.ts';
 export {
   cellAxes,
@@ -16,15 +20,12 @@ export {
   clampRepeat,
   latticeShifts,
 } from './cellGeometry.ts';
-export type { CrystalDrawingOptions } from './crystalDrawing.ts';
-export { crystalElementDrawing } from './crystalDrawing.ts';
+export type { CrystalDrawingOptions, ElementLocus } from './crystalDrawing.ts';
+export { crystalElementDrawing, elementLocus } from './crystalDrawing.ts';
 export { mergeDrawings, sameDrawings, withoutDrawings } from './drawingSet.ts';
 export type { ElementGroup } from './elementDrawing.ts';
-export {
-  drawingLabels,
-  drawingPrimitives,
-  elementGroups,
-} from './elementDrawing.ts';
+export { drawingPrimitives, elementGroups } from './elementDrawing.ts';
+export { drawingLabels } from './elementLabels.ts';
 export type { PlaneFrame } from './frame.ts';
 export { perpendicularTo, planeFrame } from './frame.ts';
 export type { SceneSphere } from './framing.ts';

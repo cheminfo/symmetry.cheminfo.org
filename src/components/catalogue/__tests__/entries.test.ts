@@ -18,8 +18,8 @@ test('C2v says its four operations, its four classes and its character table', (
   expect(fact(view, 'Inversion')).toBe('no inversion centre');
 
   const operations = section(view, 'operations');
-  if (operations.kind !== 'tokens') throw new Error('not tokens');
-  expect(operations.tokens).toStrictEqual(['E', 'C2', 'σv(xz)', 'σv(yz)']);
+  if (operations.kind !== 'operations') throw new Error('not operations');
+  expect(operations.names).toStrictEqual(['E', 'C2', 'σv(xz)', 'σv(yz)']);
 
   const classes = section(view, 'classes');
   if (classes.kind !== 'table') throw new Error('not a table');
@@ -32,6 +32,8 @@ test('C2v says its four operations, its four classes and its character table', (
 
   const characters = section(view, 'characters');
   if (characters.kind !== 'characters') throw new Error('no table');
+  if (characters.table === null) throw new Error('no C2v table');
+  expect(characters.schoenflies).toBe('C2v');
   expect(characters.table.classes).toHaveLength(4);
   expect(characters.table.irreps.map((irrep) => irrep.mulliken)).toStrictEqual([
     'A1',
@@ -58,15 +60,12 @@ test('the ten groups with no character table say so instead of crashing', () => 
     const view = pointGroupEntry(slug);
     if (view === null) throw new Error(`no ${slug}`);
     const characters = section(view, 'characters');
-    expect(characters.kind, slug).toBe('note');
-    if (characters.kind !== 'note') throw new Error('not a note');
-    expect(characters.lines[0]).toBe(
-      'The site ships no character table for this group. Its operations and its classes are above.',
-    );
+    if (characters.kind !== 'characters') throw new Error('not characters');
+    expect(characters.table, slug).toBeNull();
     // Its operations are still listed, which is what the page is for.
     const operations = section(view, 'operations');
-    if (operations.kind !== 'tokens') throw new Error('not tokens');
-    expect(operations.tokens[0], slug).toBe('E');
+    if (operations.kind !== 'operations') throw new Error('not operations');
+    expect(operations.names[0], slug).toBe('E');
   }
 });
 
@@ -77,7 +76,9 @@ test('the two linear groups list no operations and draw no stereogram', () => {
     expect(view.figure, slug).toBeNull();
     expect(fact(view, 'Order')).toBe('infinite');
     expect(section(view, 'operations').kind).toBe('note');
-    expect(section(view, 'characters').kind).toBe('note');
+    const characters = section(view, 'characters');
+    if (characters.kind !== 'characters') throw new Error('not characters');
+    expect(characters.table, slug).toBeNull();
   }
 });
 

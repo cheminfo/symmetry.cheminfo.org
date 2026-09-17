@@ -116,7 +116,10 @@ a {
  * screen at once. Below `min-height` the panes would be unusable, so the page
  * grows again and the document scrolls.
  *
- * The view is the widest of the three — it is what the page is for.
+ * The view is the widest of the three — it is what the page is for — and the
+ * pane that reads it is sized on the character table, the widest thing a
+ * workbench prints. The library has a floor of its own, below which its group
+ * names and formulas stop sharing a line.
  */
 @media (min-width: 1100px) {
   .app-screen--panes {
@@ -131,7 +134,10 @@ a {
   }
 
   .pane-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr);
+    grid-template-columns:
+      minmax(22rem, 0.9fr)
+      minmax(0, 1.2fr)
+      minmax(0, 1.15fr);
   }
 
   .pane-grid > .pane--wide {

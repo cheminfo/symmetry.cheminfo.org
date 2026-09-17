@@ -1,6 +1,13 @@
+import { MF } from 'react-mf';
+
+import {
+  CharacterTable,
+  NoCharacterTable,
+  OperationLabel,
+} from '../molecules/index.ts';
+
 import { CatalogueAnchor } from './CatalogueAnchor.tsx';
-import { CharacterTableView } from './CharacterTableView.tsx';
-import type { EntryBody } from './types.ts';
+import type { CatalogueLink, EntryBody } from './types.ts';
 
 /** What one section of an entry draws. */
 export interface EntryBodyViewProps {
@@ -57,7 +64,13 @@ export function EntryBodyView(props: EntryBodyViewProps) {
                 {body.rows.map((row) => (
                   <tr key={row.key}>
                     {row.cells.map((cell, column) => (
-                      <td key={`${body.headers[column] ?? column}`}>{cell}</td>
+                      <td key={`${body.headers[column] ?? column}`}>
+                        {column === body.symbolColumn ? (
+                          <OperationLabel name={cell} />
+                        ) : (
+                          cell
+                        )}
+                      </td>
                     ))}
                   </tr>
                 ))}
@@ -68,12 +81,28 @@ export function EntryBodyView(props: EntryBodyViewProps) {
         </>
       );
     }
-    case 'characters': {
+    case 'operations': {
       return (
         <>
-          <CharacterTableView table={body.table} />
+          <ul className="catalogue-operations">
+            {keyTokens(body.names).map((token) => (
+              <li key={token.key}>
+                <OperationLabel name={token.text} />
+              </li>
+            ))}
+          </ul>
           <Note text={body.note} />
         </>
+      );
+    }
+    case 'characters': {
+      // The one character table of the site, the one `/` prints. A second
+      // spelling of a class header or of a character is a second idea of what
+      // the table says, one click apart.
+      return body.table === null ? (
+        <NoCharacterTable group={body.group} schoenflies={body.schoenflies} />
+      ) : (
+        <CharacterTable table={body.table} schoenflies={body.schoenflies} />
       );
     }
     case 'links': {
@@ -83,7 +112,7 @@ export function EntryBodyView(props: EntryBodyViewProps) {
             {body.links.map((link) => (
               <li key={link.label}>
                 <CatalogueAnchor target={link.target}>
-                  {link.label}
+                  <LinkLabel link={link} />
                 </CatalogueAnchor>
                 {link.detail === undefined ? null : <span>{link.detail}</span>}
               </li>
@@ -112,6 +141,17 @@ function keyTokens(
     keyed.push({ key: count === 0 ? text : `${text}#${count}`, text });
   }
   return keyed;
+}
+
+/** A link's label, with its formula set by `react-mf` rather than written flat. */
+function LinkLabel(props: { link: CatalogueLink }) {
+  const { label, formula } = props.link;
+  if (formula === undefined) return <>{label}</>;
+  return (
+    <>
+      {label} — <MF mf={formula} />
+    </>
+  );
 }
 
 function Note(props: { text?: string }) {

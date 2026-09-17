@@ -59,6 +59,7 @@ export {
 export { DEFAULT_PLANE_GROUP } from './view.ts';
 export {
   animateOperation,
+  focusCrystalElement,
   selectMolecule,
   selectMotif,
   selectPlaneGroup,

@@ -57,6 +57,12 @@ export const view = {
     structureId: signal<string | null>(null),
     /** Cells drawn along each axis. */
     supercell: signal(SUPERCELL_RANGE.initial),
+    /**
+     * `elementKey` of the one symmetry element the view is showing on its own,
+     * or `null` for every element the layers ask for. A cell holds dozens at
+     * once, and the only way to see what one of them is is to see it alone.
+     */
+    focusedElement: signal<string | null>(null),
   },
   plane: {
     /** `id` of the wallpaper or frieze group being drawn. */
@@ -109,6 +115,14 @@ export function setActiveExercise(id: string | null): void {
  */
 export function setCatalogueItem(id: string | null): void {
   view.catalogue.itemId.value = id;
+}
+
+/**
+ * Show one symmetry element of the cell on its own, or go back to the layers.
+ * @param key - `elementKey` of the element, or `null` to show them all.
+ */
+export function focusCrystalElement(key: string | null): void {
+  view.crystals.focusedElement.value = key;
 }
 
 /**

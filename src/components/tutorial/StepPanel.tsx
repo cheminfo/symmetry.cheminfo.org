@@ -12,6 +12,7 @@ import type { ReactElement } from 'react';
 
 import { splitObjectRef } from '../../data/glossary/types.ts';
 import { moleculeById } from '../../data/molecules.ts';
+import { pointGroupById } from '../../data/pointGroups.ts';
 import type { TutorialPanel, TutorialStep } from '../../data/tutorial/index.ts';
 import { characterTableOf } from '../../symmetry/characterTables.ts';
 import { spaceGroup } from '../../symmetry/spaceGroups.ts';
@@ -71,9 +72,12 @@ function MoleculePanel(props: {
   if (panel === 'multiplication') return <GroupProductTable group={group} />;
   if (panel !== 'characterTable') return null;
   const table = characterTableOf(group);
+  // The symbol, not the id: `Dinfh` is written `D∞h` everywhere else on the
+  // site, and one group must not be spelled two ways.
+  const schoenflies = pointGroupById(group).schoenflies;
   return table === undefined ? (
-    <NoCharacterTable group={group} />
+    <NoCharacterTable group={group} schoenflies={schoenflies} />
   ) : (
-    <CharacterTable table={table} />
+    <CharacterTable table={table} schoenflies={schoenflies} />
   );
 }

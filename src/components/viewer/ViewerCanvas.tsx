@@ -51,6 +51,7 @@ export function ViewerCanvas(props: ViewerCanvasProps): ReactElement {
     representation,
     elements,
     labels,
+    elementStyle,
     spinning = false,
     play = null,
   } = scene;
@@ -109,8 +110,11 @@ export function ViewerCanvas(props: ViewerCanvasProps): ReactElement {
   useEffect(() => {
     const viewer = held.current;
     if (viewer === null) return;
-    void report(failure, viewer.showElements(elements ?? [], { labels }));
-  }, [container, background, elements, labels]);
+    void report(
+      failure,
+      viewer.showElements(elements ?? [], { labels, style: elementStyle }),
+    );
+  }, [container, background, elements, labels, elementStyle]);
 
   useEffect(() => {
     const viewer = held.current;

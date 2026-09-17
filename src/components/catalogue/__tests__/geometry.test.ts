@@ -9,7 +9,6 @@ import {
   wallpaperOperations,
 } from '../../../symmetry/planeGroups.ts';
 import { handledHere } from '../anchorClick.ts';
-import { formatCharacter } from '../character.ts';
 import { stripDiagram, stripShifts } from '../friezeDiagram.ts';
 import {
   cellElementLabels,
@@ -118,16 +117,6 @@ test('every frieze group draws inside its own viewBox', () => {
       diagram.glyphs.length,
     );
   }
-});
-
-test('a whole character prints whole, and an irrational one to three decimals', () => {
-  expect(formatCharacter(1)).toBe('1');
-  expect(formatCharacter(-1)).toBe('-1');
-  expect(formatCharacter(0)).toBe('0');
-  expect(formatCharacter(2.0000000001)).toBe('2');
-  // 2 cos 72°, the character of the E1 representation of C5 under C5.
-  expect(formatCharacter(0.618_033_988_75)).toBe('0.618');
-  expect(formatCharacter(-1.618_033_988_75)).toBe('-1.618');
 });
 
 test('a Hermann-Mauguin symbol is compacted the way a student types it', () => {

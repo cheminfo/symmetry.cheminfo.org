@@ -31,7 +31,9 @@ export type MeshPrimitive =
       major: Point3;
       minor: Point3;
       size: number;
-    };
+    }
+  /** A flat convex face, as the slice a plane cuts out of a cell. */
+  | { readonly shape: 'face'; points: readonly Point3[] };
 
 /** A line of text floating in the scene. */
 export interface TextItem {
@@ -41,6 +43,13 @@ export interface TextItem {
   readonly position: Point3;
   /** Its height, ångström. */
   readonly size: number;
+  /**
+   * What it is written in, `#rrggbb`. A name in the colour of the thing it
+   * names is the only way a reader pairs the two when ten of them are on one
+   * cell.
+   * @default the layer's own colour
+   */
+  readonly colour?: string;
 }
 
 /** How thick, how long and how big the drawn elements are. */
@@ -76,6 +85,12 @@ export interface ElementStyle {
    */
   dashSegments?: number;
   /**
+   * Radius of the rim drawn round a plane, ångström. A stack of translucent
+   * faces is a wash; the same stack with its edges drawn reads as planes.
+   * @default 0.03
+   */
+  rimRadius?: number;
+  /**
    * Height of an element's label, ångström.
    * @default 0.6
    */
@@ -98,6 +113,7 @@ export const DEFAULT_ELEMENT_STYLE: ResolvedElementStyle = {
   centreRadius: 0.18,
   arrowOffset: 4,
   dashSegments: 9,
+  rimRadius: 0.03,
   labelSize: 0.6,
   labelGap: 0.35,
 };
@@ -139,6 +155,9 @@ export function primitivePoints(primitive: MeshPrimitive): Point3[] {
         [x, y, z - r],
         [x, y, z + r],
       ];
+    }
+    case 'face': {
+      return [...primitive.points];
     }
     case 'plate': {
       const half = primitive.size / 2;

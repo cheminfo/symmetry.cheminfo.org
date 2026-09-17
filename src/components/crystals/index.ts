@@ -18,6 +18,7 @@ export { CifPanel } from './CifPanel.tsx';
 export {
   CRYSTAL_LAYERS,
   KIND_ORDER,
+  elementBadge,
   elementLabel,
   elementTally,
   sceneCaption,
@@ -30,6 +31,8 @@ export {
   analyseCrystal,
   crystalAtoms,
   crystalDrawings,
+  crystalElementStyle,
+  drawnElementPoint,
 } from './crystalScene.ts';
 export type { CrystalViewProps } from './CrystalView.tsx';
 export { CrystalView } from './CrystalView.tsx';

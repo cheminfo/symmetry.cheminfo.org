@@ -90,7 +90,7 @@ for (const { id, tiles, order } of OTHER_CASES) {
     expect(cells).toBeGreaterThanOrEqual(tiles * tiles);
     expect(copies).toBe(order * cells);
     await expect(page.locator('.plane-caption')).toHaveText(
-      `${order} copies per cell. Point at one to read the element that made it.`,
+      `${order} ${order === 1 ? 'copy' : 'copies'} per cell. Point at one to read the element that made it.`,
     );
   });
 }

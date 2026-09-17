@@ -26,6 +26,40 @@ export function elementLabel(element: SymmetryElement): string {
   return element.symbol;
 }
 
+/**
+ * What one element is called **on the element itself**, in the scene: its bare
+ * symbol, with a screw's index as a subscript — `m`, `3`, `2₁`, `-4`, `n`.
+ *
+ * The direction is left off on purpose. On a rod running along the axis it
+ * names, and on a plane drawn where it cuts the cell, the direction is already
+ * on screen; spelling it out turns ten elements into a wall of text with the
+ * structure somewhere behind it. The full name is on the pointer and in the
+ * list beside the view.
+ *
+ * @param element - The element, from `symmetryElements`.
+ */
+export function elementBadge(element: SymmetryElement): string {
+  const [order, index] = element.symbol.split('_');
+  if (index === undefined) return element.symbol;
+  let subscript = '';
+  for (const digit of index) subscript += SUBSCRIPTS[Number(digit)] ?? digit;
+  return `${order}${subscript}`;
+}
+
+/** The ten digits as subscripts, for a screw's index. */
+const SUBSCRIPTS: readonly string[] = [
+  '₀',
+  '₁',
+  '₂',
+  '₃',
+  '₄',
+  '₅',
+  '₆',
+  '₇',
+  '₈',
+  '₉',
+];
+
 /** How many elements of each kind the cell holds, in a fixed order. */
 export function elementTally(
   elements: readonly SymmetryElement[],
@@ -98,6 +132,12 @@ export interface SceneCaption {
   readonly elements: number;
   /** Whether they carry their names. */
   readonly named: boolean;
+  /**
+   * The element the cell is showing on its own, named, or `null` for the
+   * layers.
+   * @default null
+   */
+  readonly focused?: string | null;
 }
 
 /**
@@ -106,11 +146,14 @@ export interface SceneCaption {
  * @param about - See {@link SceneCaption}.
  */
 export function sceneCaption(about: SceneCaption): string {
-  const { name, atomsPerCell, cells, asked, elements, named } = about;
+  const { name, atomsPerCell, cells, asked, elements, named, focused } = about;
   const stack = cells === 1 ? 'one cell' : `${cells}×${cells}×${cells} cells`;
   const parts = [
     `${name} — ${atomsPerCell} atoms in the cell, drawn over ${stack}.`,
   ];
+  if (focused !== undefined && focused !== null) {
+    parts.push(`Showing ${focused} alone; click it again for the layers.`);
+  }
   if (cells !== asked) {
     parts.push(
       `${asked}×${asked}×${asked} would pass ${SUPERCELL_ATOM_CAP} atoms.`,

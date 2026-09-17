@@ -16,6 +16,7 @@ import { pointGroupBySlug } from '../../data/pointGroups.ts';
 import type { CharacterTable as Table } from '../../symmetry/characterTables.ts';
 import { displayRows, groupOrderOf } from '../../symmetry/characterTables.ts';
 
+import { OperationLabel } from './OperationLabel.tsx';
 import { SymbolText } from './SymbolText.tsx';
 import { byClass } from './characterCells.ts';
 import { formatCharacter, formatFunction } from './characters.ts';
@@ -84,7 +85,9 @@ export function CharacterTable(props: CharacterTableProps): ReactElement {
               </th>
               {table.classes.map((label) => (
                 <th key={label} scope="col">
-                  {label}
+                  {/* The same symbol the operations panel sets: a column read
+                      as `2S8^3` here and as 2S₈³ there is two tables. */}
+                  <OperationLabel name={label} />
                 </th>
               ))}
               {basis && (

@@ -14,8 +14,8 @@ import { moleculesOfGroup } from '../../data/molecules.ts';
 import type { PointGroup } from '../../data/pointGroups.ts';
 import { pointGroupBySlug } from '../../data/pointGroups.ts';
 import { count } from '../../seo/describe.ts';
+import { operationDisplayNames } from '../../symmetry/point/labels.ts';
 import { operationsOf } from '../../symmetry/pointGroups.ts';
-import { groupOperationNames } from '../../symmetry/validate.ts';
 
 import { factsOf, subtitleOf } from './pointGroupFacts.ts';
 import type {
@@ -23,10 +23,6 @@ import type {
   CatalogueLink,
   EntrySection,
 } from './types.ts';
-
-/** What a page says for the ten finite groups the site ships no table for. */
-const NO_TABLE_NOTE =
-  'The site ships no character table for this group. Its operations and its classes are above.';
 
 /**
  * One group's page, by the slug the address carries.
@@ -79,6 +75,7 @@ function sectionsOf(
       body: {
         kind: 'table',
         headers: ['Class', 'Operations in it'],
+        symbolColumn: 0,
         rows: group.classes.map((entry) => ({
           key: entry.label,
           cells: [
@@ -128,51 +125,34 @@ function operationSection(group: PointGroup): EntrySection {
     title: 'Operations',
     part: 'operations',
     body: {
-      kind: 'tokens',
+      kind: 'operations',
       // Named, not labelled: C2v holds two operations a chemist writes `σv`,
-      // and Oh twelve written `C3`. The name carries the plane or the axis, and
-      // is the spelling the exercises ask for.
-      tokens: groupOperationNames(group.id),
+      // and Oh twelve written `C3`. The name says which one, in the plane, the
+      // direction indices or the prime a textbook writes it with.
+      names: operationDisplayNames(operationsOf(group.id)),
       note: `Every one of the ${count(group.order, 'operation')}, closed from the generators, with the principal axis along z.`,
     },
   };
 }
 
 function characterSection(group: PointGroup): EntrySection {
-  const table = characterTableOf(group.id);
-  if (table !== undefined) {
-    return {
-      id: 'characters',
-      title: 'Character table',
-      part: 'characters',
-      body: {
-        kind: 'characters',
-        table,
-        ...(table.conventionNote === undefined
-          ? {}
-          : { note: table.conventionNote }),
-      },
-    };
-  }
   return {
     id: 'characters',
     title: 'Character table',
     part: 'characters',
     body: {
-      kind: 'note',
-      lines: Number.isFinite(group.order)
-        ? [NO_TABLE_NOTE]
-        : [
-            `${group.schoenflies} has infinitely many irreducible representations, so it is not a table of numbers.`,
-            'Its Σ, Π, Δ and Φ labels come from the angular momentum about the axis.',
-          ],
+      kind: 'characters',
+      table: characterTableOf(group.id) ?? null,
+      group: group.id,
+      schoenflies: group.schoenflies,
     },
   };
 }
 
 function moleculeLink(entry: MoleculeEntry): CatalogueLink {
   return {
-    label: `${entry.name} — ${entry.formula}`,
+    label: entry.name,
+    formula: entry.formula,
     detail: entry.why,
     target: { page: 'molecules', moleculeId: entry.id },
   };

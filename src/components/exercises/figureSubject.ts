@@ -35,6 +35,3 @@ export function spaceGroupOf(exercise: Exercise): number | null {
   const { kind, id } = splitObjectRef(exercise.object);
   return kind === 'spaceGroup' ? Number(id) : null;
 }
-
-/** One empty list, so a question naming no layer does not rebuild the scene. */
-export const NO_LAYERS: readonly string[] = [];

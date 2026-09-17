@@ -1,5 +1,9 @@
 /**
  * A layer of text floating in the scene: an element's name, a cell's a, b and c.
+ *
+ * The text is written on a pale card rather than straight onto the scene: a
+ * name over a dark atom, or over three translucent planes, is otherwise read
+ * as part of them.
  */
 
 import { TextBuilder } from 'molstar/lib/mol-geo/geometry/text/text-builder.js';
@@ -11,6 +15,7 @@ import { ShapeRepresentation as createShapeRepresentation } from 'molstar/lib/mo
 import { Color } from 'molstar/lib/mol-util/color/color.js';
 
 import { clearShapeLayer, storeLayer } from './layerRegistry.ts';
+import { LABEL_CARD_COLOUR } from './palette.ts';
 import type { TextItem } from './primitives.ts';
 
 /**
@@ -20,7 +25,8 @@ import type { TextItem } from './primitives.ts';
  * @param key - Which layer; a second call with the same key replaces it.
  * @param name - What the layer is called in a picking label.
  * @param items - The lines; an empty list clears the layer.
- * @param colour - What they are written in, `#rrggbb`.
+ * @param colour - What a line with no colour of its own is written in,
+ *   `#rrggbb`.
  * @throws When the canvas is not initialised yet.
  */
 export async function renderTextLayer(
@@ -40,24 +46,38 @@ export async function renderTextLayer(
   if (items.length === 0) return;
 
   const builder = TextBuilder.create({}, items.length * 4, items.length * 4);
-  const ink = Color.fromHexStyle(colour);
+  const fallback = Color.fromHexStyle(colour);
+  const inks: Color[] = [];
   for (let index = 0; index < items.length; index++) {
     const item = items[index];
     if (item === undefined) continue;
     const [x, y, z] = item.position;
     builder.add(item.text, x, y, z, item.size, item.size, index);
+    inks.push(
+      item.colour === undefined ? fallback : Color.fromHexStyle(item.colour),
+    );
   }
   const shape = Shape.create(
     name,
     {},
     builder.getText(),
-    () => ink,
+    (group: number) => inks[group] ?? fallback,
     () => 1,
     (group: number) => items[group]?.text ?? name,
   );
   const representation = createShapeRepresentation(() => shape, Text.Utils);
   await plugin.runTask(
-    representation.createOrUpdate({ attachment: 'middle-center' }, shape),
+    representation.createOrUpdate(
+      {
+        attachment: 'middle-center',
+        background: true,
+        backgroundMargin: 0.25,
+        backgroundColor: Color.fromHexStyle(LABEL_CARD_COLOUR),
+        backgroundOpacity: 0.85,
+        fontWeight: 'bold',
+      },
+      shape,
+    ),
   );
   storeLayer(plugin, key, representation);
   canvas3d.add(representation);

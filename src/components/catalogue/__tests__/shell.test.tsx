@@ -27,12 +27,18 @@ function times(markup: string, text: string): number {
   return markup.split(text).length - 1;
 }
 
-/** One row of a rendered character table, symbol first then its characters. */
-function characterRow(symbol: string, characters: readonly string[]): string {
-  const cells = characters
-    .map((value) => `<td class="catalogue-cell--number">${value}</td>`)
-    .join('');
-  return `<th scope="row" class="catalogue-cell--symbol">${symbol}</th>${cells}`;
+/**
+ * One row of a rendered character table, symbol first then its characters — in
+ * the markup the shared `<CharacterTable>` writes, which is the same markup the
+ * workbench at `/` and the tutorial print.
+ */
+function characterRow(
+  letter: string,
+  subscript: string,
+  characters: readonly string[],
+): string {
+  const cells = characters.map((value) => `<td>${value}</td>`).join('');
+  return `<th scope="row" class="mol-table__irrep"><span>${letter}<sub>${subscript}</sub></span></th>${cells}`;
 }
 
 /** One entry of one catalogue, rendered. */
@@ -69,7 +75,7 @@ test('a cell is a real link, so a crawler reaches every group', () => {
   );
 
   expect(markup).toContain(
-    '<a href="/point-groups/c1"><span class="catalogue-cell__head"><span class="catalogue-cell__symbol">C1</span><span class="catalogue-cell__badge">1</span></span><span class="catalogue-cell__detail">1 operation, 1 class, triclinic.</span></a>',
+    '<a href="/point-groups/c1"><span class="catalogue-cell__head"><span class="catalogue-cell__symbol"><span>C<sub>1</sub></span></span><span class="catalogue-cell__badge">1</span></span><span class="catalogue-cell__detail">1 operation, 1 class, triclinic.</span></a>',
   );
   expect(markup).toContain('<a href="/point-groups/oh">');
 });
@@ -103,24 +109,32 @@ test('an address naming nothing is said back, and the whole set is shown', () =>
 test('the C2v entry prints its four irreps with their exact characters', () => {
   const markup = entry('point-groups', 'c2v');
 
-  expect(markup).toContain('<h1>C2v</h1>');
-  expect(markup).toContain('<caption>C2v, order 4</caption>');
-  // Four classes, in the table's own spelling, and the two basis columns.
-  expect(markup).toContain('<th scope="col" class="catalogue-cell--number">E');
-  expect(markup).toContain('σv(xz)');
-  expect(markup).toContain('σv′(yz)');
-
-  expect(markup).toContain(characterRow('A1', ['1', '1', '1', '1']));
-  expect(markup).toContain(characterRow('A2', ['1', '1', '-1', '-1']));
-  expect(markup).toContain(characterRow('B1', ['1', '-1', '1', '-1']));
-  expect(markup).toContain(characterRow('B2', ['1', '-1', '-1', '1']));
-  // The header row plus exactly four irreps, and no fifth.
-  expect(count(markup, 'th scope="row" class="catalogue-cell--symbol"')).toBe(
-    4,
+  expect(markup).toContain('<h1><span>C<sub>2v</sub></span></h1>');
+  // The order of the group is on the table, where a student reduces against it.
+  expect(markup).toContain('<span>C<sub>2v</sub></span> (h = 4)');
+  // Four classes, set as symbols — the same setting the operations panel uses.
+  expect(markup).toContain('<th scope="col"><span>E</span></th>');
+  expect(markup).toContain(
+    '<th scope="col"><span>σ<sub>v</sub><span class="mol-operation__where">(xz)</span></span></th>',
   );
-  // The basis functions, which is what the table is read for.
-  expect(markup).toContain('<td>z</td><td>x2, y2, z2</td>');
-  expect(markup).toContain('<td>y, Rx</td><td>yz</td>');
+  expect(markup).toContain(
+    '<th scope="col"><span>σ<sub>v′</sub><span class="mol-operation__where">(yz)</span></span></th>',
+  );
+
+  expect(markup).toContain(characterRow('A', '1', ['1', '1', '1', '1']));
+  expect(markup).toContain(characterRow('A', '2', ['1', '1', '−1', '−1']));
+  expect(markup).toContain(characterRow('B', '1', ['1', '−1', '1', '−1']));
+  expect(markup).toContain(characterRow('B', '2', ['1', '−1', '−1', '1']));
+  // The header row plus exactly four irreps, and no fifth.
+  expect(count(markup, 'th scope="row" class="mol-table__irrep"')).toBe(4);
+  // The basis functions, which is what the table is read for, with the powers
+  // raised rather than written on the line.
+  expect(markup).toContain(
+    '<td class="mol-table__functions">z</td><td class="mol-table__functions">x², y², z²</td>',
+  );
+  expect(markup).toContain(
+    '<td class="mol-table__functions">y, Rx</td><td class="mol-table__functions">yz</td>',
+  );
 });
 
 test('the C2v entry says what the group is before it offers a workbench', () => {
@@ -155,16 +169,8 @@ test('a group with no character table prints the note, and does not crash', () =
   ]) {
     const markup = entry('point-groups', id);
     expect(markup, id).toContain('<h2>Character table</h2>');
-    expect(markup, id).toContain(
-      '<p>The site ships no character table for this group. Its operations and its classes are above.</p>',
-    );
-    expect(
-      count(
-        markup,
-        'table class="catalogue-table catalogue-table--characters"',
-      ),
-      id,
-    ).toBe(0);
+    expect(markup, id).toContain('This site ships no character table for');
+    expect(count(markup, 'table class="mol-table"'), id).toBe(0);
     // The operations and the classes are still there, which is the point of
     // showing a page at all.
     expect(markup, id).toContain('<h2>Operations</h2>');
@@ -175,9 +181,10 @@ test('a group with no character table prints the note, and does not crash', () =
 test('C7 prints its seven operations and its seven one-member classes', () => {
   const markup = entry('point-groups', 'c7');
 
-  expect(markup).toContain('<h1>C7</h1>');
+  expect(markup).toContain('<h1><span>C<sub>7</sub></span></h1>');
+  // Set as symbols, so a power is above the letter rather than after a caret.
   expect(markup).toContain(
-    '<li>E</li><li>C7</li><li>C7^2</li><li>C7^3</li><li>C7^4</li><li>C7^5</li><li>C7^6</li>',
+    '<li><span>E</span></li><li><span>C<sub>7</sub></span></li><li><span>C<sub>7</sub><sup>2</sup></span></li><li><span>C<sub>7</sub><sup>3</sup></span></li><li><span>C<sub>7</sub><sup>4</sup></span></li><li><span>C<sub>7</sub><sup>5</sup></span></li><li><span>C<sub>7</sub><sup>6</sup></span></li>',
   );
   expect(markup).toContain(
     'Every one of the 7 operations, closed from the generators, with the principal axis along z.',

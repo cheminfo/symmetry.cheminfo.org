@@ -9,9 +9,10 @@
  */
 
 import type { ValidationResult } from 'react-cheminfo/core';
-import { failedValidation } from 'react-cheminfo/core';
+import { failedValidation, finishValidation } from 'react-cheminfo/core';
 
 import type { Exercise, PlacedAtom } from '../data/exercises/types.ts';
+import type { DisplayFlagKey } from '../state/displayFlags.ts';
 
 import { validateCharacterRow, validateReduce } from './validate/characters.ts';
 import {
@@ -19,6 +20,7 @@ import {
   validatePlaceAtom,
   validateSpaceGroupFacts,
 } from './validate/crystal.ts';
+import { displayLabels, missingDisplay } from './validate/display.ts';
 import {
   validateAssignPointGroup,
   validateCount,
@@ -44,6 +46,7 @@ export {
   reduceToIrreps,
 } from './validate/derive.ts';
 export { spaceGroupFact } from './validate/crystal.ts';
+export { displayLabels, missingDisplay } from './validate/display.ts';
 export { selectMembership } from './validate/molecular.ts';
 export { validateCharacterRow, validateReduce } from './validate/characters.ts';
 export {
@@ -100,18 +103,31 @@ export function answerShapeOf(exercise: Exercise): ExerciseAnswer['shape'] {
 /**
  * The verdict on one answer.
  *
+ * A question that is read off the picture is not marked while a layer it needs
+ * is switched off: the missing layers come back as `missingOptions` and no case
+ * is run, so the student is told which chip to press rather than left to read
+ * failing checks as a wrong answer.
+ *
  * @param exercise - The question.
  * @param answer - What the student did, in the shape {@link answerShapeOf} names.
- * @returns Every graded case, and whether the answer is right.
+ * @param shown - The display layers currently drawn. Omitted where nothing is
+ * on screen to switch, which is how the content tests mark the chemistry alone.
+ * @returns Every graded case, the layers still to switch on, and whether the
+ * answer is right.
  */
 export function validateExercise(
   exercise: Exercise,
   answer: ExerciseAnswer,
+  shown?: readonly DisplayFlagKey[],
 ): ValidationResult {
   if (answer.shape !== answerShapeOf(exercise)) {
     return failedValidation(
       `${exercise.id} is answered as ${answerShapeOf(exercise)}, not as ${answer.shape}.`,
     );
+  }
+  const missing = missingDisplay(exercise, shown);
+  if (missing.length > 0) {
+    return finishValidation([], { missingOptions: displayLabels(missing) });
   }
   switch (exercise.kind) {
     case 'assign-point-group': {

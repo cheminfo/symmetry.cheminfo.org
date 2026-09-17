@@ -33,6 +33,7 @@ import {
   analyseCrystal,
   crystalAtoms,
   crystalDrawings,
+  crystalElementStyle,
   sceneCaption,
   useCrystalDraft,
 } from '../components/crystals/index.ts';
@@ -77,6 +78,7 @@ export function Crystals(): ReactElement {
   const unitCell = flags.unitCell.value;
   const asymmetricUnit = flags.asymmetricUnit.value;
   const asked = state.view.crystals.supercell.value;
+  const focused = state.view.crystals.focusedElement.value;
 
   // Expanding 192 operations over twenty-two sites is real work, and handing
   // the viewer a new atom array every render would redraw the whole scene.
@@ -91,7 +93,7 @@ export function Crystals(): ReactElement {
     () => crystalAtoms(analysis, cells, asymmetricUnit),
     [analysis, cells, asymmetricUnit],
   );
-  const elements = useMemo(
+  const layered = useMemo(
     () =>
       crystalDrawings(analysis, {
         axes,
@@ -103,9 +105,21 @@ export function Crystals(): ReactElement {
       }),
     [analysis, axes, screws, mirrors, glides, inversion, improper],
   );
+  // A picked element is drawn on its own, whatever the layers say: a cell holds
+  // dozens at once, and one of them is what the reader asked to see.
+  const elements = useMemo(() => {
+    if (focused === null) return layered;
+    const alone = crystalDrawings(analysis, EVERY_LAYER).filter(
+      (drawing) => drawing.id === focused,
+    );
+    return alone.length === 0 ? layered : alone;
+  }, [analysis, focused, layered]);
+  const focusedName = focused === null ? null : (elements[0]?.label ?? null);
   // A name on every one of fifty rods through one cell is a wall of text, and
   // the list on the right names them all whatever the view is showing.
-  const named = labels && elements.length <= LABEL_LIMIT;
+  const named =
+    (labels || focusedName !== null) && elements.length <= LABEL_LIMIT;
+  const elementStyle = useMemo(() => crystalElementStyle(analysis), [analysis]);
   const scene = useMemo<ViewerScene>(
     () => ({
       atoms,
@@ -113,8 +127,9 @@ export function Crystals(): ReactElement {
       repeat: [cells, cells, cells],
       elements,
       labels: named,
+      elementStyle,
     }),
-    [atoms, analysis, cells, elements, named, unitCell],
+    [atoms, analysis, cells, elements, named, unitCell, elementStyle],
   );
 
   return (
@@ -177,6 +192,7 @@ export function Crystals(): ReactElement {
               asked,
               elements: elements.length,
               named,
+              focused: focusedName,
             })}
             supercell={asked}
             onSupercell={setSupercell}
@@ -204,6 +220,16 @@ export function Crystals(): ReactElement {
     </>
   );
 }
+
+/** Every kind at once, for the one element a reader picked out of the list. */
+const EVERY_LAYER = {
+  axes: true,
+  screws: true,
+  mirrors: true,
+  glides: true,
+  inversion: true,
+  improper: true,
+} as const;
 
 const headingStyle = { margin: 0, fontSize: '1.125rem' } as const;
 

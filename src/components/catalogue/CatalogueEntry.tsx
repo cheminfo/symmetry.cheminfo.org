@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { PagePart } from 'react-cheminfo/ui';
 
 import { selectSetting } from '../../state/index.ts';
+import { SymbolText } from '../molecules/index.ts';
 
 import { CatalogueAnchor } from './CatalogueAnchor.tsx';
 import { EntryBodyView } from './EntryBodyView.tsx';
@@ -41,7 +42,9 @@ export function CatalogueEntry(props: CatalogueEntryProps) {
           >
             All {descriptor.title.toLowerCase()}
           </CatalogueAnchor>
-          <h1>{view.symbol}</h1>
+          <h1>
+            <EntrySymbol descriptor={descriptor} symbol={view.symbol} />
+          </h1>
           <p className="catalogue-entry__lead">{view.subtitle}</p>
         </header>
       </PagePart>
@@ -132,7 +135,10 @@ export function CatalogueEntry(props: CatalogueEntryProps) {
                     }}
                     title={sibling.detail}
                   >
-                    {sibling.symbol}
+                    <EntrySymbol
+                      descriptor={descriptor}
+                      symbol={sibling.symbol}
+                    />
                   </CatalogueAnchor>
                 </li>
               ))}
@@ -142,6 +148,18 @@ export function CatalogueEntry(props: CatalogueEntryProps) {
       </div>
     </article>
   );
+}
+
+/**
+ * The entry's symbol: set with its subscript where the catalogue writes
+ * Schoenflies, and left as it is written where it writes Hermann-Mauguin.
+ */
+function EntrySymbol(props: {
+  descriptor: CatalogueDescriptor;
+  symbol: string;
+}): ReactNode {
+  if (props.descriptor.schoenflies !== true) return props.symbol;
+  return <SymbolText symbol={props.symbol} />;
 }
 
 /** A section a shared link may drop, or one it may not. */

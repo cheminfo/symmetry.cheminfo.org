@@ -9,6 +9,10 @@ import {
 } from '../spaceGroupAbsences.ts';
 import { spaceGroup } from '../spaceGroups.ts';
 
+// These sweep all 521 settings; on a loaded machine they run past the 5 s
+// default.
+const SWEEP_TIMEOUT = 30_000;
+
 function rules(number: number, variant = 0): string[] {
   return absentReflections(spaceGroup(number, variant)).map(
     (condition) => `${condition.reflections}: ${condition.condition}`,
@@ -116,24 +120,28 @@ test('the F lattice extinguishes a mixed-parity reflection', () => {
   expect(isSystematicallyAbsent([2, 2, 0], spaceGroup(227))).toBe(false);
 });
 
-test('the listed conditions decide exactly what the operations decide', () => {
-  const probe = 4;
-  const wrong: string[] = [];
-  for (const setting of SPACE_GROUP_SETTINGS) {
-    const conditions = absentReflections(setting);
-    for (let h = -probe; h <= probe; h++) {
-      for (let k = -probe; k <= probe; k++) {
-        for (let l = -probe; l <= probe; l++) {
-          const listed = failsAny(conditions, [h, k, l]);
-          if (listed !== isSystematicallyAbsent([h, k, l], setting)) {
-            wrong.push(`${setting.number}/${setting.variant} ${h} ${k} ${l}`);
+test(
+  'the listed conditions decide exactly what the operations decide',
+  () => {
+    const probe = 4;
+    const wrong: string[] = [];
+    for (const setting of SPACE_GROUP_SETTINGS) {
+      const conditions = absentReflections(setting);
+      for (let h = -probe; h <= probe; h++) {
+        for (let k = -probe; k <= probe; k++) {
+          for (let l = -probe; l <= probe; l++) {
+            const listed = failsAny(conditions, [h, k, l]);
+            if (listed !== isSystematicallyAbsent([h, k, l], setting)) {
+              wrong.push(`${setting.number}/${setting.variant} ${h} ${k} ${l}`);
+            }
           }
         }
       }
     }
-  }
-  expect(wrong).toStrictEqual([]);
-});
+    expect(wrong).toStrictEqual([]);
+  },
+  SWEEP_TIMEOUT,
+);
 
 function failsAny(
   conditions: readonly ReflectionCondition[],

@@ -2,8 +2,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, test } from 'vitest';
 
 import { moleculeById } from '../../../data/molecules.ts';
+import { POINT_GROUPS } from '../../../data/pointGroups.ts';
 import { setDisplayFlag } from '../../../state/index.ts';
-import { requireCharacterTable } from '../../../symmetry/characterTables.ts';
+import {
+  characterTableOf,
+  requireCharacterTable,
+} from '../../../symmetry/characterTables.ts';
 import { CharacterTable, NoCharacterTable } from '../CharacterTable.tsx';
 import { GroupSummary } from '../GroupSummary.tsx';
 import { LayerChips } from '../LayerChips.tsx';
@@ -44,7 +48,9 @@ test('the table of C2v prints four irreps over four classes', () => {
   // heading per irrep, which is a `th` as well.
   expect(count(markup, '</th>')).toBe(11);
   expect(markup).toContain('C<sub>2v</sub></span> (h = 4)');
-  expect(markup).toContain('σv(xz)');
+  expect(markup).toContain(
+    '<span>σ<sub>v</sub><span class="mol-operation__where">(xz)</span></span>',
+  );
   expect(markup).toContain('Linear, rotations');
   expect(markup).toContain('Quadratic');
   expect(markup).toContain('x², y², z²');
@@ -88,6 +94,30 @@ test('a complex pair is printed as one row and the footnote explains it', () => 
   );
   expect(count(markup, '</tr>')).toBe(4);
   expect(markup).toContain('complex conjugates');
+});
+
+test('a class header is set as a symbol, count on the line, power above', () => {
+  const markup = renderToStaticMarkup(
+    <CharacterTable table={requireCharacterTable('D4d')} schoenflies="D4d" />,
+  );
+  // The count is not the order, so it never drops into the subscript.
+  expect(markup).toContain(
+    '<th scope="col"><span>2S<sub>8</sub><sup>3</sup></span></th>',
+  );
+  expect(markup).toContain('<th scope="col"><span>2C<sub>4</sub></span></th>');
+  // A caret is how a file writes a power, never how a page prints one.
+  expect(markup).not.toContain('^');
+});
+
+test('no character table of the site prints a caret', () => {
+  for (const group of POINT_GROUPS) {
+    const table = characterTableOf(group.id);
+    if (table === undefined) continue;
+    const markup = renderToStaticMarkup(
+      <CharacterTable table={table} schoenflies={group.schoenflies} />,
+    );
+    expect(markup, group.id).not.toContain('^');
+  }
 });
 
 test('every operation of the group is a button that plays it', () => {

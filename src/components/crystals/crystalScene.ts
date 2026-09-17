@@ -26,22 +26,25 @@ import type {
 import {
   createLattice,
   elementKey,
+  elementPoint,
   fractionalToCartesian,
   symmetryElements,
 } from '../../symmetry/core/index.ts';
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
-import {
-  addVectors,
-  dotProduct,
-  normalizeVector,
-  scaleVector,
-  subtractVectors,
-} from '../../symmetry/point/vec3.ts';
 import { spaceGroupOperations } from '../../symmetry/spaceGroups.ts';
-import type { SymmetryDrawing, ViewerAtom } from '../../viewer/core.ts';
-import { crystalElementDrawing, supercellAtoms } from '../../viewer/core.ts';
+import type {
+  CellShift,
+  ElementStyle,
+  SymmetryDrawing,
+  ViewerAtom,
+} from '../../viewer/core.ts';
+import {
+  NO_SHIFT,
+  cellShifts,
+  crystalElementDrawing,
+  supercellAtoms,
+} from '../../viewer/core.ts';
 
-import { elementLabel } from './crystalLabels.ts';
+import { elementBadge, elementLabel } from './crystalLabels.ts';
 
 /** Everything one cell is, derived from the draft and the setting in force. */
 export interface CrystalAnalysis {
@@ -57,6 +60,15 @@ export interface CrystalAnalysis {
   readonly composition: ReadonlyMap<string, number>;
   /** Every distinct symmetry element of the cell. */
   readonly elements: readonly SymmetryElement[];
+  /**
+   * Which cell each of them is drawn in, keyed by `elementKey`.
+   *
+   * An element reported through the origin may only graze the cell there —
+   * three of the nine mirror planes of `Pm-3m` do — and is drawn one lattice
+   * translation over, where it cuts it. The list beside the view reads the
+   * same map, so the row and the rod always name the same place.
+   */
+  readonly shifts: ReadonlyMap<string, CellShift>;
 }
 
 /** Which kinds of element are drawn. */
@@ -82,15 +94,37 @@ export function analyseCrystal(
 ): CrystalAnalysis {
   const operations = spaceGroupOperations(setting);
   const atoms = expandStructure(draft.sites, operations);
+  const lattice = createLattice(draft.cell);
+  const elements = symmetryElements(operations);
   return {
     setting,
-    lattice: createLattice(draft.cell),
+    lattice,
     operations,
     atoms,
     sites: describeSites(draft.sites, operations),
     composition: cellComposition(atoms),
-    elements: symmetryElements(operations),
+    elements,
+    shifts: cellShifts(elements, lattice, elementKey),
   };
+}
+
+/**
+ * Where one element is drawn, as fractional coordinates of the cell.
+ *
+ * @param analysis - What {@link analyseCrystal} returned.
+ * @param element - One of its elements.
+ */
+export function drawnElementPoint(
+  analysis: CrystalAnalysis,
+  element: SymmetryElement,
+): number[] {
+  const shift = analysis.shifts.get(elementKey(element)) ?? NO_SHIFT;
+  const point = elementPoint(element);
+  const moved: number[] = [];
+  for (let index = 0; index < 3; index++) {
+    moved.push((point[index] ?? 0) + (shift[index] ?? 0));
+  }
+  return moved;
 }
 
 /**
@@ -124,11 +158,11 @@ export function crystalAtoms(
 /**
  * The symmetry elements the layers ask for, in Cartesian ångström.
  *
- * Each is **slid along its own locus until it is centred on the cell**. An
- * axis is a line and a plane is a plane, so moving a drawing along one changes
- * nothing about which element it is — but drawing a rod centred on the point
- * the decomposition happens to report puts most of it outside the cell, and
- * fifty of them then drag the camera off the structure entirely.
+ * Each is **cut off at the cell**: an axis runs from where it enters the box to
+ * where it leaves it, and a plane is drawn as the polygon it slices out of it.
+ * That is what makes a cell full of elements readable — every rod ends on a
+ * face, every plane shows exactly where it cuts — where rods of one arbitrary
+ * length and squares hanging in the middle of the box read as a pile of sticks.
  *
  * The identity and the centring translations are elements with nothing to draw,
  * so they come back as `null` and are dropped.
@@ -143,19 +177,44 @@ export function crystalDrawings(
   const { cell } = analysis.lattice;
   const shortest = Math.min(cell.a, cell.b, cell.c);
   const longest = Math.max(cell.a, cell.b, cell.c);
-  const centre = cartesianPoint(analysis, [0.5, 0.5, 0.5]);
   const drawings: SymmetryDrawing[] = [];
   for (const element of analysis.elements) {
     if (!drawsKind(element, layers)) continue;
     const drawing = crystalElementDrawing(element, analysis.lattice, {
       id: elementKey(element),
       label: elementLabel(element),
+      badge: elementBadge(element),
+      clip: true,
+      shift: analysis.shifts.get(elementKey(element)) ?? NO_SHIFT,
       length: longest,
       size: shortest * 0.55,
     });
-    if (drawing !== null) drawings.push(centreOnCell(drawing, centre));
+    if (drawing !== null) drawings.push(drawing);
   }
   return drawings;
+}
+
+/**
+ * How thick and how large the elements of this cell are drawn.
+ *
+ * Everything is a fraction of the shortest cell edge, so the same figure reads
+ * the same on a 3.9 Å perovskite and a 24 Å zeolite. A fixed size in ångström
+ * is a hairline on one and a wall of text on the other.
+ *
+ * @param analysis - What {@link analyseCrystal} returned.
+ */
+export function crystalElementStyle(analysis: CrystalAnalysis): ElementStyle {
+  const { cell } = analysis.lattice;
+  const shortest = Math.min(cell.a, cell.b, cell.c);
+  return {
+    axisRadius: shortest * 0.012,
+    rimRadius: shortest * 0.007,
+    arrowRadius: shortest * 0.032,
+    arrowLength: shortest * 0.08,
+    centreRadius: shortest * 0.04,
+    labelSize: shortest * 0.26,
+    labelGap: shortest * 0.09,
+  };
 }
 
 /**
@@ -166,47 +225,6 @@ export function crystalDrawings(
  * names every one of them whatever is on screen.
  */
 export const LABEL_LIMIT = 24;
-
-/** The Cartesian position of a fractional point of the cell. */
-function cartesianPoint(
-  analysis: CrystalAnalysis,
-  fractional: readonly number[],
-): Vec3 {
-  const point = fractionalToCartesian(analysis.lattice, fractional);
-  return [point[0] ?? 0, point[1] ?? 0, point[2] ?? 0];
-}
-
-/** The same element, drawn where it crosses the middle of the cell. */
-function centreOnCell(drawing: SymmetryDrawing, centre: Vec3): SymmetryDrawing {
-  switch (drawing.kind) {
-    case 'rotation':
-    case 'screw':
-    case 'rotoinversion': {
-      const direction = normalizeVector(drawing.direction);
-      const along = dotProduct(
-        subtractVectors(centre, drawing.point),
-        direction,
-      );
-      return {
-        ...drawing,
-        point: addVectors(drawing.point, scaleVector(direction, along)),
-      };
-    }
-    case 'mirror':
-    case 'glide': {
-      const normal = normalizeVector(drawing.normal);
-      const off = dotProduct(subtractVectors(centre, drawing.point), normal);
-      return {
-        ...drawing,
-        point: subtractVectors(centre, scaleVector(normal, off)),
-      };
-    }
-    case 'inversion': {
-      return drawing;
-    }
-    // no default
-  }
-}
 
 function drawsKind(element: SymmetryElement, layers: CrystalLayers): boolean {
   switch (element.kind) {

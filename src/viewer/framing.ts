@@ -58,17 +58,25 @@ export function boundingSphereOf(
 }
 
 /**
- * The radius to frame, once the breathing room is added.
+ * The radius to frame.
+ *
+ * The scene is measured as the ball through its furthest corners, and a camera
+ * fitting that ball to the window leaves a cell filling barely half of it: a
+ * cube touches its own circumscribed sphere only at eight corners, and uses
+ * about 82% of its diameter even seen square-on. So the ball handed to the
+ * camera is **smaller** than the one measured, by about the slack that costs.
+ * Nothing is cut at the orientations a cell is read at, and the reader can
+ * always pull back.
  *
  * @param radius - What the scene measures.
- * @param margin - Fraction of it to leave around the edge.
+ * @param margin - Fraction of it to add; negative frames tighter than the ball.
  * @param minimum - Never frame tighter than this, ångström, so a lone atom does
  *   not fill the window.
  * @returns The radius to hand the camera.
  */
 export function framedRadius(
   radius: number,
-  margin = 0.08,
+  margin = -0.12,
   minimum = 0.5,
 ): number {
   return Math.max(radius * (1 + margin), minimum);

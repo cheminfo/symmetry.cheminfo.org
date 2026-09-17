@@ -26,6 +26,9 @@ export const CELL_COLOUR = '#475569';
 /** An element's label, and the a/b/c letters on the cell. */
 export const LABEL_COLOUR = '#1f2937';
 
+/** The card a label is written on, so it reads over a structure or a plane. */
+export const LABEL_CARD_COLOUR = '#ffffff';
+
 /**
  * The colour a drawing is painted in.
  * @param kind - Which of the six it is.

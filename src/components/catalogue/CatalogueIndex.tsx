@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { CapsuleFilter, PagePart } from 'react-cheminfo/ui';
 
+import { SymbolText } from '../molecules/index.ts';
+
 import { CatalogueAnchor } from './CatalogueAnchor.tsx';
 import type { CatalogueFilterState } from './filter.ts';
 import { EMPTY_FILTER, facetCounts, filterRows, groupRows } from './filter.ts';
@@ -114,7 +116,7 @@ export function CatalogueIndex(props: CatalogueIndexProps) {
           </h2>
           <ul className="catalogue-grid">
             {block.rows.map((row) => (
-              <Entry key={row.id} tab={descriptor.tab} row={row} />
+              <Entry key={row.id} descriptor={descriptor} row={row} />
             ))}
           </ul>
         </section>
@@ -124,20 +126,26 @@ export function CatalogueIndex(props: CatalogueIndexProps) {
 }
 
 /** One cell of the grid: the symbol, its flag, and the line under it. */
-function Entry(props: { tab: CatalogueDescriptor['tab']; row: CatalogueRow }) {
-  const { tab, row } = props;
+function Entry(props: { descriptor: CatalogueDescriptor; row: CatalogueRow }) {
+  const { descriptor, row } = props;
   return (
     <li className="catalogue-cell">
       <CatalogueAnchor
         target={{
           page: 'catalogue',
-          tab,
+          tab: descriptor.tab,
           id: row.id,
           ...(row.setting === undefined ? {} : { setting: row.setting }),
         }}
       >
         <span className="catalogue-cell__head">
-          <span className="catalogue-cell__symbol">{row.symbol}</span>
+          <span className="catalogue-cell__symbol">
+            {descriptor.schoenflies === true ? (
+              <SymbolText symbol={row.symbol} />
+            ) : (
+              row.symbol
+            )}
+          </span>
           {row.badge === undefined ? null : (
             <span className="catalogue-cell__badge">{row.badge}</span>
           )}

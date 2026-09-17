@@ -207,11 +207,53 @@
 
 /* ── The character table ──────────────────────────────────────────────────── */
 
+/*
+ * When the pane is too narrow the table scrolls, and its edge says so: a shadow
+ * pinned to the box marks a clipped side, and a cover that travels with the
+ * content hides that shadow once the end of the table is on screen. A table
+ * that fits carries neither, and neither costs a line of script.
+ */
 .mol-table-scroll {
+  /* The surface this table is printed on, so the cover leaves no seam. */
+  --table-edge: var(--surface-sunken);
+
   overflow-x: auto;
+  background-attachment: local, local, scroll, scroll;
+  background-image:
+    linear-gradient(to right, var(--table-edge) 70%, transparent),
+    linear-gradient(to left, var(--table-edge) 70%, transparent),
+    linear-gradient(
+      to right,
+      color-mix(in oklab, var(--text) 22%, transparent),
+      transparent
+    ),
+    linear-gradient(
+      to left,
+      color-mix(in oklab, var(--text) 22%, transparent),
+      transparent
+    );
+  background-position:
+    left center,
+    right center,
+    left center,
+    right center;
+  background-repeat: no-repeat;
+  background-size:
+    1.25rem 100%,
+    1.25rem 100%,
+    0.7rem 100%,
+    0.7rem 100%;
 }
 
+/* An exercise prints its table on a card, not on the page behind it. */
+.bp6-card .mol-table-scroll {
+  --table-edge: var(--surface);
+}
+
+/* As wide as its content while the pane allows it, and no wider: past that the
+   headers below wrap, and past that again it scrolls. */
 .mol-table {
+  max-width: 100%;
   border-collapse: collapse;
   font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
@@ -244,6 +286,13 @@
 .mol-table__functions {
   color: var(--text-muted);
   text-align: left;
+}
+
+/* The only cells allowed to wrap: they are prose, and "Linear, rotations" is
+   three times the width of the symbols under it. A character never wraps, so
+   the deficit lands here and the Raman column stays on screen. */
+.mol-table thead th.mol-table__functions {
+  white-space: normal;
 }
 
 /* The footnote of a combined row, and a table's convention note. */

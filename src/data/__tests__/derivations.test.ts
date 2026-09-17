@@ -22,6 +22,10 @@ import { exerciseById } from '../exercises/index.ts';
 import type { Exercise } from '../exercises/types.ts';
 import { finitePointGroups } from '../pointGroups.ts';
 
+// This sweeps all 51 finite groups; on a loaded machine it runs past the 5 s
+// default.
+const SWEEP_TIMEOUT = 30_000;
+
 test('a molecule of the library is named by the detector, not by its record', () => {
   expect(moleculePointGroup('water')).toBe('C2v');
   expect(moleculePointGroup('ethane-staggered')).toBe('D3d');
@@ -99,21 +103,25 @@ test('a plane group is read in its own namespace and no other', () => {
   expect(canonicalPlaneGroup('  ', 'wallpaper')).toBeNull();
 });
 
-test('every finite group names each of its operations exactly once', () => {
-  const groups = finitePointGroups();
-  expect(groups).toHaveLength(51);
-  for (const group of groups) {
-    const names = groupOperationNames(group.id);
-    expect(names, group.id).toHaveLength(group.order);
-    expect(new Set(names).size, group.id).toBe(group.order);
-    for (const name of names) {
-      expect(
-        operationByName(group.id, name),
-        `${group.id}: ${name}`,
-      ).toBeDefined();
+test(
+  'every finite group names each of its operations exactly once',
+  () => {
+    const groups = finitePointGroups();
+    expect(groups).toHaveLength(51);
+    for (const group of groups) {
+      const names = groupOperationNames(group.id);
+      expect(names, group.id).toHaveLength(group.order);
+      expect(new Set(names).size, group.id).toBe(group.order);
+      for (const name of names) {
+        expect(
+          operationByName(group.id, name),
+          `${group.id}: ${name}`,
+        ).toBeDefined();
+      }
     }
-  }
-});
+  },
+  SWEEP_TIMEOUT,
+);
 
 test('a name no group carries resolves to nothing', () => {
   expect(operationByName('C2v', 'S17')).toBeUndefined();

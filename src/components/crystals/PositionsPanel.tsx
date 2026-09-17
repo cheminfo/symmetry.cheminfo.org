@@ -7,17 +7,15 @@
  * operations read as geometry, which is what the 3D view draws.
  */
 
+import { useSignals } from '@preact/signals-react/runtime';
 import type { ReactElement } from 'react';
 
-import type { SymmetryElement } from '../../symmetry/core/index.ts';
-import {
-  elementKey,
-  elementPoint,
-  formatOperation,
-} from '../../symmetry/core/index.ts';
+import { focusCrystalElement, state } from '../../state/index.ts';
+import { elementKey, formatOperation } from '../../symmetry/core/index.ts';
 
 import { elementLabel } from './crystalLabels.ts';
 import type { CrystalAnalysis } from './crystalScene.ts';
+import { drawnElementPoint } from './crystalScene.ts';
 
 import './crystals.css';
 
@@ -60,10 +58,18 @@ export interface ElementsPanelProps {
 
 /**
  * The symmetry elements of the cell, each with the point it passes through.
+ *
+ * A row is a button: clicking it draws that element **on its own**, whatever
+ * the layers are showing, and clicking it again puts the layers back. Forty
+ * elements over one cell is a figure nobody reads one element out of, and this
+ * is how a student finds out which rod is the 3-fold.
+ *
  * @param props - See {@link ElementsPanelProps}.
  * @returns One row per distinct element.
  */
 export function ElementsPanel(props: ElementsPanelProps): ReactElement {
+  useSignals();
+  const focused = state.view.crystals.focusedElement.value;
   const drawable = props.analysis.elements.filter(
     (element) => element.kind !== 'identity' && element.kind !== 'translation',
   );
@@ -72,24 +78,42 @@ export function ElementsPanel(props: ElementsPanelProps): ReactElement {
       <div className="xtl-panel__title">
         Symmetry elements · {drawable.length}
       </div>
+      <div className="xtl-panel__hint">
+        Click one to see it on its own in the cell.
+      </div>
       <div className="xtl-rows">
-        {drawable.map((element, index) => (
-          <div className="xtl-row" key={elementKey(element)}>
-            <span className="xtl-row__index">{index + 1}</span>
-            <span>{elementLabel(element)}</span>
-            <span className="xtl-row__detail xtl-mono">
-              through {formatPoint(element)}
-            </span>
-          </div>
-        ))}
+        {drawable.map((element, index) => {
+          const key = elementKey(element);
+          const isFocused = key === focused;
+          return (
+            <button
+              type="button"
+              className={
+                isFocused ? 'xtl-row xtl-row--focused' : 'xtl-row xtl-row--pick'
+              }
+              aria-pressed={isFocused}
+              key={key}
+              onClick={() => {
+                focusCrystalElement(isFocused ? null : key);
+              }}
+            >
+              <span className="xtl-row__index">{index + 1}</span>
+              <span>{elementLabel(element)}</span>
+              <span className="xtl-row__detail xtl-mono">
+                through{' '}
+                {formatPoint(drawnElementPoint(props.analysis, element))}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-/** Where the element sits, as fractional coordinates of the cell. */
-function formatPoint(element: SymmetryElement): string {
-  return elementPoint(element)
+/** A fractional point, to three decimals. */
+function formatPoint(point: readonly number[]): string {
+  return point
     .map((value) => String(Math.round(value * 1000) / 1000))
     .join(', ');
 }

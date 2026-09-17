@@ -56,8 +56,12 @@ export interface CommonExercise extends Omit<
   level: ExerciseLevel;
   kind: ExerciseKind;
   /**
-   * Layers the question needs switched on, reported apart from the answer the
-   * way a missing regex flag is.
+   * Layers the question is read off — its figure draws these and nothing else,
+   * and the card offers a chip for each.
+   *
+   * One that is switched off is reported apart from the answer, the way a
+   * missing regex flag is, and no case is run: a student cannot be marked on
+   * what the page is not showing them.
    * @default undefined
    */
   requiredDisplay?: DisplayFlagKey[];

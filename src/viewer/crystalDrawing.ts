@@ -10,14 +10,20 @@
  */
 
 import type { Lattice, SymmetryElement } from '../symmetry/core/index.ts';
-import { TWELFTHS_PER_CELL, elementPoint } from '../symmetry/core/index.ts';
-import type { Vec3 } from '../symmetry/point/vec3.ts';
+import { elementPoint } from '../symmetry/core/index.ts';
 import {
   addVectors,
   dotProduct,
   normalizeVector,
 } from '../symmetry/point/vec3.ts';
 
+import { axisRod, faceOf } from './elementExtent.ts';
+import {
+  axisDirection,
+  intrinsicVector,
+  planeNormal,
+} from './elementVectors.ts';
+import { toCartesian } from './latticeBasis.ts';
 import type { Point3, SymmetryDrawing } from './types.ts';
 
 /** Drawn where it is, unless the caller asks for a whole-cell shift. */
@@ -33,6 +39,19 @@ export interface CrystalDrawingOptions {
    */
   label?: string;
   /**
+   * The short form written on the element in the scene.
+   * @default the element's own symbol
+   */
+  badge?: string;
+  /**
+   * Cut the element off at the cell: an axis runs from where it enters the box
+   * to where it leaves it, and a plane is drawn as the polygon it slices out
+   * of it. A rod of an arbitrary length reads as a floating stick, and a square
+   * hanging in the middle of the box says nothing about where its plane is.
+   * @default false
+   */
+  clip?: boolean;
+  /**
    * Length of an axis rod, ångström.
    * @default 8
    */
@@ -47,6 +66,58 @@ export interface CrystalDrawingOptions {
    * @default [0, 0, 0]
    */
   shift?: readonly [number, number, number];
+}
+
+/** Where an element sits and which way it runs, in Cartesian ångström. */
+export interface ElementLocus {
+  /** A point of the element. */
+  readonly point: Point3;
+  /** The axis direction, for an element that is a line. */
+  readonly direction?: Point3;
+  /** The plane normal, for an element that is a plane. */
+  readonly normal?: Point3;
+}
+
+/**
+ * Where one element is, without deciding how much of it to draw.
+ *
+ * The caller that has to ask *whether* an element meets the cell — before it
+ * knows how to draw it — needs exactly this and nothing else.
+ *
+ * @param element - What `symmetryElements` returned.
+ * @param lattice - The cell it lives in.
+ * @param shift - A whole-cell shift to read it at, in cells along a, b and c.
+ *   @default [0, 0, 0]
+ * @returns Its locus, or `null` for the identity and a lattice translation.
+ */
+export function elementLocus(
+  element: SymmetryElement,
+  lattice: Lattice,
+  shift: readonly [number, number, number] = ORIGIN,
+): ElementLocus | null {
+  const point = addVectors(
+    toCartesian(lattice, elementPoint(element)),
+    toCartesian(lattice, shift),
+  );
+  switch (element.kind) {
+    case 'rotation':
+    case 'screw':
+    case 'rotoinversion': {
+      return { point, direction: axisDirection(lattice, element) };
+    }
+    case 'mirror':
+    case 'glide': {
+      return { point, normal: planeNormal(lattice, element) };
+    }
+    case 'inversion': {
+      return { point };
+    }
+    case 'identity':
+    case 'translation': {
+      return null;
+    }
+    // no default
+  }
 }
 
 /**
@@ -75,6 +146,8 @@ export function crystalElementDrawing(
     length = 8,
     size = 8,
     label = element.symbol,
+    badge = element.symbol,
+    clip = false,
     shift = ORIGIN,
   } = options;
   const point = addVectors(
@@ -85,25 +158,25 @@ export function crystalElementDrawing(
   switch (element.kind) {
     case 'rotation': {
       const direction = axisDirection(lattice, element);
+      const rod = axisRod(lattice, point, direction, length, clip);
       return {
         kind: 'rotation',
         id,
         label,
-        point,
-        direction,
-        length,
+        badge,
+        ...rod,
         order: element.order,
       };
     }
     case 'screw': {
       const direction = axisDirection(lattice, element);
+      const rod = axisRod(lattice, point, direction, length, clip);
       return {
         kind: 'screw',
         id,
         label,
-        point,
-        direction,
-        length,
+        badge,
+        ...rod,
         order: element.order,
         pitch: dotProduct(
           intrinsicVector(lattice, element),
@@ -113,39 +186,49 @@ export function crystalElementDrawing(
     }
     case 'rotoinversion': {
       const direction = axisDirection(lattice, element);
+      const rod = axisRod(lattice, point, direction, length, clip);
       return {
         kind: 'rotoinversion',
         id,
         label,
+        badge,
+        // The ball marks the point it inverts through, so that one stays put
+        // however much of the axis is drawn.
         point,
-        direction,
-        length,
+        direction: rod.direction,
+        length: rod.length,
         order: element.order,
       };
     }
     case 'mirror': {
+      const normal = planeNormal(lattice, element);
       return {
         kind: 'mirror',
         id,
         label,
+        badge,
         point,
-        normal: planeNormal(lattice, element),
+        normal,
         size,
+        ...faceOf(lattice, point, normal, clip),
       };
     }
     case 'glide': {
+      const normal = planeNormal(lattice, element);
       return {
         kind: 'glide',
         id,
         label,
+        badge,
         point,
-        normal: planeNormal(lattice, element),
+        normal,
         size,
         glide: intrinsicVector(lattice, element),
+        ...faceOf(lattice, point, normal, clip),
       };
     }
     case 'inversion': {
-      return { kind: 'inversion', id, label, point };
+      return { kind: 'inversion', id, label, badge, point };
     }
     case 'identity':
     case 'translation': {
@@ -153,56 +236,4 @@ export function crystalElementDrawing(
     }
     // no default
   }
-}
-
-/** The axis `[uvw]`, as a Cartesian direction. */
-function axisDirection(lattice: Lattice, element: SymmetryElement): Point3 {
-  const axis = element.axis;
-  if (axis === null) {
-    throw new RangeError(`the ${element.symbol} element carries no axis.`);
-  }
-  return toCartesian(lattice, axis);
-}
-
-/**
- * The normal `(hkl)`, as a Cartesian direction.
- *
- * `(hkl)` is a reciprocal-space vector, so it transforms with `(M⁻¹)ᵀ` rather
- * than with `M`.
- */
-function planeNormal(lattice: Lattice, element: SymmetryElement): Point3 {
-  const normal = element.normal;
-  if (normal === null) {
-    throw new RangeError(`the ${element.symbol} element carries no normal.`);
-  }
-  const image: number[] = [0, 0, 0];
-  for (let i = 0; i < 3; i++) {
-    let sum = 0;
-    for (let j = 0; j < 3; j++) {
-      sum += (lattice.fractional[j]?.[i] ?? 0) * (normal[j] ?? 0);
-    }
-    image[i] = sum;
-  }
-  return [image[0] ?? 0, image[1] ?? 0, image[2] ?? 0];
-}
-
-/** The screw pitch or the glide vector, in ångström. */
-function intrinsicVector(lattice: Lattice, element: SymmetryElement): Point3 {
-  const fractional: number[] = [];
-  for (let index = 0; index < 3; index++) {
-    fractional.push((element.intrinsic[index] ?? 0) / TWELFTHS_PER_CELL);
-  }
-  return toCartesian(lattice, fractional);
-}
-
-function toCartesian(lattice: Lattice, point: readonly number[]): Vec3 {
-  const image: number[] = [0, 0, 0];
-  for (let i = 0; i < 3; i++) {
-    let sum = 0;
-    for (let j = 0; j < 3; j++) {
-      sum += (lattice.cartesian[i]?.[j] ?? 0) * (point[j] ?? 0);
-    }
-    image[i] = sum;
-  }
-  return [image[0] ?? 0, image[1] ?? 0, image[2] ?? 0];
 }

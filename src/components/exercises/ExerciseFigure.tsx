@@ -8,6 +8,7 @@
  * the coordinate list the cell is generated from.
  */
 
+import { useSignals } from '@preact/signals-react/runtime';
 import type { ReactElement } from 'react';
 import { useMemo } from 'react';
 
@@ -20,7 +21,8 @@ import {
 } from '../tutorial/index.ts';
 import { ViewerPanel } from '../viewer/index.ts';
 
-import { NO_LAYERS, moleculeOf, spaceGroupOf } from './figureSubject.ts';
+import { moleculeOf, spaceGroupOf } from './figureSubject.ts';
+import { drawnLayerKey, shownLayerKey } from './layerState.ts';
 
 /** What {@link ExerciseFigure} needs. */
 export interface ExerciseFigureProps {
@@ -38,6 +40,7 @@ export interface ExerciseFigureProps {
 export function ExerciseFigure(
   props: ExerciseFigureProps,
 ): ReactElement | null {
+  useSignals();
   const { exercise, detail = false } = props;
   const molecule = moleculeOf(exercise);
   if (molecule !== null) {
@@ -45,7 +48,7 @@ export function ExerciseFigure(
       <MoleculeFigure
         moleculeId={molecule}
         detail={detail}
-        layers={exercise.requiredDisplay ?? NO_LAYERS}
+        layers={drawnLayerKey(exercise, shownLayerKey())}
       />
     );
   }
@@ -70,11 +73,11 @@ export function ExerciseFigure(
 function MoleculeFigure(props: {
   readonly moleculeId: string;
   readonly detail: boolean;
-  readonly layers: readonly string[];
+  readonly layers: string;
 }): ReactElement {
   const { moleculeId, detail, layers } = props;
   const built = useMemo(() => {
-    const wanted = new Set(layers);
+    const wanted = new Set(layers.split(' '));
     return moleculeScene(moleculeId, {
       axes: detail || wanted.has('axes'),
       mirrors: detail || wanted.has('mirrors'),

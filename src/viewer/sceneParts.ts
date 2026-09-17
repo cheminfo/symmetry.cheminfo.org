@@ -8,7 +8,7 @@ import type { PluginContext } from 'molstar/lib/mol-plugin/context.js';
 import { setSceneExtent } from './camera.ts';
 import { cellEdges } from './cellGeometry.ts';
 import type { ElementGroup } from './elementDrawing.ts';
-import { boundingSphereOf, primitivesExtent } from './framing.ts';
+import { boundingSphereOf, primitivesExtent, unionSpheres } from './framing.ts';
 import type { MeshPrimitive } from './primitives.ts';
 import type { CellStyle } from './renderCell.ts';
 import { renderUnitCell } from './renderCell.ts';
@@ -96,8 +96,22 @@ export async function drawElements(
     return;
   }
   const primitives: MeshPrimitive[] = [];
-  for (const group of groups) primitives.push(...group.primitives);
-  setSceneExtent(plugin, 'elements', primitivesExtent(primitives));
+  // A name sits past the end of the element it names, so the elements reach
+  // further than their shapes do and framing the shapes alone cuts the names
+  // off at the edge of the canvas.
+  const names: Point3[] = [];
+  for (const group of groups) {
+    primitives.push(...group.primitives);
+    for (const item of group.labels) names.push(item.position);
+  }
+  const shapes = primitivesExtent(primitives);
+  setSceneExtent(
+    plugin,
+    'elements',
+    names.length === 0
+      ? shapes
+      : unionSpheres([shapes, boundingSphereOf(names)]),
+  );
 }
 
 const ATOM_PADDING = 0.5;

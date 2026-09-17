@@ -111,10 +111,38 @@
 
 /* ── The atom table ───────────────────────────────────────────────────────── */
 
+/* Eight columns of a fractional coordinate do not fit the rail at 1280px, and
+   a coordinate cut mid-digit reads as a different number: 0.46973 became 0.4
+   and -0.21442 became -0. So the columns are sized on their content and the
+   table scrolls when the rail is short, rather than truncating in silence. */
+.xtl-panel:has(> .xtl-atoms) {
+  overflow-x: auto;
+}
+
 .xtl-atoms {
   width: 100%;
+  min-width: 24.5rem;
   border-collapse: collapse;
   font-size: 0.8125rem;
+  table-layout: fixed;
+}
+
+.xtl-atoms th:nth-child(2) {
+  width: 2.8rem;
+}
+
+.xtl-atoms th:nth-child(3) {
+  width: 3.9rem;
+}
+
+.xtl-atoms th:nth-child(4),
+.xtl-atoms th:nth-child(5),
+.xtl-atoms th:nth-child(6) {
+  width: 4.5rem;
+}
+
+.xtl-atoms th:nth-child(7) {
+  width: 2.4rem;
 }
 
 .xtl-atoms th {
@@ -148,6 +176,7 @@
 
 .xtl-atoms input.xtl-atoms__number {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
   text-align: right;
 }
 
@@ -197,11 +226,39 @@
 
 .xtl-row {
   display: flex;
+  width: 100%;
   align-items: baseline;
   padding: 0.1rem 0.3rem;
+  border: 0;
   border-radius: 6px;
+  background: none;
+  color: inherit;
+  font-family: inherit;
   font-size: 0.8125rem;
   gap: 0.5rem;
+  text-align: left;
+}
+
+.xtl-row--pick {
+  cursor: pointer;
+}
+
+.xtl-row--pick:hover {
+  background: color-mix(in oklab, var(--accent) 8%, white);
+}
+
+/* The one element the cell is showing on its own. */
+.xtl-row--focused,
+.xtl-row--focused:nth-child(odd) {
+  background: color-mix(in oklab, var(--accent) 16%, white);
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.xtl-panel__hint {
+  margin-bottom: 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
 }
 
 .xtl-row:nth-child(odd) {

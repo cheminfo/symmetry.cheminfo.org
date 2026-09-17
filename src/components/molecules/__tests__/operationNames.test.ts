@@ -11,14 +11,24 @@ import {
 } from '../operationNames.ts';
 
 test('a label the group carries once is the whole name', () => {
+  // Three planes at 60° to each other have no direction indices, so a textbook
+  // primes them — and the workbench spells them exactly as the catalogue does.
   expect(operationNames(operationsOf('C3v'))).toStrictEqual([
     'E',
     'C3',
-    'σv(xz)',
+    'σv',
     'C3^2',
-    'σv(⊥[0.866 0.5 0])',
-    'σv(⊥[0.866 -0.5 0])',
+    'σv^′',
+    'σv^″',
   ]);
+});
+
+test('an axis on a rational direction is named by its indices, never a vector', () => {
+  const names = operationNames(operationsOf('Td'));
+  expect(names).toContain('C3(111)');
+  expect(names).toContain('σ(11̄0)');
+  expect(names).toContain('S4(x)');
+  for (const name of names) expect(name).not.toContain('[');
 });
 
 test('a repeated label carries the plane or the axis it acts in', () => {
@@ -52,26 +62,54 @@ test('a name the molecule has not got is -1, so a stale link still opens', () =>
 
 test('a name splits into what is set where', () => {
   expect(operationLabelParts('C3^2')).toStrictEqual({
+    multiplicity: '',
     symbol: 'C',
     subscript: '3',
     superscript: '2',
     situation: '',
   });
   expect(operationLabelParts('σv(xz)')).toStrictEqual({
+    multiplicity: '',
     symbol: 'σ',
     subscript: 'v',
     superscript: '',
     situation: 'xz',
   });
   expect(operationLabelParts('S4^3(x)')).toStrictEqual({
+    multiplicity: '',
     symbol: 'S',
     subscript: '4',
     superscript: '3',
     situation: 'x',
   });
   expect(operationLabelParts('i')).toStrictEqual({
+    multiplicity: '',
     symbol: 'i',
     subscript: '',
+    superscript: '',
+    situation: '',
+  });
+});
+
+test('a class header keeps its count on the line, not under the symbol', () => {
+  expect(operationLabelParts('2C6')).toStrictEqual({
+    multiplicity: '2',
+    symbol: 'C',
+    subscript: '6',
+    superscript: '',
+    situation: '',
+  });
+  expect(operationLabelParts('12C5^2')).toStrictEqual({
+    multiplicity: '12',
+    symbol: 'C',
+    subscript: '5',
+    superscript: '2',
+    situation: '',
+  });
+  expect(operationLabelParts('4σd')).toStrictEqual({
+    multiplicity: '4',
+    symbol: 'σ',
+    subscript: 'd',
     superscript: '',
     situation: '',
   });

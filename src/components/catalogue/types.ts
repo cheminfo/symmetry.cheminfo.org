@@ -40,6 +40,11 @@ export type CatalogueTarget =
 /** One link, and the sentence saying what pressing it does. */
 export interface CatalogueLink {
   readonly label: string;
+  /**
+   * A molecular formula printed after the label, set by `react-mf` so `H2O`
+   * carries its subscript. @default undefined — the label stands alone
+   */
+  readonly formula?: string;
   /** One clause under the label. @default undefined — the label stands alone */
   readonly detail?: string;
   readonly target: CatalogueTarget;
@@ -114,12 +119,28 @@ export type EntryBody =
       readonly kind: 'table';
       readonly headers: readonly string[];
       readonly rows: readonly EntryTableRow[];
+      /**
+       * A column holding an operation or a class header, set as a symbol
+       * rather than printed: `2S8^3` reads as 2S₈³, as it does everywhere else.
+       * @default undefined — every cell is plain text
+       */
+      readonly symbolColumn?: number;
+      readonly note?: string;
+    }
+  | {
+      readonly kind: 'operations';
+      /** The names, from `operationDisplayNames`, set as symbols. */
+      readonly names: readonly string[];
       readonly note?: string;
     }
   | {
       readonly kind: 'characters';
-      readonly table: CharacterTable;
-      readonly note?: string;
+      /** The table, or `null` when the site ships none for this group. */
+      readonly table: CharacterTable | null;
+      /** The `PointGroup.id`, which is what says why there is no table. */
+      readonly group: string;
+      /** How the group is written on screen: `C2v`, `D∞h`. */
+      readonly schoenflies: string;
     }
   | {
       readonly kind: 'links';
@@ -194,6 +215,14 @@ export interface CatalogueDescriptor {
   /** Every entry, in the order the index lists them. */
   readonly rows: readonly CatalogueRow[];
   readonly facets: readonly CatalogueFacet[];
+  /**
+   * Whether this catalogue's symbols are Schoenflies, and are therefore set
+   * with their subscripts — `C2v` reads `C₂ᵥ`, as it does on every other page
+   * of the site. A Hermann-Mauguin symbol is not written that way, so the four
+   * catalogues do not share one answer.
+   * @default false
+   */
+  readonly schoenflies?: boolean;
   /**
    * The entry an address names.
    * @param id - The second path segment.

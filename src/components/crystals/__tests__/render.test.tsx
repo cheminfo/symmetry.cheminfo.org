@@ -90,9 +90,12 @@ test('the coordinate list is the whole coset list, and the elements are named', 
   expect(positions).toContain('x,y,z');
   expect(positions).toContain('-x,y+1/2,z+1/2');
 
+  // Every element is a button: clicking one draws it on its own.
   const elements = renderToStaticMarkup(<ElementsPanel analysis={ANALYSIS} />);
   expect(elements).toContain('Symmetry elements · 147');
-  expect(count(elements, 'div class="xtl-row"')).toBe(147);
+  expect(count(elements, 'button type="button"')).toBe(147);
+  expect(elements).toContain('aria-pressed="false"');
+  expect(elements).toContain('Click one to see it on its own in the cell.');
   expect(elements).toContain('4 along [0 0 1]');
   expect(elements).toContain('m ⟂ (0 0 1)');
 });

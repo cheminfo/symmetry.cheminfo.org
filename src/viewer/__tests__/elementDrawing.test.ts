@@ -1,10 +1,6 @@
 import { expect, test } from 'vitest';
 
-import {
-  drawingLabels,
-  drawingPrimitives,
-  elementGroups,
-} from '../elementDrawing.ts';
+import { drawingPrimitives, elementGroups } from '../elementDrawing.ts';
 import type { ElementStyle } from '../primitives.ts';
 import type { SymmetryDrawing } from '../types.ts';
 
@@ -162,41 +158,6 @@ test('an inversion centre is one ball', () => {
   expect(drawingPrimitives(drawing, STYLE)).toStrictEqual([
     { shape: 'sphere', centre: [1, 2, 3], radius: 0.25 },
   ]);
-});
-
-test("an axis label sits past the end of its rod, a plane's past the edge", () => {
-  const axis: SymmetryDrawing = {
-    kind: 'rotation',
-    id: 'c2',
-    label: 'C2',
-    point: [0, 0, 0],
-    direction: [0, 0, 1],
-    length: 4,
-    order: 2,
-  };
-  expect(drawingLabels(axis, STYLE)).toStrictEqual([
-    { text: 'C2', position: [0, 0, 2.5], size: 0.5 },
-  ]);
-  const plane: SymmetryDrawing = {
-    kind: 'mirror',
-    id: 'sv',
-    label: 'σv',
-    point: [0, 0, 0],
-    normal: [0, 0, 1],
-    size: 6,
-  };
-  expect(drawingLabels(plane, STYLE)).toStrictEqual([
-    { text: 'σv', position: [3.5, 0, 0], size: 0.5 },
-  ]);
-});
-
-test('an unnamed element gets no label', () => {
-  expect(
-    drawingLabels(
-      { kind: 'inversion', id: 'i', label: '', point: [0, 0, 0] },
-      STYLE,
-    ),
-  ).toStrictEqual([]);
 });
 
 test('a group takes the colour of its kind unless the drawing names one', () => {

@@ -6,6 +6,10 @@
  * question nobody has read yet is what makes a student close the page. After
  * it, each case carries the validator's own sentence, which names the value and
  * what was wanted.
+ *
+ * A layer the question is read off and the student has switched off is reported
+ * on its own, and nothing else is: the answer was never marked, so calling it
+ * wrong would be a lie.
  */
 
 import { Callout } from '@blueprintjs/core';
@@ -43,8 +47,8 @@ export function ExerciseVerdict(props: ExerciseVerdictProps): ReactElement {
       )}
 
       {result.missingOptions.length > 0 && attempted && (
-        <Callout intent="warning" icon="layers">
-          {`Switch on: ${result.missingOptions.join(', ')}.`}
+        <Callout intent="warning" icon="layers" title="Not marked yet">
+          {`This question is read off the picture, and a layer it needs is switched off. Switch on: ${result.missingOptions.join(', ')}.`}
         </Callout>
       )}
 
@@ -54,11 +58,14 @@ export function ExerciseVerdict(props: ExerciseVerdictProps): ReactElement {
         </Callout>
       )}
 
-      {attempted && !result.passed && result.error === null && (
-        <Callout intent="danger" icon="cross-circle" title="Not yet">
-          {failureLine(result)}
-        </Callout>
-      )}
+      {attempted &&
+        !result.passed &&
+        result.error === null &&
+        result.missingOptions.length === 0 && (
+          <Callout intent="danger" icon="cross-circle" title="Not yet">
+            {failureLine(result)}
+          </Callout>
+        )}
 
       <TestCaseList results={result.cases} pending={pending} />
     </div>

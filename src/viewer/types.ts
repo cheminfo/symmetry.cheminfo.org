@@ -32,6 +32,13 @@ export interface DrawingBase {
   /** What the pointer reads: `C3`, `2₁ along [001]`, `σv`, `n glide`. */
   readonly label: string;
   /**
+   * The short form written on the element in the scene — `m`, `3`, `2₁`, `-1`.
+   * Forty rods each carrying their full name is a wall of text nobody reads,
+   * and the list beside the view says the rest.
+   * @default the label
+   */
+  readonly badge?: string;
+  /**
    * Its colour, `#rrggbb`. The kind's own convention is used when absent.
    * @default the convention in `palette.ts`
    */
@@ -72,17 +79,24 @@ export interface RotoinversionDrawing extends DrawingBase {
   readonly order: number;
 }
 
-/** A mirror plane: a translucent square through `point`. */
+/** A mirror plane: a translucent face through `point`. */
 export interface MirrorDrawing extends DrawingBase {
   readonly kind: 'mirror';
   readonly point: Point3;
   /** The plane normal; need not be normalised. */
   readonly normal: Point3;
-  /** Side of the drawn square, ångström. */
+  /** Side of the drawn square, ångström, when there is no outline. */
   readonly size: number;
+  /**
+   * The corners the plane is drawn between, in order around it. A crystal
+   * hands over the polygon where the plane cuts the cell, which says where it
+   * sits far better than a square floating in the middle of one does.
+   * @default a square of `size`, spanned by the frame of the normal
+   */
+  readonly outline?: readonly Point3[];
 }
 
-/** A glide plane: the square, plus an arrow in it along the glide vector. */
+/** A glide plane: the face, plus an arrow in it along the glide vector. */
 export interface GlideDrawing extends DrawingBase {
   readonly kind: 'glide';
   readonly point: Point3;
@@ -90,6 +104,11 @@ export interface GlideDrawing extends DrawingBase {
   readonly size: number;
   /** The glide vector itself, ångström, lying in the plane. */
   readonly glide: Point3;
+  /**
+   * The corners the plane is drawn between, in order around it.
+   * @default a square of `size`, spanned by the frame of the normal
+   */
+  readonly outline?: readonly Point3[];
 }
 
 /** An inversion centre: a small ball. */

@@ -8,7 +8,7 @@ import {
 } from 'molstar/lib/mol-geo/geometry/mesh/builder/cylinder.js';
 import { addPlane } from 'molstar/lib/mol-geo/geometry/mesh/builder/plane.js';
 import { addSphere } from 'molstar/lib/mol-geo/geometry/mesh/builder/sphere.js';
-import type { MeshBuilder } from 'molstar/lib/mol-geo/geometry/mesh/mesh-builder.js';
+import { MeshBuilder } from 'molstar/lib/mol-geo/geometry/mesh/mesh-builder.js';
 import { Vec3 } from 'molstar/lib/mol-math/linear-algebra.js';
 
 import type { MeshPrimitive } from './primitives.ts';
@@ -61,6 +61,20 @@ export function addMeshPrimitive(
     }
     case 'sphere': {
       addSphere(state, vec(primitive.centre), primitive.radius, SPHERE_DETAIL);
+      return;
+    }
+    case 'face': {
+      // A fan from the first corner; the corners come round the plane in
+      // order, so the face is convex and the fan covers it exactly.
+      const { points } = primitive;
+      const first = points[0];
+      if (first === undefined) return;
+      for (let index = 1; index + 1 < points.length; index++) {
+        const second = points[index];
+        const third = points[index + 1];
+        if (second === undefined || third === undefined) continue;
+        MeshBuilder.addTriangle(state, vec(first), vec(second), vec(third));
+      }
       return;
     }
     case 'plate': {

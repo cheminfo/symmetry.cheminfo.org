@@ -9,6 +9,7 @@
 
 import type {
   CellRepeat,
+  ElementStyle,
   SymmetryDrawing,
   UnitCell,
   ViewerAtom,
@@ -60,6 +61,13 @@ export interface ViewerScene {
    * @default true
    */
   readonly labels?: boolean;
+  /**
+   * How thick and how large those elements are drawn. A cell scales it to its
+   * own edges, so the same figure reads the same on a 3.9 Å perovskite and a
+   * 24 Å zeolite.
+   * @default the defaults of `primitives.ts`
+   */
+  readonly elementStyle?: ElementStyle;
   /**
    * How the atoms are drawn.
    * @default 'ball-and-stick'
