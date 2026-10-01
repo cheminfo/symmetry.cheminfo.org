@@ -131,7 +131,7 @@ export const FIXED_ROUTES: readonly RouteMeta[] = [
     path: '/about',
     title: 'About — what this tool computes and what it borrows',
     description:
-      'What this tool derives from a structure and where it stops, the tables and libraries it borrows, how to cite it, and where to report a problem.',
+      'What this symmetry tool derives from a structure and where it stops, the point-group and space-group tables it borrows, and how to cite it.',
     short: 'About',
     note: 'what it computes, and what it borrows',
   },
