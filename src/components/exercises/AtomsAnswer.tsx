@@ -7,8 +7,8 @@
  * and leaves the choice open.
  */
 
-import { InputGroup } from '@blueprintjs/core';
 import type { ReactElement } from 'react';
+import { NumberInput } from 'react-cheminfo/ui';
 
 import type {
   PlaceAtomExercise,
@@ -43,17 +43,15 @@ export function AtomsAnswer(props: AtomsAnswerProps): ReactElement {
         <div key={row.name} className="answer-atoms__row">
           <span className="answer-atoms__element">{row.name}</span>
           {AXES.map((axis) => (
-            <InputGroup
+            <NumberInput
               key={axis}
-              type="number"
-              value={String(row.atom[axis])}
-              aria-label={`${row.name} ${axis}`}
-              onValueChange={(entry) => {
+              buttons={false}
+              step={0.1}
+              value={row.atom[axis]}
+              ariaLabel={`${row.name} ${axis}`}
+              onChange={(entry) => {
                 onChange(
-                  replace(value, row.position, {
-                    ...row.atom,
-                    [axis]: Number(entry),
-                  }),
+                  replace(value, row.position, { ...row.atom, [axis]: entry }),
                 );
               }}
             />

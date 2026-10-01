@@ -8,8 +8,8 @@
  * what "tetragonal" means.
  */
 
-import { NumericInput } from '@blueprintjs/core';
 import type { ReactElement } from 'react';
+import { NumberInput } from 'react-cheminfo/ui';
 
 import type { CellParameter } from '../../crystal/cellConstraints.ts';
 import {
@@ -52,17 +52,16 @@ export function CellEditor(props: CellEditorProps): ReactElement {
             <div className="xtl-field" key={key}>
               <span className="xtl-field__label">{name}</span>
               {forced === null ? (
-                <NumericInput
+                <NumberInput
                   size="small"
                   fill
-                  buttonPosition="none"
+                  buttons={false}
                   min={isCellEdge(key) ? 0.1 : 1}
                   max={isCellEdge(key) ? 1000 : 179}
-                  stepSize={isCellEdge(key) ? 0.1 : 1}
-                  minorStepSize={0.0001}
+                  step={isCellEdge(key) ? 0.1 : 1}
                   value={round(cell[key])}
-                  aria-label={name}
-                  onValueChange={(value) => {
+                  ariaLabel={name}
+                  onChange={(value) => {
                     onChange(key, value);
                   }}
                 />
