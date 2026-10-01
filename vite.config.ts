@@ -2,6 +2,7 @@ import react from '@vitejs/plugin-react';
 import { cheminfoBuildInfo, cheminfoPrerender } from 'react-cheminfo/vite';
 import { defineConfig } from 'vite';
 
+import { pageContent } from './src/seo/content.ts';
 import { NOSCRIPT_ROUTES, PAGE_ROUTES } from './src/seo/routes.ts';
 import { configuredSiteUrl } from './src/state/site.ts';
 
@@ -30,6 +31,9 @@ export default defineConfig({
     cheminfoPrerender({
       site: 'symmetry',
       routes: PAGE_ROUTES,
+      // What each address says for itself. Without it all 365 ship the same
+      // body — this site's menu — and the catalogues are near-duplicates.
+      content: pageContent,
       // The published address, mount path included, so every canonical link,
       // `og:url`, card and sitemap entry starts where the site is served.
       origin: configuredSiteUrl(),
