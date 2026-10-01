@@ -45,13 +45,6 @@ test('every borrowed work the site runs on is named, and resolves', () => {
     'react-cheminfo',
     'cheminfo-font',
   ]);
-  expect(about.license).toBe('MIT');
-  expect(about.repository).toBe(
-    'https://github.com/cheminfo/symmetry.cheminfo.org',
-  );
-  expect(about.issues).toBe(
-    'https://github.com/cheminfo/symmetry.cheminfo.org/issues',
-  );
 });
 
 test('why symmetry is worth learning, and that nothing leaves the page', () => {

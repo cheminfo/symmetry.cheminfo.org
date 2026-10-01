@@ -36,8 +36,6 @@ test('/about is a routed page, with the family sections in order', async ({
     'What you can do here',
     'Built on',
     'How to cite',
-    'Licence and source',
-    'Found a problem?',
   ]);
 
   // Every line of the record is on the page, and nothing else is.
@@ -47,30 +45,20 @@ test('/about is a routed page, with the family sections in order', async ({
   await expect(page.getByRole('contentinfo')).toHaveCount(1);
 });
 
-test('the About names the licence, the repository and the build running', async ({
+test('the About names the build running, and nothing about its sources', async ({
   page,
 }) => {
   await page.goto('/about');
 
-  const licence = page.locator('.about-licence');
-  await expect(licence).toContainText('MIT, © cheminfo.');
-  await expect(
-    licence.getByRole('link', {
-      name: 'github.com/cheminfo/symmetry.cheminfo.org',
-    }),
-  ).toBeVisible();
-
   // Written by the build, never by hand: a version typed into a record is wrong
-  // by the next release. The commit joins it once the repository has one.
-  await expect(licence).toContainText(
-    /Running version \d+\.\d+\.\d+, built \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} UTC/,
+  // by the next release.
+  await expect(page.locator('.about-build')).toContainText(
+    /Built \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} UTC/,
   );
 
-  await expect(
-    page
-      .locator('.about-issues')
-      .getByRole('link', { name: /symmetry\.cheminfo\.org\/issues/ }),
-  ).toBeVisible();
+  await expect(page.locator('.about-licence')).toHaveCount(0);
+  await expect(page.locator('.about-issues')).toHaveCount(0);
+  await expect(page.locator('a.about-version')).toHaveCount(0);
 });
 
 test('the About credits every borrowed work, and offers a citation', async ({
