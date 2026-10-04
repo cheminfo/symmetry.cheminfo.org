@@ -1,6 +1,10 @@
 FROM node:24-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
+# A deploy that has to build from source installs over the network at the
+# worst moment, and npm's two default retries are spent in under twenty
+# seconds — a blip that short must not be what fails a deploy.
+ENV NPM_CONFIG_FETCH_RETRIES=5 NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT=120000
 RUN npm ci --ignore-scripts
 COPY . .
 

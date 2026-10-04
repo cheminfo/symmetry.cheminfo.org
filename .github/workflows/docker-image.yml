@@ -9,3 +9,8 @@ jobs:
   docker-image:
     # Documentation: https://github.com/zakodium/workflows#docker-image
     uses: zakodium/workflows/.github/workflows/docker-image.yml@docker-image-v1
+    with:
+      # Without it the workflow publishes a single `:HEAD` and no `latest`,
+      # so a plain `docker compose up -d` cannot pull and the server builds
+      # from source instead. Empty on a manual run, whose ref is a branch.
+      tag-version: ${{ github.event_name == 'push' && github.ref_name || '' }}
