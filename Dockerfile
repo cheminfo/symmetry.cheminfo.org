@@ -16,7 +16,7 @@ COPY . .
 ARG SITE_URL=
 ENV SITE_URL=$SITE_URL
 
-RUN npm run build
+RUN npm run build-only
 
 FROM joseluisq/static-web-server:2-alpine
 # The build stays here, read-only. The entrypoint copies it to SERVER_ROOT,

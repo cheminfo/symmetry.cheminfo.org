@@ -10,6 +10,10 @@
 
 import { expect, test } from '@playwright/test';
 
+// The dialog hands the iframe snippet over through the clipboard, which is the
+// only place it is ever written.
+test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
+
 // Playwright's stock thirty seconds is a page's own time; these run several at a
 // time against the one `npm run dev` behind them, where a page that renders in
 // two seconds alone takes ten while five browsers ask that server at once. The
@@ -81,20 +85,27 @@ test('the dialog writes a link and an iframe, and the link reopens the page', as
   await page.getByRole('button', { name: 'Share' }).click();
 
   const dialog = page.locator('.share-dialog');
-  const link = dialog.locator('.code-block pre').nth(0);
-  const frame = dialog.locator('.code-block pre').nth(1);
+  // Neither the address nor the frame markup is printed: the link is where
+  // "Open in a new tab" leads, and the markup only reaches the clipboard.
+  const link = dialog.locator('.share-linkbar a');
+  const href = () => link.getAttribute('href');
 
   // The address bar contributes the tool's settings, the dialog the rest.
-  await expect(link).toHaveText(/\/plane\?planeGroup=p4g&tiles=3$/);
-  await expect(frame).toHaveText(/^<iframe src="http.+\/plane\?planeGroup=p4g/);
-  await expect(frame).toHaveText(/height="640"/);
-  await expect(frame).toHaveText(/title="symmetry\.cheminfo\.org — Plane"/);
+  await expect.poll(href).toMatch(/\/plane\?planeGroup=p4g&tiles=3$/);
+
+  await dialog.getByRole('button', { name: 'Copy the iframe' }).click();
+  const frame = await page.evaluate(() => navigator.clipboard.readText());
+
+  expect(frame).toMatch(/^<iframe src="http.+\/plane\?planeGroup=p4g/);
+  expect(frame).toMatch(/height="640"/);
+  expect(frame).toMatch(/title="symmetry\.cheminfo\.org — Plane"/);
 
   await dialog.getByText('Embed in another page', { exact: true }).click();
-  await expect(link).toHaveText(/\/plane\?embed=1&planeGroup=p4g&tiles=3$/);
+  await expect.poll(href).toMatch(/\/plane\?embed=1&planeGroup=p4g&tiles=3$/);
 
   await dialog.getByText('Motif editor', { exact: true }).click();
-  const shared = (await link.textContent()) ?? '';
+  const shared = (await href()) ?? '';
+
   expect(shared).toMatch(/\/plane\?embed=1&hide=motif&planeGroup=p4g&tiles=3$/);
 
   await page.goto(shared);

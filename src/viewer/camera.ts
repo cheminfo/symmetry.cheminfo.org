@@ -10,14 +10,15 @@
 import { Sphere3D } from 'molstar/lib/mol-math/geometry.js';
 import { Vec3 } from 'molstar/lib/mol-math/linear-algebra.js';
 import type { PluginContext } from 'molstar/lib/mol-plugin/context.js';
+import {
+  DEFAULT_CAMERA_DURATION,
+  MINIMUM_FRAMING_RADIUS,
+} from 'react-cheminfo/molstar/core';
 
 import type { SceneSphere } from './framing.ts';
 import { framedRadius, unionSpheres } from './framing.ts';
 import type { ViewOrientation } from './orientation.ts';
 import type { Point3 } from './types.ts';
-
-/** Transition length used when the caller does not pick one, milliseconds. */
-export const DEFAULT_CAMERA_DURATION = 250;
 
 /**
  * Record how far one part of the scene reaches.
@@ -108,7 +109,7 @@ export function focusPoint(
     plugin.managers.camera.setSnapshot(
       camera.getInvariantFocus(
         target,
-        Math.max(radius, MINIMUM_RADIUS),
+        Math.max(radius, MINIMUM_FRAMING_RADIUS),
         Vec3.create(...orientation.up),
         // The direction a camera looks along runs from the eye to what it is
         // looking at, so it is the opposite of where the eye sits.
@@ -124,33 +125,8 @@ export function focusPoint(
     // measures the scene itself to avoid: it left water filling a twentieth of
     // the canvas and benzene a quarter of it. The margin is already in
     // `framedRadius`, so nothing is added here.
-    { extraRadius: 0, minRadius: MINIMUM_RADIUS, durationMs },
+    { extraRadius: 0, minRadius: MINIMUM_FRAMING_RADIUS, durationMs },
   );
-}
-
-/**
- * Turn the automatic spin on or off.
- *
- * A spinning scene is a camera move, not a symmetry operation: it is for
- * reading a 3D arrangement off a flat screen, never for showing that a molecule
- * maps onto itself.
- *
- * @param plugin - The molstar context.
- * @param spinning - Whether the scene should keep turning.
- * @param speed - molstar's own spin unit.
- */
-export function setSpin(
-  plugin: PluginContext,
-  spinning: boolean,
-  speed = 1,
-): void {
-  plugin.canvas3d?.setProps({
-    trackball: {
-      animate: spinning
-        ? { name: 'spin', params: { speed, axis: Vec3.create(0, 1, 0) } }
-        : { name: 'off', params: {} },
-    },
-  });
 }
 
 /** The other way round, so a direction can be turned into a camera place. */
@@ -158,8 +134,7 @@ function negated(vector: Point3): Point3 {
   return [-vector[0], -vector[1], -vector[2]];
 }
 
-/** Never frame tighter than this, ångström, so one atom does not fill the view. */
-const MINIMUM_RADIUS = 0.5;
-
 /** What each part of the scene reaches, per plugin. */
 const extents = new WeakMap<PluginContext, Map<string, SceneSphere>>();
+
+export { DEFAULT_CAMERA_DURATION } from 'react-cheminfo/molstar/core';

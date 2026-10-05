@@ -28,7 +28,7 @@ export default defineConfig({
     // The build, not the dev server: `preview` serves the prerendered head of
     // each route, which is exactly what the contract spec asserts, and it does
     // not re-transform every module on demand.
-    command: 'npm run build && npm run preview',
+    command: 'npm run build-only && npm run preview',
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     stdout: 'ignore',

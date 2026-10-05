@@ -128,7 +128,7 @@ test('a definition shows the object to open, not a line of code', () => {
   // tooltip, so it is drawn straight from the provider instead.
   const markup = renderToStaticMarkup(
     <SymmetryGlossary>
-      <GlossaryDefinition entry={termOf('glide plane')} tone="page" />
+      <GlossaryDefinition entry={termOf('glide plane')} />
     </SymmetryGlossary>,
   );
 
@@ -155,7 +155,7 @@ test('an example with a note prints the note between it and the button', () => {
 
   const markup = renderToStaticMarkup(
     <SymmetryGlossary>
-      <GlossaryDefinition entry={noted} tone="page" />
+      <GlossaryDefinition entry={noted} />
     </SymmetryGlossary>,
   );
 

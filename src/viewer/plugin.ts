@@ -12,19 +12,11 @@
  * molstar's own UI is never mounted: every control on this site is ours.
  */
 
-import { PluginViewModel } from 'molstar/lib/extensions/plugin/view-model.js';
 import type { PluginContext } from 'molstar/lib/mol-plugin/context.js';
-// Lowercased on import: it is a factory, not a constructor.
-import { DefaultPluginSpec as defaultPluginSpec } from 'molstar/lib/mol-plugin/spec.js';
-import { Color } from 'molstar/lib/mol-util/color/color.js';
+import { MolstarPlugin, setSpin } from 'react-cheminfo/molstar/core';
 
-import {
-  DEFAULT_CAMERA_DURATION,
-  focusPoint,
-  resetCamera,
-  setSpin,
-} from './camera.ts';
-import { subscribeHover } from './hover.ts';
+import { DEFAULT_CAMERA_DURATION, focusPoint, resetCamera } from './camera.ts';
+import { subscribeViewerHover } from './hover.ts';
 import type { ViewOrientation } from './orientation.ts';
 import type { Point3 } from './types.ts';
 
@@ -39,38 +31,26 @@ export interface ViewerOptions {
 
 /** One molstar canvas, and the queue everything drawn on it goes through. */
 export class ViewerPlugin {
-  readonly #model: PluginViewModel;
-  #disposed = false;
+  readonly #plugin: MolstarPlugin;
 
   /** Resolves once the canvas exists; every call awaits it internally. */
   readonly ready: Promise<void>;
 
   constructor(container: HTMLElement, options: ViewerOptions = {}) {
-    // tokens-ok: the canvas clear colour is a scene value, not a page surface.
-    const { background = '#ffffff' } = options;
-    const spec = defaultPluginSpec();
-    this.#model = new PluginViewModel({
-      spec: {
-        ...spec,
-        canvas3d: {
-          ...spec.canvas3d,
-          renderer: { backgroundColor: Color.fromHexStyle(background) },
-          camera: { helper: { axes: { name: 'off', params: {} } } },
-          // Replacing a scene commits several times, and molstar's own default
-          // glides the camera on each, so the structure appears to drift into
-          // place. Reframing is right; animating it between two unrelated
-          // structures is not.
-          cameraResetDurationMs: 0,
-        },
-      },
+    this.#plugin = new MolstarPlugin(container, {
+      background: options.background,
+      // Replacing a scene commits several times, and molstar's own default
+      // glides the camera on each, so the structure appears to drift into
+      // place. Reframing is right; animating it between two unrelated
+      // structures is not.
+      cameraResetDurationMilliseconds: 0,
     });
-    this.#model.mount(container);
-    this.ready = this.#model.initialized;
+    this.ready = this.#plugin.ready;
   }
 
   /** Whether {@link dispose} has been called. */
   get disposed(): boolean {
-    return this.#disposed;
+    return this.#plugin.disposed;
   }
 
   /**
@@ -81,18 +61,8 @@ export class ViewerPlugin {
    *   while `action` was still running. An initialisation failure, and any
    *   error `action` throws while the viewer is alive, still reach the caller.
    */
-  async run(
-    action: (plugin: PluginContext) => void | Promise<void>,
-  ): Promise<void> {
-    if (this.#disposed) return;
-    await this.ready;
-    if (this.#disposed) return;
-    try {
-      await action(this.#model.plugin);
-    } catch (error) {
-      if (this.#disposed) return;
-      throw error;
-    }
+  run(action: (plugin: PluginContext) => void | Promise<void>): Promise<void> {
+    return this.#plugin.run(action).then(() => undefined);
   }
 
   /**
@@ -150,23 +120,14 @@ export class ViewerPlugin {
    * @returns A function that stops the reporting; safe to call at any time.
    */
   onHover(listener: (label: string | null) => void): () => void {
-    let stop: (() => void) | null = null;
-    let cancelled = false;
-    void this.run((plugin) => {
-      if (cancelled) return;
-      stop = subscribeHover(plugin, listener);
-    });
-    return () => {
-      cancelled = true;
-      stop?.();
-      stop = null;
-    };
+    return this.#plugin.subscribe((plugin) =>
+      subscribeViewerHover(plugin, listener),
+    );
   }
 
   /** Re-read the container's size. Call from a `ResizeObserver`. */
   handleResize(): void {
-    if (this.#disposed) return;
-    this.#model.plugin.handleResize();
+    this.#plugin.handleResize();
   }
 
   /**
@@ -174,16 +135,6 @@ export class ViewerPlugin {
    * call before initialisation has finished.
    */
   dispose(): void {
-    if (this.#disposed) return;
-    this.#disposed = true;
-    // `mount` creates the canvas synchronously, so the context exists even when
-    // initialisation went on to fail; releasing it is what stops the browser
-    // dropping an older viewer's. A rejected `ready` must not escape here
-    // either — nobody is left to handle it.
-    void this.ready
-      .catch(() => undefined)
-      .then(() => {
-        this.#model.plugin.dispose();
-      });
+    this.#plugin.dispose();
   }
 }

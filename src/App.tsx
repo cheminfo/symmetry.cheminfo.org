@@ -18,10 +18,10 @@ import type { ReactElement } from 'react';
 import { useEffect } from 'react';
 import { startDocumentMeta } from 'react-cheminfo/core';
 import {
+  AboutButton,
   CiteButton,
   EcosystemButton,
   HiddenPartsProvider,
-  NavLink,
   SiteFooter,
   SiteHeader,
   SiteTheme,
@@ -97,18 +97,13 @@ export function App(): ReactElement {
           markSize={24}
           actions={
             <>
-              <NavLink
-                item={{
-                  id: 'about',
-                  label: 'About',
-                  href: withBase('/about'),
-                  icon: 'info-sign',
-                  title: 'What this site computes, and what it borrows',
-                  onSelect: () => {
-                    setActiveTab('about');
-                  },
-                }}
+              <AboutButton
+                href={withBase('/about')}
+                title="What this site computes, and what it borrows"
                 active={activeTab === 'about'}
+                onSelect={() => {
+                  setActiveTab('about');
+                }}
               />
               <CiteButton works={ABOUT.cite ?? []} />
               <EcosystemButton currentSiteId="symmetry" />
