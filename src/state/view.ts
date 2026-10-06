@@ -8,6 +8,7 @@
  */
 
 import { signal } from '@preact/signals-react';
+import { clampSplit } from 'react-cheminfo/core';
 
 import type { SharePartId } from '../share/parts.ts';
 
@@ -30,6 +31,12 @@ export const view = {
   tutorial: {
     /** `id` of the step on screen, or `null` for the first one. */
     stepId: signal<string | null>(null),
+    /**
+     * Share of the row the prose takes beside the live view, as a whole
+     * percentage, or `null` while the page sits at the default in
+     * `src/state/split.ts`.
+     */
+    split: signal<number | null>(null),
   },
   exercises: {
     /** `id` of the exercise the Exercises page has open. */
@@ -99,6 +106,15 @@ export function setActiveTab(tab: TabId): void {
  */
 export function setTutorialStep(id: string | null): void {
   view.tutorial.stepId.value = id;
+}
+
+/**
+ * Divide the tutorial's row between the prose and the live view.
+ * @param split - Share of the row the prose takes, or `null` to leave the page
+ * at its own default.
+ */
+export function setTutorialSplit(split: number | null): void {
+  view.tutorial.split.value = split === null ? null : clampSplit(split);
 }
 
 /**

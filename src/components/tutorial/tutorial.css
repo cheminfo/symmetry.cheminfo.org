@@ -7,21 +7,9 @@
   gap: 10px;
 }
 
-.tutorial__body {
-  display: grid;
-  align-items: start;
-  gap: 12px;
-  grid-template-columns: minmax(0, 1fr);
-}
-
-/* The prose reads at a column width; the view takes the rest. Below this the
-   two stack, because a 3D canvas in half a phone is not a view. */
-@media (min-width: 900px) {
-  .tutorial__body {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-  }
-}
-
+/* The row the prose and the live view share is `SplitRow`'s: the share each
+   takes is dragged and travels in `?split=`, so nothing here may give either
+   half a width of its own. Where it stacks is the page's, as `stackBelow`. */
 .tutorial__prose,
 .tutorial__stage {
   display: flex;

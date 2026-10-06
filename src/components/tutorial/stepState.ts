@@ -52,6 +52,26 @@ export function resolveStepIndex(stepId: string | null): number {
 }
 
 /**
+ * Whether a step draws a panel beside its view, which is what the page has to
+ * know before it lays its row out: a step with no panel, whose prose and demo
+ * button a link has hidden, leaves that half of the row genuinely empty, and
+ * the live view takes the whole width instead of a share of it.
+ *
+ * The three molecular panels belong to a molecule and the coordinate list to a
+ * cell; a plane group has none of the four. This and `StepPanel` must agree,
+ * and a test over every step of the tour holds them to it.
+ * @param step - The step to ask about.
+ * @returns True when `StepPanel` draws something for it.
+ */
+export function stepHasPanel(step: TutorialStep): boolean {
+  const { object, panel } = step;
+  if (panel === undefined) return false;
+  const { kind } = splitObjectRef(object);
+  if (kind === 'spaceGroup') return panel === 'positions';
+  return kind === 'molecule' && panel !== 'positions';
+}
+
+/**
  * Switch the step's layers on and every other one off.
  * @param step - The step being opened.
  */

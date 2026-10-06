@@ -6,6 +6,7 @@ import { TUTORIAL_STEPS } from '../../../data/tutorial/index.ts';
 import { PlaneStage } from '../PlaneStage.tsx';
 import { StepPanel } from '../StepPanel.tsx';
 import { StepStage } from '../StepStage.tsx';
+import { stepHasPanel } from '../stepState.ts';
 
 /** The step with this id. @throws When the tour has no such step. */
 function step(id: string): TutorialStep {
@@ -55,6 +56,19 @@ test('a step with no panel draws none', () => {
   expect(renderToStaticMarkup(<StepPanel step={step('mirror-water')} />)).toBe(
     '',
   );
+});
+
+test('every step agrees with what stepHasPanel says about it', () => {
+  // The tutorial page lays its row out from `stepHasPanel` before rendering,
+  // so a step the two disagree about would give a pane a share of the row and
+  // then draw nothing in it.
+  for (const entry of TUTORIAL_STEPS) {
+    const drawn = renderToStaticMarkup(<StepPanel step={entry} />) !== '';
+    expect(stepHasPanel(entry)).toBe(drawn);
+  }
+  // Both outcomes are in the tour, so the loop is not vacuous either way.
+  expect(TUTORIAL_STEPS.filter(stepHasPanel)).toHaveLength(8);
+  expect(TUTORIAL_STEPS).toHaveLength(18);
 });
 
 test('the positions panel of a step is the coset list of its own group', () => {

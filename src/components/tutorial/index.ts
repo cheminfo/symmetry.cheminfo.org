@@ -43,5 +43,6 @@ export {
   openObject,
   openStepInWorkbench,
   resolveStepIndex,
+  stepHasPanel,
   useStepLayers,
 } from './stepState.ts';

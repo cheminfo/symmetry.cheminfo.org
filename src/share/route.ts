@@ -9,6 +9,7 @@
  */
 
 import { batch } from '@preact/signals-react';
+import { SPLIT_PARAM, splitParam } from 'react-cheminfo/core';
 
 import { structureById } from '../data/structures/index.ts';
 import type { DisplayFlagKey } from '../state/index.ts';
@@ -30,6 +31,7 @@ import {
   setHiddenParts,
   setSupercell,
   setTiles,
+  setTutorialSplit,
   setTutorialStep,
   state,
 } from '../state/index.ts';
@@ -52,6 +54,13 @@ import { HIDE_PARAM } from './parts.ts';
 const SPACE_GROUP_PARAM = 'spaceGroup';
 
 /**
+ * How the share of a two-pane row is read and written. The name, the range and
+ * the rule that a row left at its default writes nothing are the family's, so
+ * `?split=35` means the same thing on every site of it.
+ */
+const SPLIT = splitParam();
+
+/**
  * Where the state says the visitor is, as a route.
  *
  * Reads signals, so it is meant to be called inside an `effect`: every leaf it
@@ -66,6 +75,7 @@ export function currentRoute(): Route {
   if (tab === 'crystals') writeCrystals(query);
   if (tab === 'plane') writePlane(query);
   if (tab === 'space-groups') writeNumber(query, 'setting', settingIndex());
+  if (tab === 'tutorial') writeSplit(query, state.view.tutorial.split.value);
   if (drawsLayers(tab)) writeFlags(query);
   if (state.view.embedded.value) query[EMBED_PARAM] = '1';
   const hidden = serializeHidden(state.view.hidden.value);
@@ -128,6 +138,7 @@ function applyPage(route: Route, params: ShareParamSet): void {
   }
   if (tab === 'tutorial') {
     setTutorialStep(id);
+    setTutorialSplit(SPLIT.parse(query[SPLIT_PARAM] ?? null));
     return;
   }
   if (tab === 'exercises') {
@@ -164,6 +175,17 @@ function writePlane(query: Record<string, string>): void {
   writeText(query, 'planeGroup', state.view.plane.groupId.value);
   writeText(query, 'motif', state.view.plane.motifId.value ?? '');
   writeNumber(query, 'tiles', state.view.plane.tiles.value);
+}
+
+/**
+ * Write a share a splitter was dragged to; a row still at the page's own
+ * default writes nothing, so an ordinary link stays an ordinary link.
+ * @param query - Query being built.
+ * @param split - Share of the row the first pane takes, or `null`.
+ */
+function writeSplit(query: Record<string, string>, split: number | null): void {
+  const raw = SPLIT.serialize(split);
+  if (raw !== null) query[SPLIT_PARAM] = raw;
 }
 
 /**

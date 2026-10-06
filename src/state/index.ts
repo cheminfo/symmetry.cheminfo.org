@@ -46,6 +46,7 @@ export {
   TILES_RANGE,
   clampToRange,
 } from './ranges.ts';
+export { DEFAULT_TUTORIAL_SPLIT, TUTORIAL_STACK_BELOW } from './split.ts';
 export type { CatalogueTabId, TabId } from './tabs.ts';
 export {
   CATALOGUE_TAB_IDS,
@@ -73,5 +74,6 @@ export {
   setHiddenParts,
   setSupercell,
   setTiles,
+  setTutorialSplit,
   setTutorialStep,
 } from './view.ts';

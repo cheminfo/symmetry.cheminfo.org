@@ -119,6 +119,31 @@ test('a page with no chrome is left with none when the link says so', () => {
   expect(state.view.embedded.value).toBe(false);
 });
 
+test('the share the tutorial row is divided at survives the round trip', () => {
+  expect(open('/tutorial?split=30')).toBe('/tutorial?split=30');
+  expect(state.view.tutorial.split.value).toBe(30);
+
+  // A share no splitter could reach is brought back inside the range rather
+  // than rejected: the address arrives from bookmarks and hand-edited slides.
+  expect(open('/tutorial/bravais?split=995')).toBe(
+    '/tutorial/bravais?split=80',
+  );
+  expect(state.view.tutorial.split.value).toBe(80);
+
+  // Nonsense leaves the page at its own default, and writes nothing.
+  expect(open('/tutorial?split=wide')).toBe('/tutorial');
+  expect(state.view.tutorial.split.value).toBeNull();
+});
+
+test('a tutorial link that names no share stays a plain link', () => {
+  open('/tutorial?split=30');
+
+  expect(open('/tutorial')).toBe('/tutorial');
+  expect(state.view.tutorial.split.value).toBeNull();
+  // The share belongs to the tutorial, so no other page grows the parameter.
+  expect(open('/cheatsheet?split=30')).toBe('/cheatsheet');
+});
+
 test('a structure named alone opens in the group its own file names', () => {
   open('/crystals?structure=quartz');
 
