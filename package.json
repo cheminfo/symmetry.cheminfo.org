@@ -36,7 +36,7 @@
     "ml-xsadd": "^3.0.0",
     "molstar": "^5.11.0",
     "react": "^19.2.8",
-    "react-cheminfo": "^0.42.0",
+    "react-cheminfo": "^0.43.0",
     "react-dom": "^19.2.8",
     "react-mf": "^3.1.1"
   },
