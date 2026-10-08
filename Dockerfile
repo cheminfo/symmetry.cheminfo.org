@@ -26,10 +26,9 @@ COPY --from=builder /app/dist /app/dist
 COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 ENV SERVER_ROOT=/public
-# The build writes one HTML file per routed address, each with its own head, so
-# `/tutorial` must serve `tutorial/index.html` as it stands rather than
-# redirecting to `/tutorial/` — the address the app writes is the address the
-# canonical names.
+# The build writes one HTML file per routed address, each with its own head:
+# `/tutorial` is served from `tutorial.html`, and must never be redirected to
+# `/tutorial/` — the address the app writes is the address the canonical names.
 ENV SERVER_REDIRECT_TRAILING_SLASH=false
 # No fallback page: every address the app answers is on disk, so an address
 # that is not is genuinely not a page of this site and 404s, rather than

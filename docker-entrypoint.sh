@@ -27,7 +27,7 @@ esac
 if [ "$base_path" != "/" ]; then
   # Every page, because each address the build wrote is a file of its own and
   # any of them can be the one a visitor opens first.
-  find "$root" -name index.html -type f | while IFS= read -r page; do
+  find "$root" -name '*.html' -type f | while IFS= read -r page; do
     awk -v href="$base_path" '
       !stamped && index($0, "<base href=\"/\" />") > 0 {
         at = index($0, "<base href=\"/\" />")
@@ -45,7 +45,7 @@ if [ -n "$TRACKING_SCRIPT" ]; then
   # Every page, not only the root one: the build writes one file per address so
   # each is titled and described as itself, and a visitor arriving on any of
   # them must be counted the same way.
-  find "$root" -name index.html -type f | while IFS= read -r page; do
+  find "$root" -name '*.html' -type f | while IFS= read -r page; do
     # Written with index()/substr() rather than sub(): the snippet is operator
     # input taken verbatim, and a `&` in it would otherwise be read as the match.
     awk '
