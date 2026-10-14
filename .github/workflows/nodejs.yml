@@ -1,6 +1,12 @@
 name: Node.js CI
 
+# The repository is public, so these minutes are free: the unit, type, lint and
+# format gate runs on every push and every pull request.
 on:
+  push:
+    branches:
+      - main
+  pull_request:
   workflow_dispatch:
 
 jobs:
