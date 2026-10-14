@@ -61,15 +61,22 @@ test('the app opens on the molecule workbench, with its pages and utilities', as
     'Cheatsheet',
   ]);
 
-  // About first, then Cite, Tools and Share: the order every site of the family
-  // keeps, so somebody who has learned where to cite one has learned them all.
+  // About first, then Cite, Tools and Contact, with Share last: the order every
+  // site of the family keeps, so somebody who has learned where to cite one has
+  // learned them all.
   const utilities = await page
     .locator('.app-header-actions')
     .locator('a[aria-label], button[aria-label]')
     .evaluateAll((nodes) =>
       nodes.map((node) => node.getAttribute('aria-label')),
     );
-  expect(utilities).toStrictEqual(['About', 'Cite', 'Tools', 'Share']);
+  expect(utilities).toStrictEqual([
+    'About',
+    'Cite',
+    'Tools',
+    'Contact',
+    'Share',
+  ]);
 
   // The wordmark writes the name in the two colours the site owns, split at its
   // own capital, with no domain after it.

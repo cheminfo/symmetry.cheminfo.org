@@ -1,6 +1,12 @@
 name: End-to-end tests
 
+# The repository is public, so these minutes are free: the suite that
+# `npm run build` gates on is the suite every push and every pull request runs.
 on:
+  push:
+    branches:
+      - main
+  pull_request:
   workflow_dispatch:
 
 jobs:

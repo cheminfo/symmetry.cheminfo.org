@@ -107,9 +107,9 @@ export function App(): ReactElement {
               />
               <CiteButton works={ABOUT.cite ?? []} />
               <EcosystemButton currentSiteId="symmetry" />
-              <ShareButton />
             </>
           }
+          share={<ShareButton />}
         />
 
         {/*
