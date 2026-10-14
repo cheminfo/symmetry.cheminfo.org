@@ -100,6 +100,12 @@ test('the dialog writes a link and an iframe, and the link reopens the page', as
   expect(frame).toMatch(/height="640"/);
   expect(frame).toMatch(/title="symmetry\.cheminfo\.org — Plane"/);
 
+  // Copying is the last thing one does in the dialog, so it closes itself on
+  // the way out. Open it again to go on configuring the link.
+  await expect(dialog).toBeHidden();
+  await page.getByRole('button', { name: 'Share' }).click();
+  await expect(dialog).toBeVisible();
+
   await dialog.getByText('Embed in another page', { exact: true }).click();
   await expect.poll(href).toMatch(/\/plane\?embed=1&planeGroup=p4g&tiles=3$/);
 
