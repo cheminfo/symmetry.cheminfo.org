@@ -4,11 +4,20 @@
  * Pure string to list: no `window`, no state, so both directions are unit
  * tested on their own. The whole site's vocabulary is read, not the open page's
  * — a link that hides the character table stays in force while the reader walks
- * to the page that has one.
+ * to the page that has one. The reading itself — trimmed names, unknown ones dropped,
+ * one canonical order — is `react-cheminfo`'s share configuration.
  */
 
+import type { ShareVocabulary } from 'react-cheminfo/core';
+import {
+  applyShareConfig,
+  formatQueryString,
+  parseQueryString,
+  parseShareConfig,
+} from 'react-cheminfo/core';
+
 import type { SharePartId } from './parts.ts';
-import { SHARE_PART_IDS } from './parts.ts';
+import { HIDE_PARAM, SHARE_PARTS, SHARE_PART_IDS } from './parts.ts';
 
 /**
  * Read the hidden parts out of a `hide` parameter.
@@ -21,11 +30,10 @@ import { SHARE_PART_IDS } from './parts.ts';
  */
 export function parseHidden(value: string | undefined): SharePartId[] {
   if (value === undefined) return [];
-  const asked = new Set<string>();
-  for (const name of value.split(',')) asked.add(name.trim());
+  const search = formatQueryString({ [HIDE_PARAM]: value });
   const hidden: SharePartId[] = [];
-  for (const id of SHARE_PART_IDS) {
-    if (asked.has(id)) hidden.push(id);
+  for (const key of parseShareConfig(search, SITE_PARTS).hidden) {
+    if (isSharePartId(key)) hidden.push(key);
   }
   return hidden;
 }
@@ -37,12 +45,12 @@ export function parseHidden(value: string | undefined): SharePartId[] {
  * @returns The parameter value, or an empty string when nothing is hidden.
  */
 export function serializeHidden(hidden: readonly SharePartId[]): string {
-  const asked = new Set<string>(hidden);
-  const names: string[] = [];
-  for (const id of SHARE_PART_IDS) {
-    if (asked.has(id)) names.push(id);
-  }
-  return names.join(',');
+  const search = applyShareConfig(
+    '',
+    { embed: false, hidden, params: {} },
+    SITE_PARTS,
+  );
+  return parseQueryString(search)[HIDE_PARAM] ?? '';
 }
 
 /**
@@ -56,3 +64,8 @@ export function isSharePartId(value: string): value is SharePartId {
   }
   return false;
 }
+
+/** Every part of the site, in the order `?hide=` lists them. */
+const SITE_PARTS: ShareVocabulary = {
+  parts: SHARE_PART_IDS.map((id) => SHARE_PARTS[id]),
+};

@@ -21,7 +21,6 @@ export {
   DISPLAY_FLAG_KEYS,
   isDisplayFlagKey,
 } from './displayFlags.ts';
-export { clearStoredBucket, persistBucket } from './persist.ts';
 export type {
   ExerciseProgress,
   ExerciseStatus,

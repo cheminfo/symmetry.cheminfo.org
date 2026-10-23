@@ -10,6 +10,7 @@
 
 import type { ShareParamValues } from 'react-cheminfo/core';
 import {
+  formatQueryString,
   integerParam,
   parseShareConfig,
   stringParam,
@@ -22,8 +23,6 @@ import {
   TILES_RANGE,
 } from '../state/ranges.ts';
 import { DEFAULT_PLANE_GROUP } from '../state/view.ts';
-
-import { toSearch } from './query.ts';
 
 /** The longest id a link may name, in characters. */
 const MAX_ID_LENGTH = 64;
@@ -84,7 +83,7 @@ export type ShareParamSet = ShareParamValues<ShareParams>;
 export function readShareParams(
   query: Readonly<Record<string, string>>,
 ): ShareParamSet {
-  return parseShareConfig(toSearch(query), {
+  return parseShareConfig(formatQueryString(query, { keepEmptyValues: true }), {
     parts: [],
     params: SHARE_PARAMS,
   }).params;

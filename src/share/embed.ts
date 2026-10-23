@@ -8,9 +8,11 @@
  */
 
 import type { ShareVocabulary } from 'react-cheminfo/core';
-import { isHidden, parseShareConfig } from 'react-cheminfo/core';
-
-import { toSearch } from './query.ts';
+import {
+  formatQueryString,
+  isHidden,
+  parseShareConfig,
+} from 'react-cheminfo/core';
 
 export { EMBED_PARAM } from 'react-cheminfo/core';
 
@@ -34,6 +36,9 @@ const CHROME_VOCABULARY: ShareVocabulary = {
  * @returns True when the page must render without header, bar and footer.
  */
 export function parseEmbed(query: Readonly<Record<string, string>>): boolean {
-  const config = parseShareConfig(toSearch(query), CHROME_VOCABULARY);
+  const config = parseShareConfig(
+    formatQueryString(query, { keepEmptyValues: true }),
+    CHROME_VOCABULARY,
+  );
   return config.embed || isHidden(config, LEGACY_HEADER_PART);
 }

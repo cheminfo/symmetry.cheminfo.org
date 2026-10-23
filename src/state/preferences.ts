@@ -8,12 +8,12 @@
  */
 
 import type { Signal } from '@preact/signals-react';
-import { signal } from '@preact/signals-react';
+import { effect, signal } from '@preact/signals-react';
 import type { ExerciseStatus } from 'react-cheminfo/core';
+import { persistSignalBucket } from 'react-cheminfo/core';
 
 import type { DisplayFlagKey } from './displayFlags.ts';
 import { DISPLAY_FLAGS } from './displayFlags.ts';
-import { persistBucket } from './persist.ts';
 
 /** How a symmetry element is named on screen. */
 export type Notation = 'schoenflies' | 'hermann-mauguin';
@@ -29,23 +29,31 @@ export interface ExerciseProgress {
   showSolution: boolean;
 }
 
-const display = persistBucket('symmetry:preferences', {
-  /**
-   * Schoenflies by default: it is what a molecule is named in, and it is what a
-   * first course meets first. The crystal workbench offers the other one.
-   */
-  notation: signal<Notation>('schoenflies'),
-  /**
-   * One signal per layer, so a chip re-renders only its own consumers. Built
-   * from {@link DISPLAY_FLAGS} so the chip bar and the stored defaults cannot
-   * name two different sets.
-   */
-  flags: defaultFlags(),
+const display = persistSignalBucket({
+  key: 'symmetry:preferences',
+  effect,
+  bucket: {
+    /**
+     * Schoenflies by default: it is what a molecule is named in, and it is what a
+     * first course meets first. The crystal workbench offers the other one.
+     */
+    notation: signal<Notation>('schoenflies'),
+    /**
+     * One signal per layer, so a chip re-renders only its own consumers. Built
+     * from {@link DISPLAY_FLAGS} so the chip bar and the stored defaults cannot
+     * name two different sets.
+     */
+    flags: defaultFlags(),
+  },
 });
 
-const exercises = persistBucket('symmetry:exercises', {
-  /** Progress by exercise id. Absent ids read as {@link defaultProgress}. */
-  progress: signal<Record<string, ExerciseProgress>>({}),
+const exercises = persistSignalBucket({
+  key: 'symmetry:exercises',
+  effect,
+  bucket: {
+    /** Progress by exercise id. Absent ids read as {@link defaultProgress}. */
+    progress: signal<Record<string, ExerciseProgress>>({}),
+  },
 });
 
 /** The `preferences` bucket: plain object, signal leaves, never reassigned. */

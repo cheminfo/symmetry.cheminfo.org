@@ -17,28 +17,26 @@
  * addresses for one page is the second front door the family forbids. A link
  * that names it anyway still opens, and the bar is rewritten to `/`.
  *
- * A fragment never reaches the server, so a hash-routed site is one address to
- * every crawler and its pages are folded into a single result; a `#` is also
- * dropped by half the tools that pass links around — LMS editors, chat clients,
- * QR generators. Links written when the tool routed by the hash still open:
- * {@link readRoute} rewrites `#/crystals` to `/crystals` once, in place.
- *
- * The parser and the serialiser are pure: they never touch `window`, and are
- * unit-tested on their own. Only the three helpers at the bottom read or write
- * the real location.
+ * The parsing, the writing, the query codec (a `+` stays a plus, a comma stays
+ * readable) and the adoption of `#/crystals` links are `react-cheminfo`'s
+ * `createTabRouter`. What is here is the site's page list, and the shape the
+ * rest of the site names a route by.
  */
 
+import type { TabRoute } from 'react-cheminfo/core';
 import {
-  adoptLegacyHashAddress,
+  EMBED_PARAM,
+  HIDE_PARAM,
+  createTabRouter,
   formatQueryString,
-  parseQueryString,
+  readRoute as readTabRoute,
+  subscribeToRoute as subscribeToTabRoute,
+  writeRoute as writeTabRoute,
 } from 'react-cheminfo/core';
 
-import { pathWithoutBase, withBase } from '../state/site.ts';
+import { BASE_PATH } from '../state/site.ts';
 import type { TabId } from '../state/tabs.ts';
-import { DEFAULT_TAB, isTabId } from '../state/tabs.ts';
-
-import { splitPath, splitQuery } from './address.ts';
+import { DEFAULT_TAB, TAB_IDS } from '../state/tabs.ts';
 
 /** Where the app is: which page, what that page has open, and how it is set up. */
 export interface Route {
@@ -64,36 +62,25 @@ export const DEFAULT_ROUTE: Route = { tab: DEFAULT_TAB, id: null, query: {} };
  * all resolve to something sensible rather than throwing, because the address
  * is hand-editable and arrives from bookmarks, lecture slides and course pages
  * — including ones written for the hash the tool used to route by.
- * @param address - Path and query, with or without a leading `#` or `/`.
+ * @param address - Path and query, from the site's own root.
  * @returns The route it denotes, or {@link DEFAULT_ROUTE} when it denotes none.
  */
 export function parseAddress(address: string): Route {
-  const { path, search } = splitQuery(address);
-  const query = parseQueryString(search);
-  const segments = splitPath(path);
-  const tab = segments[0];
-  if (tab === undefined || !isTabId(tab)) {
-    return { tab: DEFAULT_TAB, id: null, query };
-  }
-  const id = segments[1];
-  if (id === undefined || id === '' || !tabTakesId(tab)) {
-    return { tab, id: null, query };
-  }
-  return { tab, id, query };
+  return routeOf(SITE_ROUTER.parse(address));
 }
 
 /**
  * Serialise a route into the address that parses back to it.
  * @param route - Route to serialise.
- * @returns An absolute path, with its query when it carries one.
+ * @returns An absolute path from the site's own root, with its query when it
+ * carries one.
  */
 export function formatRoute(route: Route): string {
-  const path =
-    route.id === null || !tabTakesId(route.tab)
-      ? pathOf(route.tab)
-      : `${pathOf(route.tab)}/${encodeURIComponent(route.id)}`;
-  const search = formatQueryString(route.query);
-  return search === '' ? path : `${path}?${search}`;
+  return SITE_ROUTER.format({
+    tab: route.tab,
+    id: route.id,
+    params: route.query,
+  });
 }
 
 /**
@@ -105,7 +92,7 @@ export function formatRoute(route: Route): string {
  * @returns Its path, from the site's own root.
  */
 export function pathOf(tab: TabId): string {
-  return tab === 'molecules' ? '/' : `/${tab}`;
+  return SITE_ROUTER.format({ tab });
 }
 
 /**
@@ -145,21 +132,13 @@ export function routesEqual(first: Route, second: Route): boolean {
 /**
  * Read the route the browser is currently showing.
  *
- * A link written for the hash the tool used to route by — the old
- * cristallOgraph addresses were all fragments — is rewritten to its path once,
- * in place, so a course page made years ago opens the page it names.
+ * A link written for the hash the tool used to route by is rewritten to its
+ * path once, in place, so a course page made years ago opens the page it
+ * names.
  * @returns The parsed address.
  */
 export function readRoute(): Route {
-  const { pathname, search, hash } = window.location;
-  const path = pathWithoutBase(pathname);
-  const legacy = adoptLegacyHashAddress(`${path}${search}${hash}`);
-  if (legacy !== null) {
-    const route = parseAddress(legacy);
-    window.history.replaceState(null, '', withBase(formatRoute(route)));
-    return route;
-  }
-  return parseAddress(`${path}${search}`);
+  return routeOf(readTabRoute(PAGE_ROUTER));
 }
 
 /**
@@ -170,34 +149,71 @@ export function readRoute(): Route {
  * it instead: the link stays shareable, but eighteen tutorial steps do not bury
  * the back button under eighteen entries. Writing the address the location
  * already carries is skipped, so echoing state back into the URL cannot loop.
+ *
+ * The address written is exactly the route's: the framing and the hidden parts
+ * are part of the state, so a `hide` the state dropped is dropped from the bar.
  * @param route - Route to show.
  */
 export function writeRoute(route: Route): void {
-  const address = formatRoute(route);
-  const { pathname, search } = window.location;
-  const current = `${pathWithoutBase(pathname)}${search}`;
-  if (current === address) return;
-  const mounted = withBase(address);
-  // Neither call fires `popstate`, so this cannot echo back through the
-  // subscription below.
-  if (parseAddress(current).tab === route.tab) {
-    window.history.replaceState(null, '', mounted);
-    return;
+  writing = true;
+  try {
+    writeTabRoute(PAGE_ROUTER, {
+      tab: route.tab,
+      id: route.id,
+      params: namingShareParams(route.query),
+    });
+  } finally {
+    writing = false;
   }
-  window.history.pushState(null, '', mounted);
 }
 
 /**
  * Follow the browser's own navigation — back, forward, an edited address bar.
- * @param listener - Called with the new route on every `popstate`.
+ *
+ * The app's own writes are not reported: the state they come from is already
+ * on screen, and applying it again would reload what the visitor is working
+ * on under their hands.
+ * @param listener - Called with the new route on every move of the browser.
  * @returns A function removing the listener.
  */
 export function subscribeToRoute(listener: (route: Route) => void): () => void {
-  function handlePopState(): void {
-    listener(readRoute());
+  return subscribeToTabRoute(PAGE_ROUTER, (route) => {
+    if (!writing) listener(routeOf(route));
+  });
+}
+
+const ROUTER_OPTIONS = {
+  tabs: TAB_IDS.map((id) => ({ id, takesId: tabTakesId(id) })),
+  home: DEFAULT_TAB,
+  adoptLegacyHash: true,
+};
+
+/** Addresses from the site's own root: what the tests and the head read. */
+const SITE_ROUTER = createTabRouter<TabId>(ROUTER_OPTIONS);
+
+/** The same addresses under the mount path, as the browser shows them. */
+const PAGE_ROUTER = createTabRouter<TabId>({
+  ...ROUTER_OPTIONS,
+  basePath: BASE_PATH,
+});
+
+/** Whether {@link writeRoute} is moving the browser right now. */
+let writing = false;
+
+function routeOf(route: TabRoute<TabId>): Route {
+  return { tab: route.tab, id: route.id, query: route.params };
+}
+
+/**
+ * The query with the share parameters named even when it does not carry them,
+ * so the router removes them rather than keeping the ones on screen.
+ */
+function namingShareParams(
+  query: Record<string, string>,
+): Record<string, string | null> {
+  const params: Record<string, string | null> = { ...query };
+  for (const key of [EMBED_PARAM, HIDE_PARAM]) {
+    if (!Object.hasOwn(params, key)) params[key] = null;
   }
-  window.addEventListener('popstate', handlePopState);
-  return () => {
-    window.removeEventListener('popstate', handlePopState);
-  };
+  return params;
 }
