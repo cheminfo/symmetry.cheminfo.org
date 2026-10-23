@@ -23,6 +23,8 @@ services:
       retries: 3
       start_period: 10s
     init: true
+    # Nothing is bind-mounted, so nothing here needs root.
+    user: '65534:65534'
     restart: unless-stopped
     stop_grace_period: 30s
     read_only: true
@@ -59,6 +61,8 @@ services:
     # every version of the CLI.
     command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
     init: true
+    # cloudflared's own nonroot user, stated so an image change cannot drop it.
+    user: '65532:65532'
     restart: unless-stopped
     read_only: true
     security_opt:
