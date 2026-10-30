@@ -1,24 +1,23 @@
-import { expect, test } from 'vitest';
-
 import {
   DESCRIPTION_MAX,
   DESCRIPTION_MIN,
   DESCRIPTION_TARGET,
-  count,
-  describe,
-  withArticle,
-} from '../describe.ts';
+  fitDescription,
+} from 'react-cheminfo/core';
+import { expect, test } from 'vitest';
+
+import { count, withArticle } from '../describe.ts';
 
 const BASE = 'Space group 1, P 1: triclinic, primitive lattice, class 1.';
 
 test('a base already long enough is left exactly as it was written', () => {
   const base = 'x'.repeat(DESCRIPTION_TARGET);
-  expect(describe(base, [['never used.']])).toBe(base);
+  expect(fitDescription(base, [['never used.']])).toBe(base);
 });
 
 test('the longest clause that still fits is the one taken', () => {
   expect(
-    describe(BASE, [
+    fitDescription(BASE, [
       [
         'A clause far too long to fit beside a base of fifty-eight characters, and then some more of it to be sure.',
         'Symmorphic and Sohncke, so one enantiomer can crystallise in it.',
@@ -33,14 +32,14 @@ test('the longest clause that still fits is the one taken', () => {
 test('at most one clause of a choice is used, however often it is offered', () => {
   const clause =
     'Symmorphic and Sohncke, so one enantiomer can crystallise in it.';
-  const text = describe(BASE, [[clause, clause, clause]]);
+  const text = fitDescription(BASE, [[clause, clause, clause]]);
 
   expect(text.split(clause)).toHaveLength(2);
   expect(text.length).toBe(123);
 });
 
 test('growing stops at the target, so a later choice is left off', () => {
-  const text = describe(BASE, [
+  const text = fitDescription(BASE, [
     [
       'Centrosymmetric, with a glide plane or a screw axis that no origin removes.',
     ],
@@ -52,24 +51,12 @@ test('growing stops at the target, so a later choice is left off', () => {
 
 test('an empty choice contributes nothing and the next one is tried', () => {
   expect(
-    describe(BASE, [
+    fitDescription(BASE, [
       [],
       ['Six settings of it are tabulated, on other axes or origins.'],
     ]),
   ).toBe(
     'Space group 1, P 1: triclinic, primitive lattice, class 1. Six settings of it are tabulated, on other axes or origins.',
-  );
-});
-
-test('a description that cannot reach the floor is refused where it is written', () => {
-  expect(() => describe('Too short.')).toThrow(
-    /a page description is 110 to 160 characters; this one is 10: Too short\./,
-  );
-});
-
-test('a base already past the ceiling is refused rather than truncated', () => {
-  expect(() => describe('y'.repeat(DESCRIPTION_MAX + 1))).toThrow(
-    /this one is 161/,
   );
 });
 

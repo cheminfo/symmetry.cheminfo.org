@@ -1,10 +1,14 @@
-import { assertRoutes, pageMetaFor } from 'react-cheminfo/core';
+import {
+  DESCRIPTION_MAX,
+  DESCRIPTION_MIN,
+  assertRoutes,
+  pageMetaFor,
+} from 'react-cheminfo/core';
 import { expect, test } from 'vitest';
 
 import { FRIEZE_GROUPS } from '../../data/friezeGroups.ts';
 import { WALLPAPER_GROUPS } from '../../data/planeGroups.ts';
 import { POINT_GROUPS } from '../../data/pointGroups.ts';
-import { DESCRIPTION_MAX, DESCRIPTION_MIN } from '../describe.ts';
 import { exerciseRoutes, tutorialRoutes } from '../lessonRoutes.ts';
 import { friezeRoutes, wallpaperRoutes } from '../planeGroupRoutes.ts';
 import { pointGroupRoutes } from '../pointGroupRoutes.ts';

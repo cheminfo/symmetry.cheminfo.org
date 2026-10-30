@@ -53,21 +53,12 @@ a {
   color: var(--accent);
 }
 
-/* The tool fills the screen it is opened on and grows past it when what is on
+/* The shell fills the screen it is opened on and grows past it when what is on
    the page needs more room. A fixed height would instead let flex shrink the
    panels below their own content, and a Blueprint callout compressed to a few
-   pixels paints its text over whatever follows it. */
-.app-screen {
-  display: flex;
-  min-height: 100dvh;
-  flex-direction: column;
-}
-
-.app-screen > main {
-  flex: 1 1 auto;
-}
-
-.app-main {
+   pixels paints its text over whatever follows it. The page keeps its own
+   gutter, on a phone included, rather than the shell's. */
+.site-shell > .app-main {
   display: flex;
   flex-direction: column;
   padding: 14px;
@@ -122,12 +113,12 @@ a {
  * names and formulas stop sharing a line.
  */
 @media (min-width: 1100px) {
-  .app-screen--panes {
+  .site-shell:has(> .app-main--panes) {
     height: 100dvh;
     min-height: min-content;
   }
 
-  .app-screen > .app-main--panes {
+  .site-shell > .app-main--panes {
     overflow: auto;
     min-height: 34rem;
     flex: 1 1 1px;
@@ -179,7 +170,7 @@ a {
 /* A phone has no width to spend on nested gutters: the page and its cards keep
    just enough to separate an edge from a line of text. */
 @media (max-width: 600px) {
-  .app-main {
+  .site-shell > .app-main {
     padding: 4px;
   }
 

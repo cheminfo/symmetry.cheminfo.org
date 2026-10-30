@@ -2,7 +2,6 @@ import { expect, test } from 'vitest';
 
 import {
   boundingSphereOf,
-  framedRadius,
   primitivesExtent,
   unionSpheres,
 } from '../framing.ts';
@@ -63,9 +62,4 @@ test('a ball is measured by its own radius, not by its centre alone', () => {
     primitivesExtent([{ shape: 'sphere', centre: [0, 0, 0], radius: 3 }])
       .radius,
   ).toBe(3);
-});
-
-test('the framed radius leaves a margin and never frames tighter than the minimum', () => {
-  expect(framedRadius(10, 0.1)).toBeCloseTo(11, 12);
-  expect(framedRadius(0.01)).toBe(0.5);
 });

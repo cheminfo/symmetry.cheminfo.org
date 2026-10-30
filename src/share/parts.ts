@@ -198,3 +198,15 @@ export const TAB_PARTS: Record<TabId, readonly SharePartId[]> = {
 export function partsOf(tab: TabId): readonly SharePartId[] {
   return TAB_PARTS[tab];
 }
+
+/**
+ * Whether a string names one of the hideable parts.
+ * @param value - Candidate name.
+ * @returns True when it is a {@link SharePartId}.
+ */
+export function isSharePartId(value: string): value is SharePartId {
+  for (const id of SHARE_PART_IDS) {
+    if (id === value) return true;
+  }
+  return false;
+}

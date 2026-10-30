@@ -13,10 +13,14 @@
  */
 
 import type { PluginContext } from 'molstar/lib/mol-plugin/context.js';
-import { MolstarPlugin, setSpin } from 'react-cheminfo/molstar/core';
+import {
+  MolstarPlugin,
+  focusPoint,
+  setSpin,
+  subscribeHoverLabel,
+} from 'react-cheminfo/molstar/core';
 
-import { DEFAULT_CAMERA_DURATION, focusPoint, resetCamera } from './camera.ts';
-import { subscribeViewerHover } from './hover.ts';
+import { DEFAULT_CAMERA_DURATION, resetCamera } from './camera.ts';
 import type { ViewOrientation } from './orientation.ts';
 import type { Point3 } from './types.ts';
 
@@ -96,7 +100,7 @@ export class ViewerPlugin {
     orientation?: ViewOrientation,
   ): Promise<void> {
     return this.run((plugin) => {
-      focusPoint(plugin, centre, radius, durationMs, orientation);
+      focusPoint(plugin, centre, radius, { durationMs, orientation });
     });
   }
 
@@ -114,14 +118,19 @@ export class ViewerPlugin {
   }
 
   /**
-   * Report what the pointer rests on, by the label its drawing carries.
+   * Report what the pointer rests on, by the label its drawing carries. Every
+   * axis, plane and centre is drawn with a label already — `C3 along [111]`,
+   * `n glide at x = ¼` — and an atom is named `O 1`, never by the row molstar
+   * parsed it from.
    *
    * @param listener - Called with the label, or `null` over nothing.
    * @returns A function that stops the reporting; safe to call at any time.
    */
   onHover(listener: (label: string | null) => void): () => void {
     return this.#plugin.subscribe((plugin) =>
-      subscribeViewerHover(plugin, listener),
+      subscribeHoverLabel(plugin, (hover) => {
+        listener(hover === null ? null : hover.label);
+      }),
     );
   }
 

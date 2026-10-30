@@ -1,6 +1,11 @@
 import { expect, test } from 'vitest';
 
-import { parseEmbed } from '../embed.ts';
+import { readShareConfig } from '../vocabulary.ts';
+
+/** Whether a decoded query frames the page. */
+function parseEmbed(query: Record<string, string>): boolean {
+  return readShareConfig(query).embed;
+}
 
 test('a page with no embed parameter keeps its chrome', () => {
   expect(parseEmbed({})).toBe(false);

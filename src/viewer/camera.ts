@@ -4,7 +4,8 @@
  * What is on screen is measured here rather than read off molstar, for the
  * reason `framing.ts` gives: a representation's own bounding sphere is padded by
  * the largest ball it could ever draw. Each part of the scene registers its
- * extent as it is drawn, and the camera frames the union.
+ * extent as it is drawn, and the camera frames the union — the framing itself,
+ * and the union, are `react-cheminfo`'s.
  */
 
 import { Sphere3D } from 'molstar/lib/mol-math/geometry.js';
@@ -12,13 +13,22 @@ import { Vec3 } from 'molstar/lib/mol-math/linear-algebra.js';
 import type { PluginContext } from 'molstar/lib/mol-plugin/context.js';
 import {
   DEFAULT_CAMERA_DURATION,
-  MINIMUM_FRAMING_RADIUS,
+  resetCamera as frameScene,
 } from 'react-cheminfo/molstar/core';
 
 import type { SceneSphere } from './framing.ts';
-import { framedRadius, unionSpheres } from './framing.ts';
 import type { ViewOrientation } from './orientation.ts';
-import type { Point3 } from './types.ts';
+
+/**
+ * The scene is measured as the ball through its furthest corners, and a camera
+ * fitting that ball to the window leaves a cell filling barely half of it: a
+ * cube touches its own circumscribed sphere only at eight corners, and uses
+ * about 82% of its diameter even seen square-on. So the ball handed to the
+ * camera is **smaller** than the one measured, by about the slack that costs.
+ * Nothing is cut at the orientations a cell is read at, and the reader can
+ * always pull back.
+ */
+const SCENE_MARGIN = -0.12;
 
 /**
  * Record how far one part of the scene reaches.
@@ -34,21 +44,15 @@ export function setSceneExtent(
 ): void {
   let parts = extents.get(plugin);
   if (parts === undefined) {
-    parts = new Map<string, SceneSphere>();
+    parts = new Map<string, Sphere3D>();
     extents.set(plugin, parts);
   }
-  if (sphere === null) parts.delete(key);
-  else parts.set(key, sphere);
-}
-
-/**
- * Everything registered, as one ball.
- *
- * @param plugin - The molstar context.
- * @returns The scene's extent; a point at the origin when nothing is drawn.
- */
-export function sceneExtent(plugin: PluginContext): SceneSphere {
-  return unionSpheres([...(extents.get(plugin)?.values() ?? [])]);
+  if (sphere === null) {
+    parts.delete(key);
+    return;
+  }
+  const [x, y, z] = sphere.centre;
+  parts.set(key, Sphere3D.create(Vec3.create(x, y, z), sphere.radius));
 }
 
 /**
@@ -65,76 +69,15 @@ export function resetCamera(
   durationMs = DEFAULT_CAMERA_DURATION,
   orientation?: ViewOrientation,
 ): void {
-  const scene = sceneExtent(plugin);
-  if (scene.radius <= 0) {
-    plugin.managers.camera.reset(undefined, durationMs);
-    return;
-  }
-  focusPoint(
-    plugin,
-    scene.centre,
-    framedRadius(scene.radius),
+  frameScene(plugin, {
+    spheres: [...(extents.get(plugin)?.values() ?? [])],
+    margin: SCENE_MARGIN,
     durationMs,
     orientation,
-  );
-}
-
-/**
- * Zoom onto one point of the scene.
- *
- * @param plugin - The molstar context.
- * @param centre - What to frame, Cartesian ångström.
- * @param radius - Radius of the ball to fit, ångström.
- * @param durationMs - Transition length; 0 jumps.
- * @param orientation - Where to look from; the current direction when absent.
- */
-export function focusPoint(
-  plugin: PluginContext,
-  centre: Point3,
-  radius: number,
-  durationMs = DEFAULT_CAMERA_DURATION,
-  orientation?: ViewOrientation,
-): void {
-  // add() only queues, and a queued object belongs to no bounding sphere yet,
-  // so framing right after drawing would frame the scene without it.
-  plugin.canvas3d?.commit(true);
-  const target = Vec3.create(centre[0], centre[1], centre[2]);
-  const camera = plugin.canvas3d?.camera;
-  if (orientation !== undefined && camera !== undefined) {
-    // `focusSphere` keeps whichever way the camera already points, and the way
-    // it points when a canvas opens is straight down −z. `getInvariantFocus`
-    // is the one that takes a direction and an up and uses both as given —
-    // `getFocus` only matches their sign against the current camera, so half
-    // the scenes would come back looking from the other side.
-    plugin.managers.camera.setSnapshot(
-      camera.getInvariantFocus(
-        target,
-        Math.max(radius, MINIMUM_FRAMING_RADIUS),
-        Vec3.create(...orientation.up),
-        // The direction a camera looks along runs from the eye to what it is
-        // looking at, so it is the opposite of where the eye sits.
-        Vec3.create(...negated(orientation.eye)),
-      ),
-      durationMs,
-    );
-    return;
-  }
-  plugin.managers.camera.focusSphere(
-    Sphere3D.create(target, radius),
-    // `extraRadius` defaults to 4 A, which is the very padding this module
-    // measures the scene itself to avoid: it left water filling a twentieth of
-    // the canvas and benzene a quarter of it. The margin is already in
-    // `framedRadius`, so nothing is added here.
-    { extraRadius: 0, minRadius: MINIMUM_FRAMING_RADIUS, durationMs },
-  );
-}
-
-/** The other way round, so a direction can be turned into a camera place. */
-function negated(vector: Point3): Point3 {
-  return [-vector[0], -vector[1], -vector[2]];
+  });
 }
 
 /** What each part of the scene reaches, per plugin. */
-const extents = new WeakMap<PluginContext, Map<string, SceneSphere>>();
+const extents = new WeakMap<PluginContext, Map<string, Sphere3D>>();
 
 export { DEFAULT_CAMERA_DURATION } from 'react-cheminfo/molstar/core';

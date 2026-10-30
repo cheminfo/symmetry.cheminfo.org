@@ -1,6 +1,12 @@
 import { expect, test } from 'vitest';
 
-import { readShareParams } from '../params.ts';
+import type { ShareParamSet } from '../params.ts';
+import { readShareConfig } from '../vocabulary.ts';
+
+/** Every setting a decoded query carries. */
+function readShareParams(query: Record<string, string>): ShareParamSet {
+  return readShareConfig(query).params;
+}
 
 test('a link that says nothing leaves every setting at its default', () => {
   expect(readShareParams({})).toStrictEqual({

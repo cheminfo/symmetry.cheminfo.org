@@ -30,12 +30,7 @@ export { plainName } from './labelText.ts';
 export type { PlaneFrame } from './frame.ts';
 export { perpendicularTo, planeFrame } from './frame.ts';
 export type { SceneSphere } from './framing.ts';
-export {
-  boundingSphereOf,
-  framedRadius,
-  primitivesExtent,
-  unionSpheres,
-} from './framing.ts';
+export { boundingSphereOf, primitivesExtent, unionSpheres } from './framing.ts';
 export type { OrientedScene, ViewOrientation } from './orientation.ts';
 export {
   principalAxisOf,

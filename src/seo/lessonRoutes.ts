@@ -8,8 +8,7 @@
  */
 
 import type { RouteMeta } from 'react-cheminfo/core';
-
-import { describe } from './describe.ts';
+import { fitDescription } from 'react-cheminfo/core';
 
 /** What a route needs from one tutorial step or one exercise. */
 export interface LessonEntry {
@@ -34,7 +33,7 @@ export function tutorialRoutes(
     // characters, and a search result cuts a title at about 60 before the
     // site name is even added. Which step it is, the description says.
     title: step.title,
-    description: describe(step.summary, [
+    description: fitDescription(step.summary, [
       [
         `Step ${index + 1} of ${steps.length} of the symmetry tutorial, worked in a live 3D view.`,
         `Step ${index + 1} of ${steps.length} of the symmetry tutorial.`,
@@ -55,7 +54,7 @@ export function exerciseRoutes(
   return exercises.map((exercise, index) => ({
     path: `/exercises/${exercise.id}`,
     title: `${exercise.title} — symmetry exercise ${index + 1}`,
-    description: describe(exercise.summary, [
+    description: fitDescription(exercise.summary, [
       [
         `Exercise ${index + 1} of ${exercises.length}, checked as you type, with hints and an answer you can reveal.`,
         `Exercise ${index + 1} of ${exercises.length}, checked as you type.`,

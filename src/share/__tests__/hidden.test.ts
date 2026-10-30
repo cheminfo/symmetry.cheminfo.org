@@ -1,7 +1,18 @@
+import { formatHiddenParts, readHiddenParts } from 'react-cheminfo/core';
 import { expect, test } from 'vitest';
 
-import { isSharePartId, parseHidden, serializeHidden } from '../hidden.ts';
-import { SHARE_PARTS, SHARE_PART_IDS } from '../parts.ts';
+import { SHARE_PARTS, SHARE_PART_IDS, isSharePartId } from '../parts.ts';
+import { SITE_VOCABULARY } from '../vocabulary.ts';
+
+/** The parts a `?hide=` value leaves out, read with the site's whole list. */
+function parseHidden(value: string | undefined): readonly string[] {
+  return readHiddenParts(value, SITE_VOCABULARY.parts);
+}
+
+/** A `?hide=` value, written with the site's whole list. */
+function serializeHidden(hidden: readonly string[]): string {
+  return formatHiddenParts(hidden, SITE_VOCABULARY.parts);
+}
 
 test('an absent parameter hides nothing', () => {
   expect(parseHidden(undefined)).toStrictEqual([]);

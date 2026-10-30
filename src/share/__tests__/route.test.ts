@@ -2,7 +2,7 @@ import { beforeEach, expect, test } from 'vitest';
 
 import { state } from '../../state/index.ts';
 import { formatRoute, parseAddress } from '../../utils/router.ts';
-import { defaultFlagsValue } from '../flags.ts';
+import { DEFAULT_LAYERS } from '../flags.ts';
 import { applyRoute, currentRoute } from '../route.ts';
 
 /** The address the state says it is on, in its canonical form. */
@@ -19,7 +19,7 @@ function open(value: string): string {
 beforeEach(() => {
   // The layers are stored preferences, so one test's link would otherwise be
   // in force in the next.
-  open(`/?flags=${defaultFlagsValue()}`);
+  open(`/?flags=${DEFAULT_LAYERS.join(',')}`);
 });
 
 test('a plain visit keeps a plain address', () => {
@@ -35,7 +35,7 @@ test('a link naming a setting already at its default writes it no more', () => {
     '/crystals',
   );
   expect(open('/plane?planeGroup=p4m&tiles=4')).toBe('/plane');
-  expect(open(`/?flags=${defaultFlagsValue()}`)).toBe('/');
+  expect(open(`/?flags=${DEFAULT_LAYERS.join(',')}`)).toBe('/');
 });
 
 test('what each workbench is showing survives parse, apply and parse', () => {

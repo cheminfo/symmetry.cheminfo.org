@@ -14,6 +14,7 @@
  */
 
 import type { RouteMeta } from 'react-cheminfo/core';
+import { fitDescription } from 'react-cheminfo/core';
 
 import type { Centring, SpaceGroupSetting } from '../data/spaceGroups.ts';
 import {
@@ -22,7 +23,7 @@ import {
   spaceGroupSettings,
 } from '../symmetry/spaceGroups.ts';
 
-import { count, describe } from './describe.ts';
+import { count } from './describe.ts';
 
 const CENTRING_WORD: Readonly<Record<Centring, string>> = {
   P: 'primitive',
@@ -55,7 +56,7 @@ export function spaceGroupRoute(number: number): RouteMeta {
   return {
     path: `/space-groups/${number}`,
     title: `${compact} — space group ${number}, ${setting.crystalSystem}`,
-    description: describe(baseOf(setting, compact), extrasOf(setting)),
+    description: fitDescription(baseOf(setting, compact), extrasOf(setting)),
     short: compact,
   };
 }

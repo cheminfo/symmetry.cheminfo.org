@@ -9,7 +9,13 @@
  */
 
 import { batch } from '@preact/signals-react';
-import { SPLIT_PARAM, splitParam } from 'react-cheminfo/core';
+import {
+  EMBED_PARAM,
+  HIDE_PARAM,
+  SPLIT_PARAM,
+  formatHiddenParts,
+  splitParam,
+} from 'react-cheminfo/core';
 
 import { structureById } from '../data/structures/index.ts';
 import type { DisplayFlagKey } from '../state/index.ts';
@@ -38,17 +44,11 @@ import {
 import type { TabId } from '../state/tabs.ts';
 import type { Route } from '../utils/router.ts';
 
-import { EMBED_PARAM, parseEmbed } from './embed.ts';
-import {
-  FLAGS_PARAM,
-  defaultFlagsValue,
-  parseFlags,
-  serializeFlags,
-} from './flags.ts';
-import { parseHidden, serializeHidden } from './hidden.ts';
+import { FLAGS, FLAGS_PARAM } from './flags.ts';
 import type { ShareParamSet } from './params.ts';
-import { SHARE_PARAMS, readShareParams } from './params.ts';
-import { HIDE_PARAM } from './parts.ts';
+import { SHARE_PARAMS } from './params.ts';
+import { isSharePartId } from './parts.ts';
+import { SITE_VOCABULARY, readShareConfig } from './vocabulary.ts';
 
 /** The query name of the space group, so the two readers cannot disagree. */
 const SPACE_GROUP_PARAM = 'spaceGroup';
@@ -59,6 +59,9 @@ const SPACE_GROUP_PARAM = 'spaceGroup';
  * `?split=35` means the same thing on every site of it.
  */
 const SPLIT = splitParam();
+
+/** Every part of the site, in the order `?hide=` lists them. */
+const PARTS = SITE_VOCABULARY.parts;
 
 /**
  * Where the state says the visitor is, as a route.
@@ -78,7 +81,7 @@ export function currentRoute(): Route {
   if (tab === 'tutorial') writeSplit(query, state.view.tutorial.split.value);
   if (drawsLayers(tab)) writeFlags(query);
   if (state.view.embedded.value) query[EMBED_PARAM] = '1';
-  const hidden = serializeHidden(state.view.hidden.value);
+  const hidden = formatHiddenParts(state.view.hidden.value, PARTS);
   if (hidden !== '') query[HIDE_PARAM] = hidden;
   return { tab, id: idOf(tab), query };
 }
@@ -94,10 +97,10 @@ export function currentRoute(): Route {
  * @param route - Route to apply.
  */
 export function applyRoute(route: Route): void {
-  const params = readShareParams(route.query);
+  const { embed, hidden, params } = readShareConfig(route.query);
   batch(() => {
-    setEmbedded(parseEmbed(route.query));
-    setHiddenParts(parseHidden(route.query[HIDE_PARAM]));
+    setEmbedded(embed);
+    setHiddenParts(hidden.filter((key) => isSharePartId(key)));
     applyFlags(route.query[FLAGS_PARAM]);
     setActiveTab(route.tab);
     applyPage(route, params);
@@ -152,7 +155,7 @@ function applyPage(route: Route, params: ShareParamSet): void {
 }
 
 function applyFlags(value: string | undefined): void {
-  const flags = parseFlags(value);
+  const flags = FLAGS.parse(value ?? null);
   if (flags === null) return;
   for (const meta of DISPLAY_FLAGS) {
     setDisplayFlag(meta.key, flags.has(meta.key));
@@ -191,19 +194,15 @@ function writeSplit(query: Record<string, string>, split: number | null): void {
 /**
  * The layers, written only when they differ from the site's own defaults: a
  * visitor who has changed nothing must not grow a twelve-name query string.
+ * Every layer is read, so the `effect` tracks all twelve.
  */
 function writeFlags(query: Record<string, string>): void {
-  const value = serializeFlags(readFlags());
-  if (value !== defaultFlagsValue()) query[FLAGS_PARAM] = value;
-}
-
-/** Every layer, read in one place so the `effect` tracks all twelve. */
-function readFlags(): Record<DisplayFlagKey, boolean> {
-  const flags: Partial<Record<DisplayFlagKey, boolean>> = {};
+  const on = new Set<DisplayFlagKey>();
   for (const meta of DISPLAY_FLAGS) {
-    flags[meta.key] = state.preferences.flags[meta.key].value;
+    if (state.preferences.flags[meta.key].value) on.add(meta.key);
   }
-  return flags as Record<DisplayFlagKey, boolean>;
+  const value = FLAGS.serialize(on);
+  if (value !== null) query[FLAGS_PARAM] = value;
 }
 
 function settingIndex(): number {

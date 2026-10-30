@@ -193,6 +193,6 @@ test('the deck records how many hints each solved question took', () => {
   // The open question is the selected option, and it is the only one.
   expect(times(markup, 'aria-selected="true"')).toBe(1);
   expect(markup).toContain(
-    'data-selected="true" class="exercise-deck__item exercise-deck__item--active"',
+    'data-selected="true" class="exercise-list__item exercise-list__item--active"',
   );
 });

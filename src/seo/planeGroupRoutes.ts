@@ -10,12 +10,13 @@
  */
 
 import type { RouteMeta } from 'react-cheminfo/core';
+import { fitDescription } from 'react-cheminfo/core';
 
 import { FRIEZE_GROUPS, FRIEZE_TO_WALLPAPER } from '../data/friezeGroups.ts';
 import { WALLPAPER_GROUPS } from '../data/planeGroups.ts';
 import type { FriezeGroup, WallpaperGroup } from '../symmetry/planeGroups.ts';
 
-import { count, describe, withArticle } from './describe.ts';
+import { count, withArticle } from './describe.ts';
 
 /** `/wallpaper/<id>` for the seventeen ways a pattern repeats in the plane. */
 export function wallpaperRoutes(): readonly RouteMeta[] {
@@ -36,7 +37,7 @@ export function wallpaperRoute(group: WallpaperGroup): RouteMeta {
   return {
     path: `/wallpaper/${group.id}`,
     title: `${group.id} — wallpaper group ${group.number} of 17, ${group.lattice}`,
-    description: describe(base, [
+    description: fitDescription(base, [
       group.full === group.id ? [] : [`Written ${group.full} in full.`],
       [group.example],
       [group.fundamentalDomain],
@@ -55,7 +56,7 @@ export function friezeRoute(group: FriezeGroup): RouteMeta {
   return {
     path: `/frieze/${group.id}`,
     title: `${group.id} — frieze group ${group.number} of 7, the ${group.conway}`,
-    description: describe(base, [
+    description: fitDescription(base, [
       [group.example],
       wallpaper === undefined
         ? []

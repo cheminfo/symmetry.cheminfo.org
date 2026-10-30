@@ -10,7 +10,10 @@
 import type { Signal } from '@preact/signals-react';
 import { effect, signal } from '@preact/signals-react';
 import type { ExerciseStatus } from 'react-cheminfo/core';
-import { persistSignalBucket } from 'react-cheminfo/core';
+import {
+  createProgressController,
+  persistSignalBucket,
+} from 'react-cheminfo/core';
 
 import type { DisplayFlagKey } from './displayFlags.ts';
 import { DISPLAY_FLAGS } from './displayFlags.ts';
@@ -86,76 +89,42 @@ export function setNotation(notation: Notation): void {
 }
 
 /**
+ * The actions on the exercise progress, every one of them replacing the
+ * records rather than mutating them, so whatever renders from them is told.
+ * An exercise nobody has touched reads as {@link defaultProgress}, and a record
+ * is stored with exactly its three fields.
+ */
+const progress = createProgressController(preferences.exercises.progress, {
+  empty: defaultProgress,
+});
+
+/**
  * Read one exercise's progress, defaults included.
  *
  * Reads the signal, so a component calling it re-renders when progress moves.
- * @param id - Exercise id.
- * @returns Its progress, or a fresh default when it has not been touched.
  */
-export function getExerciseProgress(id: string): ExerciseProgress {
-  return { ...defaultProgress(), ...preferences.exercises.progress.value[id] };
-}
+export const getExerciseProgress = progress.getExerciseProgress;
+
+/** Record an attempt or a success. */
+export const setExerciseStatus = progress.setExerciseStatus;
 
 /**
- * Record an attempt or a success.
- * @param id - Exercise id.
- * @param status - New status.
+ * Reveal the next hint of an exercise, one at a time, stopping at the last
+ * when the hint count is given.
  */
-export function setExerciseStatus(id: string, status: ExerciseStatus): void {
-  updateProgress(id, { status });
-}
+export const revealNextHint = progress.revealNextHint;
 
-/**
- * Reveal the next hint of an exercise, one at a time.
- * @param id - Exercise id.
- * @param hintCount - How many hints it has, to stop at the last one.
- * Unbounded when omitted.
- */
-export function revealNextHint(id: string, hintCount?: number): void {
-  const revealed = getExerciseProgress(id).hintsRevealed + 1;
-  updateProgress(id, {
-    hintsRevealed:
-      hintCount === undefined ? revealed : Math.min(revealed, hintCount),
-  });
-}
+/** Show or hide the sample answer. */
+export const setShowSolution = progress.setShowSolution;
 
-/**
- * Show or hide the sample answer.
- * @param id - Exercise id.
- * @param show - Whether the solution is visible.
- */
-export function setShowSolution(id: string, show: boolean): void {
-  updateProgress(id, { showSolution: show });
-}
-
-/**
- * Forget one exercise: status, hints and revealed solution.
- * @param id - Exercise id.
- */
-export function resetExercise(id: string): void {
-  const next: Record<string, ExerciseProgress> = {};
-  for (const [key, value] of Object.entries(
-    preferences.exercises.progress.value,
-  )) {
-    if (key !== id) next[key] = value;
-  }
-  preferences.exercises.progress.value = next;
-}
+/** Forget one exercise: status, hints and revealed solution. */
+export const resetExercise = progress.resetExercise;
 
 /**
  * Forget every exercise. The UI puts this behind a confirmation dialog,
  * because it wipes a week of a student's work.
  */
-export function clearAllProgress(): void {
-  preferences.exercises.progress.value = {};
-}
-
-function updateProgress(id: string, patch: Partial<ExerciseProgress>): void {
-  preferences.exercises.progress.value = {
-    ...preferences.exercises.progress.value,
-    [id]: { ...getExerciseProgress(id), ...patch },
-  };
-}
+export const clearAllProgress = progress.clearAllProgress;
 
 function defaultProgress(): ExerciseProgress {
   return { status: 'idle', hintsRevealed: 0, showSolution: false };

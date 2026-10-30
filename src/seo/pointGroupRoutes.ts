@@ -10,13 +10,14 @@
  */
 
 import type { RouteMeta } from 'react-cheminfo/core';
+import { fitDescription } from 'react-cheminfo/core';
 
 import { characterTableOf } from '../data/characterTables.ts';
 import { moleculesOfGroup } from '../data/molecules.ts';
 import type { PointGroup } from '../data/pointGroups.ts';
 import { POINT_GROUPS } from '../data/pointGroups.ts';
 
-import { count, describe, withArticle } from './describe.ts';
+import { count, withArticle } from './describe.ts';
 
 /** `/point-groups/<slug>` for every point group the catalogue holds. */
 export function pointGroupRoutes(): readonly RouteMeta[] {
@@ -28,7 +29,7 @@ export function pointGroupRoute(group: PointGroup): RouteMeta {
   return {
     path: `/point-groups/${group.slug}`,
     title: titleOf(group),
-    description: describe(baseOf(group), extrasOf(group)),
+    description: fitDescription(baseOf(group), extrasOf(group)),
     short: group.schoenflies,
   };
 }

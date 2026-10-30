@@ -52,8 +52,8 @@ test('the About names the build running, and nothing about its sources', async (
 
   // Written by the build, never by hand: a version typed into a record is wrong
   // by the next release.
-  await expect(page.locator('.about-build')).toContainText(
-    /Built \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} UTC/,
+  await expect(page.locator('.about-hero .about-version')).toHaveText(
+    /^(?:\d+\.\d+\.\d+|[\da-f]{7}) · \d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC$/,
   );
 
   await expect(page.locator('.about-licence')).toHaveCount(0);

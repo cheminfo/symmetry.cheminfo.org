@@ -9,12 +9,7 @@
  */
 
 import type { ShareParamValues } from 'react-cheminfo/core';
-import {
-  formatQueryString,
-  integerParam,
-  parseShareConfig,
-  stringParam,
-} from 'react-cheminfo/core';
+import { integerParam, stringParam } from 'react-cheminfo/core';
 
 import {
   SETTING_RANGE,
@@ -74,17 +69,3 @@ export type ShareParams = typeof SHARE_PARAMS;
 
 /** Every setting at the value the link carries, or at its default. */
 export type ShareParamSet = ShareParamValues<ShareParams>;
-
-/**
- * Read every setting a link carries.
- * @param query - Decoded query of the address.
- * @returns The settings, each clamped or cut to what the tool can serve.
- */
-export function readShareParams(
-  query: Readonly<Record<string, string>>,
-): ShareParamSet {
-  return parseShareConfig(formatQueryString(query, { keepEmptyValues: true }), {
-    parts: [],
-    params: SHARE_PARAMS,
-  }).params;
-}

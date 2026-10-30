@@ -3,8 +3,11 @@ import { expect, test, vi } from 'vitest';
 import {
   getExerciseProgress,
   preferences,
+  resetExercise,
+  revealNextHint,
   setExerciseStatus,
   setNotation,
+  setShowSolution,
 } from '../preferences.ts';
 
 // Installed before the buckets are read, with what an earlier visit stored:
@@ -82,4 +85,14 @@ test('the two buckets are written under the keys they always were', () => {
       'c2v-water'
     ].status,
   ).toBe('solved');
+});
+
+test('a progress record is stored with exactly its three fields', () => {
+  revealNextHint('point-group-water', 3);
+  setShowSolution('point-group-water', true);
+  resetExercise('c2v-water');
+
+  expect(storage.getItem('symmetry:exercises:v1')).toBe(
+    '{"progress":{"point-group-water":{"status":"idle","hintsRevealed":1,"showSolution":true}}}',
+  );
 });

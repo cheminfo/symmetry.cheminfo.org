@@ -18,6 +18,7 @@ import {
   spread,
   waitForChange,
   waitForPaint,
+  waitForPick,
   waitForStable,
 } from './canvasSignature.ts';
 
@@ -224,7 +225,7 @@ test('the pointer names what the site drew, never what molstar parsed', async ({
         (frame?.x ?? 0) + ((frame?.width ?? 0) * column) / 10,
         (frame?.y ?? 0) + ((frame?.height ?? 0) * row) / 10,
       );
-      await page.waitForTimeout(80);
+      await waitForPick(page);
       const label = await page.evaluate(
         () =>
           document.querySelector('[data-testid="symmetry-3d-readout"]')

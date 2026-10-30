@@ -145,6 +145,32 @@ export async function waitForChange(
 }
 
 /**
+ * Wait until the viewer has acted on where the pointer now rests. molstar picks
+ * what lies under the pointer in its render loop, at most thirty times a
+ * second, and reports the pick a frame or more later; so the wait is counted in
+ * frames the page has drawn, which a loaded machine slows down with it, and not
+ * in time, which it does not.
+ *
+ * @param page - The page the viewer lives in.
+ */
+export async function waitForPick(page: Page): Promise<void> {
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        let frames = 0;
+        let first: number | undefined;
+        const step = (time: number) => {
+          first ??= time;
+          frames++;
+          if (frames >= 8 && time - first > 1000 / 10) resolve();
+          else requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }),
+  );
+}
+
+/**
  * How many distinct luminance steps the frame holds.
  *
  * @param signature - A fingerprint.

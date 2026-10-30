@@ -17,18 +17,9 @@ import { useSignals } from '@preact/signals-react/runtime';
 import type { ReactElement } from 'react';
 import { useEffect } from 'react';
 import { startDocumentMeta } from 'react-cheminfo/core';
-import {
-  AboutButton,
-  CiteButton,
-  EcosystemButton,
-  HiddenPartsProvider,
-  SiteFooter,
-  SiteHeader,
-  SiteTheme,
-} from 'react-cheminfo/ui';
+import { SiteShell } from 'react-cheminfo/ui';
 
 import { ABOUT } from './about.ts';
-import { About } from './pages/About.tsx';
 import { Catalogue } from './pages/Catalogue.tsx';
 import { Cheatsheet } from './pages/Cheatsheet.tsx';
 import { Crystals } from './pages/Crystals.tsx';
@@ -37,8 +28,8 @@ import { Molecules } from './pages/Molecules.tsx';
 import { Plane } from './pages/Plane.tsx';
 import { Tutorial } from './pages/Tutorial.tsx';
 import { PAGE_ROUTES } from './seo/routes.ts';
-import { ShareButton } from './share/ShareButton.tsx';
 import { applyRoute, currentRoute } from './share/route.ts';
+import { shareVocabularyOf } from './share/vocabulary.ts';
 import type { TabId } from './state/index.ts';
 import {
   DEFAULT_TAB,
@@ -81,68 +72,46 @@ export function App(): ReactElement {
   }));
 
   return (
-    <>
-      <SiteTheme siteId="symmetry" />
-      <div className={screenClassName(activeTab)}>
-        <SiteHeader
-          siteId="symmetry"
-          width="full"
-          embedded={framed}
-          nav={hidden.includes('tabs') ? [] : navItems}
-          activeId={activeTab}
-          homeHref={withBase('/')}
-          onHome={() => {
-            setActiveTab(DEFAULT_TAB);
-          }}
-          markSize={24}
-          actions={
-            <>
-              <AboutButton
-                href={withBase('/about')}
-                title="What this site computes, and what it borrows"
-                active={activeTab === 'about'}
-                onSelect={() => {
-                  setActiveTab('about');
-                }}
-              />
-              <CiteButton works={ABOUT.cite ?? []} />
-              <EcosystemButton currentSiteId="symmetry" />
-            </>
-          }
-          share={<ShareButton />}
-        />
-
-        {/*
-          The one `page-<tab>` marker the end-to-end tests locate a page by. It
-          lives on the shell, where exactly one exists at a time — a page adding
-          its own would make the locator ambiguous and fail Playwright's strict
-          mode.
-        */}
-        <main
-          className={mainClassName(activeTab)}
-          data-testid={`page-${activeTab}`}
-        >
-          <HiddenPartsProvider hidden={hidden}>
-            <PageBody tab={activeTab} />
-          </HiddenPartsProvider>
-        </main>
-      </div>
-
-      <SiteFooter siteId="symmetry" width="full" embedded={framed} />
-    </>
+    <SiteShell
+      siteId="symmetry"
+      width="full"
+      markSize={24}
+      embedded={framed}
+      hidden={hidden}
+      nav={navItems}
+      activeId={activeTab}
+      homeHref={withBase('/')}
+      onHome={() => {
+        setActiveTab(DEFAULT_TAB);
+      }}
+      about={{
+        content: ABOUT,
+        href: withBase('/about'),
+        title: 'What this site computes, and what it borrows',
+        active: activeTab === 'about',
+        onSelect: () => {
+          setActiveTab('about');
+        },
+      }}
+      share={{
+        vocabulary: shareVocabularyOf(activeTab),
+        title: TAB_LABELS[activeTab],
+        frameHeight: FRAME_HEIGHT,
+      }}
+      // The one `page-<tab>` marker the end-to-end tests locate a page by. It
+      // lives on the shell, where exactly one exists at a time — a page adding
+      // its own would make the locator ambiguous and fail Playwright's strict
+      // mode.
+      mainTestId={`page-${activeTab}`}
+      mainClassName={mainClassName(activeTab)}
+    >
+      <PageBody tab={activeTab} />
+    </SiteShell>
   );
 }
 
-/**
- * The classes of the block the header and the page share: one screen tall, and
- * exactly one screen tall for the three workbenches, whose panes scroll on
- * their own.
- * @param tab - The open page.
- * @returns The class attribute.
- */
-function screenClassName(tab: TabId): string {
-  return hasPanes(tab) ? 'app-screen app-screen--panes' : 'app-screen';
-}
+/** Enough for the 3D view, its chips and a readout under them. */
+const FRAME_HEIGHT = 640;
 
 /**
  * The classes the page body carries: the shell's own, plus the three-pane one
@@ -171,7 +140,6 @@ function PageBody(props: { tab: TabId }): ReactElement {
   if (tab === 'tutorial') return <Tutorial />;
   if (tab === 'exercises') return <Exercises />;
   if (tab === 'cheatsheet') return <Cheatsheet />;
-  if (tab === 'about') return <About />;
   if (isCatalogueTab(tab)) return <Catalogue tab={tab} />;
   return <Molecules />;
 }
