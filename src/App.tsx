@@ -87,7 +87,6 @@ export function App(): ReactElement {
       about={{
         content: ABOUT,
         href: withBase('/about'),
-        title: 'What this site computes, and what it borrows',
         active: activeTab === 'about',
         onSelect: () => {
           setActiveTab('about');

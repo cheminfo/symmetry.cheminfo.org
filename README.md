@@ -174,7 +174,7 @@ npm run test         # vitest + type-check + token and deploy checks + eslint + 
 npm run test-e2e     # playwright, needs a browser: npx playwright install chromium
 npm run build        # prerenders one HTML file per address, plus sitemap.xml
 
-node scripts/generateOgImage.ts     # redraw public/og.png, the card a link unfurls into
+npm run og-image                    # redraw public/og.png, the card a link unfurls into
 node scripts/generateSpaceGroups.ts # regenerate src/data/spaceGroupRows.ts
 ```
 

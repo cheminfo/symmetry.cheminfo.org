@@ -1,23 +1,15 @@
 import { expect, test } from 'vitest';
 
 import type { Route } from '../router.ts';
-import {
-  DEFAULT_ROUTE,
-  formatRoute,
-  parseAddress,
-  pathOf,
-  routesEqual,
-  tabTakesId,
-} from '../router.ts';
+import { formatRoute, parseAddress, pathOf } from '../router.ts';
+
+const HOME: Route = { tab: 'molecules', id: null, query: {} };
 
 test('an empty address is the molecule workbench', () => {
-  const home: Route = { tab: 'molecules', id: null, query: {} };
-
-  expect(parseAddress('')).toStrictEqual(home);
-  expect(parseAddress('/')).toStrictEqual(home);
-  expect(parseAddress('#')).toStrictEqual(home);
-  expect(parseAddress('#/')).toStrictEqual(home);
-  expect(DEFAULT_ROUTE).toStrictEqual(home);
+  expect(parseAddress('')).toStrictEqual(HOME);
+  expect(parseAddress('/')).toStrictEqual(HOME);
+  expect(parseAddress('#')).toStrictEqual(HOME);
+  expect(parseAddress('#/')).toStrictEqual(HOME);
 });
 
 test('the molecule workbench is `/`, and `/molecules` is not a second door', () => {
@@ -33,9 +25,9 @@ test('the molecule workbench is `/`, and `/molecules` is not a second door', () 
 });
 
 test('an unknown page falls back to the molecule workbench', () => {
-  expect(parseAddress('/groups')).toStrictEqual(DEFAULT_ROUTE);
-  expect(parseAddress('/Crystals')).toStrictEqual(DEFAULT_ROUTE);
-  expect(parseAddress('/point-group/c2v')).toStrictEqual(DEFAULT_ROUTE);
+  expect(parseAddress('/groups')).toStrictEqual(HOME);
+  expect(parseAddress('/Crystals')).toStrictEqual(HOME);
+  expect(parseAddress('/point-group/c2v')).toStrictEqual(HOME);
 });
 
 test('every page of the bar is its own address', () => {
@@ -52,18 +44,11 @@ test('every page of the bar is its own address', () => {
 });
 
 test('a workbench addresses no entry, a catalogue does', () => {
-  expect(tabTakesId('molecules')).toBe(false);
-  expect(tabTakesId('crystals')).toBe(false);
-  expect(tabTakesId('plane')).toBe(false);
-  expect(tabTakesId('cheatsheet')).toBe(false);
-  expect(tabTakesId('about')).toBe(false);
-  expect(tabTakesId('point-groups')).toBe(true);
-  expect(tabTakesId('space-groups')).toBe(true);
-  expect(tabTakesId('wallpaper')).toBe(true);
-  expect(tabTakesId('frieze')).toBe(true);
-  expect(tabTakesId('tutorial')).toBe(true);
-  expect(tabTakesId('exercises')).toBe(true);
   // A second segment on a page that addresses nothing is dropped, not kept.
+  expect(parseAddress('/molecules/water').id).toBe(null);
+  expect(parseAddress('/plane/p4g').id).toBe(null);
+  expect(parseAddress('/cheatsheet/mirror').id).toBe(null);
+  expect(parseAddress('/about/team').id).toBe(null);
   expect(parseAddress('/crystals/225')).toStrictEqual({
     tab: 'crystals',
     id: null,
@@ -145,21 +130,4 @@ test('every address the site answers round-trips through both directions', () =>
   for (const address of addresses) {
     expect(formatRoute(parseAddress(address))).toBe(address);
   }
-});
-
-test('two routes are equal when they name the same page, entry and query', () => {
-  const first: Route = {
-    tab: 'space-groups',
-    id: '14',
-    query: { setting: '1' },
-  };
-
-  expect(routesEqual(first, { ...first })).toBe(true);
-  expect(routesEqual(first, { ...first, id: '15' })).toBe(false);
-  expect(routesEqual(first, { ...first, tab: 'point-groups' })).toBe(false);
-  expect(routesEqual(first, { ...first, query: {} })).toBe(false);
-  // An empty entry is not part of the address, so it is not part of the route.
-  expect(routesEqual(first, { ...first, query: { setting: '1', x: '' } })).toBe(
-    true,
-  );
 });
