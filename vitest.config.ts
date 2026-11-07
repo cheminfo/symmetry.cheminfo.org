@@ -8,6 +8,9 @@ export default defineConfig({
   // `Cannot read properties of null`. vite.config.ts carries the same list.
   resolve: { dedupe: ['react', 'react-dom', '@blueprintjs/core'] },
   test: {
+    // Worker threads start faster than processes; each file keeps its own
+    // modules.
+    pool: 'threads',
     // e2e/*.spec.ts belongs to playwright, which vitest cannot run.
     exclude: [...defaultExclude, 'e2e/**'],
     coverage: {
