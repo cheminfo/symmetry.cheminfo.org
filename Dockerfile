@@ -1,4 +1,4 @@
-FROM node:24-alpine AS builder
+FROM node:24-slim AS builder
 WORKDIR /app
 COPY package*.json ./
 # A deploy that has to build from source installs over the network at the
@@ -18,7 +18,7 @@ ENV SITE_URL=$SITE_URL
 
 RUN npm run build-only
 
-FROM joseluisq/static-web-server:2-alpine
+FROM joseluisq/static-web-server:2-debian
 # The build stays here, read-only. The entrypoint copies it to SERVER_ROOT,
 # which is a tmpfs, so the mount can be stamped into the pages at startup
 # without the image filesystem ever being writable.
