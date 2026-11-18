@@ -9,4 +9,8 @@
 
 export type { ViewerPanelProps } from './ViewerPanel.tsx';
 export { ViewerPanel } from './ViewerPanel.tsx';
-export type { OperationPlayback, ViewerScene } from './viewerScene.ts';
+export type {
+  OperationPlayback,
+  ViewerHandle,
+  ViewerScene,
+} from './viewerScene.ts';

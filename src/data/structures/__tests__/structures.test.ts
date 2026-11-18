@@ -11,9 +11,9 @@ import {
   structureSetting,
 } from '../index.ts';
 
-test('the library holds sixteen structures, each with a distinct id', () => {
-  expect(STRUCTURES).toHaveLength(16);
-  expect(new Set(STRUCTURES.map((entry) => entry.id)).size).toBe(16);
+test('the library holds eighteen structures, each with a distinct id', () => {
+  expect(STRUCTURES).toHaveLength(18);
+  expect(new Set(STRUCTURES.map((entry) => entry.id)).size).toBe(18);
   expect(structureById('halite')?.title).toBe('Halite');
   expect(structureById('nothing-of-the-sort')).toBeUndefined();
   expect(() => structureCif('nothing-of-the-sort')).toThrow(
@@ -35,7 +35,7 @@ test('every file parses, and names the group its entry records', () => {
     expect(structureSetting(entry)).toStrictEqual(resolved.setting);
     resolvedIds.push(entry.id);
   }
-  expect(resolvedIds).toHaveLength(16);
+  expect(resolvedIds).toHaveLength(18);
 });
 
 test('the library spans all seven crystal systems', () => {
@@ -90,6 +90,8 @@ test('the symmetry fills each cell with the number of atoms it should', () => {
     ['perovskite', 20],
     ['gypsum', 48],
     ['chalcanthite', 42],
+    ['naphthalene', 36],
+    ['aspirin', 84],
   ]);
 });
 
@@ -115,6 +117,8 @@ test('a structure taken from the COD records the entry it came from', () => {
     'perovskite',
     'gypsum',
     'chalcanthite',
+    'naphthalene',
+    'aspirin',
   ]);
   for (const entry of fromCod) {
     const source = entry.source;
@@ -130,7 +134,7 @@ test('what each structure teaches is one clause, and says something', () => {
     expect(entry.teaches.endsWith('.')).toBe(true);
     expect(entry.formula.length).toBeGreaterThan(0);
   }
-  expect(new Set(STRUCTURES.map((entry) => entry.teaches)).size).toBe(16);
+  expect(new Set(STRUCTURES.map((entry) => entry.teaches)).size).toBe(18);
 });
 
 /** The library entry with this id. */

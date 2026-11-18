@@ -15,10 +15,9 @@ import { batch } from '@preact/signals-react';
 import { useSignals } from '@preact/signals-react/runtime';
 import { useMemo, useState } from 'react';
 
-import { readCif } from '../../crystal/cif/index.ts';
 import type { CrystalDraft } from '../../crystal/draft.ts';
 import { draftOf, emptyDraft, reconstrain } from '../../crystal/draft.ts';
-import { resolveStructureSetting } from '../../crystal/resolve.ts';
+import { openCif } from '../../crystal/openCif.ts';
 import { structureById, structureOf } from '../../data/structures/index.ts';
 import {
   selectSetting,
@@ -108,7 +107,7 @@ export function useCrystalDraft(): CrystalWorkbench {
       });
     },
     openFile: (text, fileName) => {
-      const read = readFile(text, fileName);
+      const read = openCif(text, fileName);
       if (typeof read === 'string') {
         setProblem(read);
         return;
@@ -159,31 +158,4 @@ function libraryDraft(id: string): CrystalDraft | null {
     settingOf(entry.spaceGroupNumber, entry.variant),
     entry.title,
   );
-}
-
-/**
- * A dropped file as a draft, or the one sentence to show instead.
- *
- * `readCif` throws a sentence already written for a reader, so it is shown as
- * it is rather than wrapped in one of our own.
- */
-function readFile(
-  text: string,
-  fileName: string,
-): { draft: CrystalDraft; setting: SpaceGroupSetting } | string {
-  let structure;
-  try {
-    structure = readCif(text);
-  } catch (error) {
-    return error instanceof Error ? error.message : 'It is not a CIF.';
-  }
-  const resolved = resolveStructureSetting(structure);
-  if (resolved.setting === null) {
-    return `${fileName} names no space group this site recognises. Add a _space_group_IT_number, a Hermann-Mauguin symbol or the operation list.`;
-  }
-  const name = fileName.replace(/\.cif$/i, '');
-  return {
-    draft: draftOf(structure, resolved.setting, name),
-    setting: resolved.setting,
-  };
 }

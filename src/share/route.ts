@@ -17,6 +17,7 @@ import {
   splitParam,
 } from 'react-cheminfo/core';
 
+import { openViewerUrl } from '../components/cif/viewerSource.ts';
 import { structureById } from '../data/structures/index.ts';
 import type { DisplayFlagKey } from '../state/index.ts';
 import {
@@ -29,6 +30,7 @@ import {
   selectSetting,
   selectSpaceGroup,
   selectStructure,
+  selectViewerStructure,
   setActiveExercise,
   setActiveTab,
   setCatalogueItem,
@@ -39,6 +41,9 @@ import {
   setTiles,
   setTutorialSplit,
   setTutorialStep,
+  setViewerPacking,
+  setViewerSplit,
+  setViewerSupercell,
   state,
 } from '../state/index.ts';
 import type { TabId } from '../state/tabs.ts';
@@ -77,6 +82,7 @@ export function currentRoute(): Route {
   if (tab === 'molecules') writeMolecules(query);
   if (tab === 'crystals') writeCrystals(query);
   if (tab === 'plane') writePlane(query);
+  if (tab === 'viewer') writeViewer(query);
   if (tab === 'space-groups') writeNumber(query, 'setting', settingIndex());
   if (tab === 'tutorial') writeSplit(query, state.view.tutorial.split.value);
   if (drawsLayers(tab)) writeFlags(query);
@@ -139,6 +145,20 @@ function applyPage(route: Route, params: ShareParamSet): void {
     setTiles(params.tiles);
     return;
   }
+  if (tab === 'viewer') {
+    // A name the library does not hold is handed to the page, which opens on
+    // nothing rather than on a structure the link did not name.
+    selectViewerStructure(params.structure === '' ? null : params.structure);
+    if (params.cif === '') {
+      state.view.viewer.cifUrl.value = null;
+    } else if (params.cif !== state.view.viewer.cifUrl.peek()) {
+      void openViewerUrl(params.cif);
+    }
+    setViewerSupercell(params.supercell);
+    setViewerPacking(params.packing);
+    setViewerSplit(SPLIT.parse(query[SPLIT_PARAM] ?? null));
+    return;
+  }
   if (tab === 'tutorial') {
     setTutorialStep(id);
     setTutorialSplit(SPLIT.parse(query[SPLIT_PARAM] ?? null));
@@ -178,6 +198,16 @@ function writePlane(query: Record<string, string>): void {
   writeText(query, 'planeGroup', state.view.plane.groupId.value);
   writeText(query, 'motif', state.view.plane.motifId.value ?? '');
   writeNumber(query, 'tiles', state.view.plane.tiles.value);
+}
+
+function writeViewer(query: Record<string, string>): void {
+  const { structureId, cifUrl, supercell, packing, split } = state.view.viewer;
+  writeText(query, 'structure', structureId.value ?? '');
+  if (cifUrl.value !== null) query.cif = cifUrl.value;
+  writeNumber(query, 'supercell', supercell.value);
+  const raw = SHARE_PARAMS.packing.serialize(packing.value);
+  if (raw !== null) query.packing = raw;
+  writeSplit(query, split.value);
 }
 
 /**

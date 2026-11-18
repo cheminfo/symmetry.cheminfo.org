@@ -13,11 +13,13 @@
 
 import type { ReactElement } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { Molecule3DCamera } from 'react-cheminfo/molecule3d';
+import { useImageExport } from 'react-cheminfo/molecule3d';
 
 import type { Viewer } from '../../viewer/index.ts';
 import { createViewer, sceneOrientation } from '../../viewer/index.ts';
 
-import type { ViewerScene } from './viewerScene.ts';
+import type { ViewerHandle, ViewerScene } from './viewerScene.ts';
 
 /** Props of {@link ViewerCanvas}. */
 export interface ViewerCanvasProps {
@@ -34,6 +36,12 @@ export interface ViewerCanvasProps {
    * @default undefined
    */
   onFailure?: (message: string | null) => void;
+  /**
+   * Called with the means to picture the scene once the canvas exists, and with
+   * `null` once it is gone.
+   * @default undefined
+   */
+  onHandle?: (handle: ViewerHandle | null) => void;
 }
 
 /**
@@ -43,9 +51,10 @@ export interface ViewerCanvasProps {
  * @returns The canvas and its readout.
  */
 export function ViewerCanvas(props: ViewerCanvasProps): ReactElement {
-  const { scene, background, onFailure } = props;
+  const { scene, background, onFailure, onHandle } = props;
   const {
     atoms,
+    camera = null,
     cell = null,
     repeat,
     representation,
@@ -79,12 +88,41 @@ export function ViewerCanvas(props: ViewerCanvasProps): ReactElement {
     framing.current = orientation;
   }, [orientation]);
 
+  // A camera a figure carried is put back once, on the structure it came
+  // with; every later redraw frames the scene as any other does.
+  const opening = useRef<Molecule3DCamera | null>(camera);
+  const applied = useRef<Molecule3DCamera | null>(null);
+  useEffect(() => {
+    opening.current = camera;
+  }, [camera]);
+
   // Kept in a ref as well, so a page passing an inline callback does not redraw
   // the whole scene on every render.
   const failure = useRef(onFailure);
   useEffect(() => {
     failure.current = onFailure;
   }, [onFailure]);
+
+  // The draw in flight, so a picture asked for meanwhile waits for it.
+  const drawing = useRef<Promise<void> | null>(null);
+
+  const { capture } = useImageExport(container, held, 'crystal');
+  const handing = useRef(onHandle);
+  useEffect(() => {
+    handing.current = onHandle;
+  }, [onHandle]);
+  useEffect(() => {
+    const listener = handing.current;
+    if (listener === undefined || container === null) return;
+    listener({
+      capture,
+      readCamera: () => held.current?.readCamera() ?? Promise.resolve(null),
+      whenDrawn: () => drawing.current ?? Promise.resolve(),
+    });
+    return () => {
+      listener(null);
+    };
+  }, [capture, container]);
 
   // A callback ref, so the viewer is created by the element arriving; the
   // effects that draw are declared after this one and so run after it, and
@@ -113,14 +151,21 @@ export function ViewerCanvas(props: ViewerCanvasProps): ReactElement {
   useEffect(() => {
     const viewer = held.current;
     if (viewer === null) return;
-    void report(
-      failure,
-      (async () => {
-        await viewer.showStructure(atoms, { representation });
-        await viewer.showCell(cell, repeat);
+    container?.setAttribute('data-drawn', 'false');
+    const work = (async () => {
+      await viewer.showStructure(atoms, { representation });
+      await viewer.showCell(cell, repeat);
+      const wanted = opening.current;
+      if (wanted !== null && wanted !== applied.current) {
+        applied.current = wanted;
+        await viewer.applyCamera(wanted);
+      } else {
         await viewer.resetCamera(0, framing.current);
-      })(),
-    );
+      }
+      container?.setAttribute('data-drawn', 'true');
+    })();
+    drawing.current = work.catch(() => undefined);
+    void report(failure, work);
   }, [container, background, atoms, cell, repeat, representation]);
 
   useEffect(() => {

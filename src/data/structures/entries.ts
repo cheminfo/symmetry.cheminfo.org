@@ -1,8 +1,9 @@
 import type { StructureEntry } from './types.ts';
 
 /**
- * The sixteen structures the crystal workbench opens with, simplest first and
- * ending in the triclinic one that forces nothing.
+ * The eighteen structures the crystal workbench opens with, simplest first,
+ * the inorganic ones ending in the triclinic one that forces nothing, then two
+ * molecular crystals in P2₁/c, the group most organic crystals take.
  *
  * Between them they cover all seven crystal systems and every centring letter
  * but A and B, and several were chosen to sit beside each other: copper,
@@ -209,6 +210,32 @@ export const STRUCTURE_ENTRIES: readonly StructureEntry[] = [
       kind: 'cod',
       cod: '9008253',
       citation: 'Bacon & Titterton, Z. Kristallogr. 141 (1975) 330',
+    },
+  },
+  {
+    id: 'naphthalene',
+    title: 'Naphthalene',
+    formula: 'C10H8',
+    spaceGroupNumber: 14,
+    variant: 0,
+    teaches: 'Half a molecule in the file: an inversion centre makes the rest.',
+    source: {
+      kind: 'cod',
+      cod: '2311088',
+      citation: 'Hoser & Madsen, Acta Cryst. A73 (2017) 102',
+    },
+  },
+  {
+    id: 'aspirin',
+    title: 'Aspirin',
+    formula: 'C9H8O4',
+    spaceGroupNumber: 14,
+    variant: 0,
+    teaches: 'Four whole molecules per cell, one in each general position.',
+    source: {
+      kind: 'cod',
+      cod: '7050902',
+      citation: 'Wilson, New J. Chem. 26 (2002) 1733',
     },
   },
 ];

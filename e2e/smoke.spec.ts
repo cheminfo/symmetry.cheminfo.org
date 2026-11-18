@@ -1,5 +1,5 @@
 /**
- * The shell: the six pages, the four utilities, path routing, and a reload that
+ * The shell: the seven pages, the four utilities, path routing, and a reload that
  * lands where the visitor left off.
  *
  * Everything is located by its place in the chrome — the page links by their
@@ -22,6 +22,7 @@ const TABS = [
   { id: 'molecules', label: 'Molecules', path: '/' },
   { id: 'crystals', label: 'Crystals', path: '/crystals' },
   { id: 'plane', label: 'Plane', path: '/plane' },
+  { id: 'viewer', label: 'Viewer', path: '/viewer' },
   { id: 'tutorial', label: 'Tutorial', path: '/tutorial' },
   { id: 'exercises', label: 'Exercises', path: '/exercises' },
   { id: 'cheatsheet', label: 'Cheatsheet', path: '/cheatsheet' },
@@ -56,6 +57,7 @@ test('the app opens on the molecule workbench, with its pages and utilities', as
     'Molecules',
     'Crystals',
     'Plane',
+    'Viewer',
     'Tutorial',
     'Exercises',
     'Cheatsheet',
@@ -110,7 +112,7 @@ test('the workbench opens on water, read as C2v from its coordinates', async ({
 });
 
 test('every page switches and writes its own path', async ({ page }) => {
-  // Two of the six mount molstar, which is fetched on demand.
+  // Three of the seven mount molstar, which is fetched on demand.
   test.setTimeout(120_000);
   await page.goto('/');
 

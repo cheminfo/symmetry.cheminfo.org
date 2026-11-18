@@ -13,14 +13,27 @@
  */
 
 import type { PluginContext } from 'molstar/lib/mol-plugin/context.js';
+import type {
+  ImageSize,
+  Molecule3DCamera,
+  RenderedFigure,
+  SceneCapture,
+} from 'react-cheminfo/molecule3d';
 import {
   MolstarPlugin,
+  captureFigure,
+  captureScene,
   focusPoint,
   setSpin,
   subscribeHoverLabel,
 } from 'react-cheminfo/molstar/core';
 
-import { DEFAULT_CAMERA_DURATION, resetCamera } from './camera.ts';
+import {
+  DEFAULT_CAMERA_DURATION,
+  applyCamera,
+  readCamera,
+  resetCamera,
+} from './camera.ts';
 import type { ViewOrientation } from './orientation.ts';
 import type { Point3 } from './types.ts';
 
@@ -34,7 +47,7 @@ export interface ViewerOptions {
 }
 
 /** One molstar canvas, and the queue everything drawn on it goes through. */
-export class ViewerPlugin {
+export class ViewerPlugin implements SceneCapture {
   readonly #plugin: MolstarPlugin;
 
   /** Resolves once the canvas exists; every call awaits it internally. */
@@ -83,6 +96,50 @@ export class ViewerPlugin {
     return this.run((plugin) => {
       resetCamera(plugin, durationMs, orientation);
     });
+  }
+
+  /**
+   * Where the camera stands, against what is drawn.
+   *
+   * @returns The camera, or `null` while nothing is drawn.
+   */
+  async readCamera(): Promise<Molecule3DCamera | null> {
+    return (await this.#plugin.run(readCamera)) ?? null;
+  }
+
+  /**
+   * Put the camera back where {@link readCamera} found it.
+   *
+   * @param camera - Where to stand.
+   */
+  applyCamera(camera: Molecule3DCamera): Promise<void> {
+    return this.run((plugin) => {
+      applyCamera(plugin, camera);
+    });
+  }
+
+  /**
+   * Render the scene off screen at a size of its own, for a picture to save.
+   *
+   * @param size - Pixel size of the picture.
+   * @returns The PNG as a data URI; `undefined` once the viewer is disposed.
+   */
+  captureImage(size: ImageSize): Promise<string | undefined> {
+    return this.#plugin.run((plugin) => captureScene(plugin, size));
+  }
+
+  /**
+   * Render the part of the scene holding the crystal, for a figure handed on.
+   *
+   * @param size - Pixel size of the frame the crystal is cut from.
+   * @param longest - Longest side of the figure, in pixels.
+   * @returns The figure; `undefined` once the viewer is disposed.
+   */
+  captureFigure(
+    size: ImageSize,
+    longest: number,
+  ): Promise<RenderedFigure | undefined> {
+    return this.#plugin.run((plugin) => captureFigure(plugin, size, longest));
   }
 
   /**

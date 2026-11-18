@@ -1,0 +1,64 @@
+/* ── The crystal viewer ───────────────────────────────────────────────────── */
+
+.cif-page {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cif-page__view,
+.cif-page__side {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cif-drop__examples {
+  display: flex;
+  max-width: 40rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.cif-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.cif-details__name {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.cif-details__row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.cif-details__row > .xtl-fact__label {
+  min-width: 5.5rem;
+}
+
+.cif-details__aside {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.cif-details__cell {
+  display: grid;
+  gap: 4px 10px;
+  grid-template-columns: repeat(3, minmax(0, max-content));
+}
+
+/* A cell parameter is named by its letter, and α is not A: the case stays. */
+.cif-details__cell .xtl-fact__label {
+  font-size: 0.75rem;
+  font-style: italic;
+  letter-spacing: 0;
+  text-transform: none;
+}

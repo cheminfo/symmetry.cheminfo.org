@@ -49,7 +49,7 @@ test('parse and serialize are each other, over every part at once', () => {
 });
 
 test('every part describes itself for the dialog, and only the bar is chrome', () => {
-  expect(SHARE_PART_IDS).toHaveLength(18);
+  expect(SHARE_PART_IDS).toHaveLength(19);
   for (const id of SHARE_PART_IDS) {
     const part = SHARE_PARTS[id];
     expect(part.key).toBe(id);

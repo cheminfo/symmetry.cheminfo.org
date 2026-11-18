@@ -3,11 +3,12 @@ import { expect, test } from 'vitest';
 
 import { FIXED_ROUTES, NOSCRIPT_ROUTES, PAGE_ROUTES } from '../seo/routes.ts';
 
-test('the pages that exist whatever the data says are these eleven', () => {
+test('the pages that exist whatever the data says are these twelve', () => {
   expect(FIXED_ROUTES.map((route) => route.path)).toStrictEqual([
     '/',
     '/crystals',
     '/plane',
+    '/viewer',
     '/tutorial',
     '/exercises',
     '/cheatsheet',
@@ -49,6 +50,7 @@ test('the crawl path reads as a menu, not as a list of search results', () => {
     'Molecules',
     'Crystals',
     'Plane',
+    'Viewer',
     'Tutorial',
     'Exercises',
     'Cheatsheet',

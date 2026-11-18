@@ -9,7 +9,7 @@
  */
 
 import type { ShareParamValues } from 'react-cheminfo/core';
-import { integerParam, stringParam } from 'react-cheminfo/core';
+import { enumParam, integerParam, stringParam } from 'react-cheminfo/core';
 
 import {
   SETTING_RANGE,
@@ -17,7 +17,7 @@ import {
   SUPERCELL_RANGE,
   TILES_RANGE,
 } from '../state/ranges.ts';
-import { DEFAULT_PLANE_GROUP } from '../state/view.ts';
+import { DEFAULT_PLANE_GROUP, VIEWER_PACKINGS } from '../state/view.ts';
 
 /** The longest id a link may name, in characters. */
 const MAX_ID_LENGTH = 64;
@@ -52,6 +52,13 @@ export const SHARE_PARAMS = {
     max: SUPERCELL_RANGE.maximum,
     default: SUPERCELL_RANGE.initial,
   }),
+  /**
+   * A CIF for the viewer to fetch and draw, by its address: how a database
+   * page such as crystals.cheminfo.org opens one of its entries here.
+   */
+  cif: stringParam({ maxLength: 2048 }),
+  /** Whether the viewer draws whole molecules or the atoms its cell cuts. */
+  packing: enumParam(VIEWER_PACKINGS, 'molecules'),
   /** Which wallpaper or frieze group the plane workbench is drawing. */
   planeGroup: stringParam({ default: DEFAULT_PLANE_GROUP, maxLength: 12 }),
   /** Which motif it repeats. */

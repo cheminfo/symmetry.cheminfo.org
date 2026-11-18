@@ -16,7 +16,9 @@ import { effect } from '@preact/signals-react';
 import { useSignals } from '@preact/signals-react/runtime';
 import type { ReactElement } from 'react';
 import { useEffect } from 'react';
+import { BUILD_INFO } from 'react-cheminfo/build-info';
 import { startDocumentMeta } from 'react-cheminfo/core';
+import { useHostConnection } from 'react-cheminfo/host';
 import { SiteShell } from 'react-cheminfo/ui';
 
 import { ABOUT } from './about.ts';
@@ -27,6 +29,7 @@ import { Exercises } from './pages/Exercises.tsx';
 import { Molecules } from './pages/Molecules.tsx';
 import { Plane } from './pages/Plane.tsx';
 import { Tutorial } from './pages/Tutorial.tsx';
+import { Viewer } from './pages/Viewer.tsx';
 import { PAGE_ROUTES } from './seo/routes.ts';
 import { applyRoute, currentRoute } from './share/route.ts';
 import { shareVocabularyOf } from './share/vocabulary.ts';
@@ -40,6 +43,7 @@ import {
   state,
 } from './state/index.ts';
 import { absoluteUrl, withBase } from './state/site.ts';
+import { TOOL, TOOL_OUTPUTS, loadFromHost, toolFigureStates } from './tool.ts';
 import {
   formatRoute,
   pathOf,
@@ -59,6 +63,15 @@ export function App(): ReactElement {
   const activeTab = state.view.activeTab.value;
 
   useRouteSync();
+  // A drawing or a document framing the viewer takes its crystal as a figure,
+  // and hands one back to be changed (`tool.ts`).
+  useHostConnection(TOOL, {
+    load: loadFromHost,
+    outputs: TOOL_OUTPUTS,
+    states: toolFigureStates,
+    build: BUILD_INFO,
+    cite: ABOUT.cite,
+  });
 
   const framed = state.view.embedded.value;
   const hidden = state.view.hidden.value;
@@ -136,6 +149,7 @@ function PageBody(props: { tab: TabId }): ReactElement {
   const { tab } = props;
   if (tab === 'crystals') return <Crystals />;
   if (tab === 'plane') return <Plane />;
+  if (tab === 'viewer') return <Viewer />;
   if (tab === 'tutorial') return <Tutorial />;
   if (tab === 'exercises') return <Exercises />;
   if (tab === 'cheatsheet') return <Cheatsheet />;

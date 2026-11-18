@@ -8,6 +8,11 @@
  */
 
 import type {
+  Molecule3DCamera,
+  Molecule3DCapture,
+} from 'react-cheminfo/molecule3d';
+
+import type {
   CellRepeat,
   ElementStyle,
   SymmetryDrawing,
@@ -84,4 +89,21 @@ export interface ViewerScene {
    * @default false
    */
   readonly spinning?: boolean;
+  /**
+   * Where the camera stands when this structure is drawn — the view a figure
+   * carried — instead of the framing every new structure gets. It is put back
+   * once; a later redraw frames the scene again.
+   * @default null
+   */
+  readonly camera?: Molecule3DCamera | null;
+}
+
+/** What the canvas hands a page that pictures it. */
+export interface ViewerHandle {
+  /** Render the scene as a figure. */
+  readonly capture: Molecule3DCapture;
+  /** Where the camera stands, against what is drawn; `null` before anything is. */
+  readonly readCamera: () => Promise<Molecule3DCamera | null>;
+  /** Resolves once the structure asked for last is drawn. */
+  readonly whenDrawn: () => Promise<void>;
 }

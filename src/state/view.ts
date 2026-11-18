@@ -25,6 +25,15 @@ import { DEFAULT_TAB } from './tabs.ts';
 /** The plane group the pattern workbench opens on: four-fold, with mirrors. */
 export const DEFAULT_PLANE_GROUP = 'p4m';
 
+/**
+ * How the viewer fills a cell: each molecule whole, in the cell its centre
+ * falls in, or every atom wrapped into the cell, cut where the walls cut it.
+ */
+export type ViewerPacking = 'molecules' | 'cell';
+
+/** Every packing, in the order the viewer offers them; the first is its default. */
+export const VIEWER_PACKINGS: readonly ViewerPacking[] = ['molecules', 'cell'];
+
 /** The `view` bucket: plain object, signal leaves, never reassigned. */
 export const view = {
   activeTab: signal<TabId>(DEFAULT_TAB),
@@ -70,6 +79,27 @@ export const view = {
      * once, and the only way to see what one of them is is to see it alone.
      */
     focusedElement: signal<string | null>(null),
+  },
+  viewer: {
+    /**
+     * `id` of the library structure on screen, or `null` for a file somebody
+     * opened, or for nothing yet. The text itself is `data.crystal`.
+     */
+    structureId: signal<string | null>(null),
+    /**
+     * The address the CIF on screen was fetched from, when a link named one
+     * as `?cif=` — so the link the page writes back still opens it.
+     */
+    cifUrl: signal<string | null>(null),
+    /** Cells drawn along each axis. */
+    supercell: signal(SUPERCELL_RANGE.initial),
+    /** How the cell is filled. */
+    packing: signal<ViewerPacking>('molecules'),
+    /**
+     * Share of the row the 3D view takes beside the details, as a whole
+     * percentage, or `null` while the page sits at its own default.
+     */
+    split: signal<number | null>(null),
   },
   plane: {
     /** `id` of the wallpaper or frieze group being drawn. */
@@ -195,6 +225,38 @@ export function selectStructure(id: string | null): void {
  */
 export function setSupercell(cells: number): void {
   view.crystals.supercell.value = clampToRange(cells, SUPERCELL_RANGE);
+}
+
+/**
+ * Name the library structure the viewer shows, or none.
+ * @param id - Structure id, or `null` for a file or an empty viewer.
+ */
+export function selectViewerStructure(id: string | null): void {
+  view.viewer.structureId.value = id;
+}
+
+/**
+ * Draw more of the viewer's crystal than one cell.
+ * @param cells - Cells along each axis, clamped to what the page can draw.
+ */
+export function setViewerSupercell(cells: number): void {
+  view.viewer.supercell.value = clampToRange(cells, SUPERCELL_RANGE);
+}
+
+/**
+ * Fill the viewer's cell with whole molecules, or with atoms cut at its walls.
+ * @param packing - How the cell is filled.
+ */
+export function setViewerPacking(packing: ViewerPacking): void {
+  view.viewer.packing.value = packing;
+}
+
+/**
+ * Divide the viewer's row between the 3D view and the details.
+ * @param split - Share of the row the view takes, or `null` for the default.
+ */
+export function setViewerSplit(split: number | null): void {
+  view.viewer.split.value = split === null ? null : clampSplit(split);
 }
 
 /**

@@ -1,7 +1,7 @@
 /**
  * What each address says in the HTML the server hands out, above the crawl path.
  *
- * All 365 addresses used to ship the same body — this site's menu — so a crawler
+ * All the addresses used to ship the same body — this site's menu — so a crawler
  * was handed one text for every point group, every space group and every plane
  * group, and told by the title alone that they were different pages. That is how
  * a catalogue becomes a set of duplicates a search engine folds into one result.
@@ -36,6 +36,13 @@ const PAGES: Record<string, PageContent> = {
     paragraphs: [
       'Pick a space group, give it a cell and put atoms in it: the general positions are generated, the glide planes and screw axes are drawn where they fall, and the structure can be exported as a CIF.',
       'The 230 groups are addressed by their International Tables number, and the settings of a group — other axes, another origin — are the same page rather than a near-duplicate of it.',
+    ],
+  },
+  '/viewer': {
+    heading: 'Open a crystal structure from its CIF file',
+    paragraphs: [
+      'Drop a CIF file — from the Crystallography Open Database, a paper or a refinement — and the crystal is drawn in 3D: its molecules whole, or the atoms of one cell as the walls cut them.',
+      'The formula, the space group, the six cell parameters and the source the file names are read beside it, and the picture can be added to a drawing or a document.',
     ],
   },
   '/plane': {

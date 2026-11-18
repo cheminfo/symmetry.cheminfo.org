@@ -1,7 +1,6 @@
-import { cifParser } from 'cif-to-json';
+import { parseCifBlocks } from 'cif-to-json';
 import { elementBySymbol } from 'react-cheminfo/core';
 
-import { normalizeCif } from './normalize.ts';
 import { parseCifNumber } from './number.ts';
 import type { CifIndex, CifRowIndex } from './tags.ts';
 import {
@@ -31,10 +30,17 @@ import type {
  *   or names an atom whose element cannot be read.
  */
 export function readCif(text: string): CrystalStructure {
-  const { name, text: normalized } = normalizeCif(text);
-  const index = indexCif(cifParser(normalized));
+  const blocks = parseCifBlocks(text);
+  if (blocks.length > 1) {
+    const names = blocks.map((block) => block.name).join(', ');
+    throw new Error(
+      `This file holds ${blocks.length} data blocks (${names}). Split it and load one structure at a time.`,
+    );
+  }
+  const [block] = blocks;
+  const index = indexCif(block?.data ?? {});
   return {
-    name,
+    name: block?.name ?? '',
     formula:
       scalarTag(index, ['_chemical_formula_sum', '_chemical_formula_moiety']) ??
       '',

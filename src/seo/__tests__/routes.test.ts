@@ -15,7 +15,7 @@ import { pointGroupRoutes } from '../pointGroupRoutes.ts';
 import { FIXED_ROUTES, GENERATED_ROUTES, PAGE_ROUTES } from '../routes.ts';
 import { spaceGroupRoutes } from '../spaceGroupRoutes.ts';
 
-test('the site answers 365 addresses, and each section contributes its own', () => {
+test('the site answers 366 addresses, and each section contributes its own', () => {
   expect(pointGroupRoutes()).toHaveLength(53);
   expect(spaceGroupRoutes()).toHaveLength(230);
   expect(wallpaperRoutes()).toHaveLength(17);
@@ -26,9 +26,9 @@ test('the site answers 365 addresses, and each section contributes its own', () 
   expect(
     PAGE_ROUTES.filter((route) => route.path.startsWith('/exercises/')),
   ).toHaveLength(29);
-  expect(FIXED_ROUTES).toHaveLength(11);
+  expect(FIXED_ROUTES).toHaveLength(12);
   expect(GENERATED_ROUTES).toHaveLength(354);
-  expect(PAGE_ROUTES).toHaveLength(365);
+  expect(PAGE_ROUTES).toHaveLength(366);
 });
 
 test('the whole table is one a build can read as a set of file names', () => {
@@ -66,9 +66,9 @@ test('no two pages carry the same address, title or description', () => {
   const titles = new Set(PAGE_ROUTES.map((route) => route.title));
   const descriptions = new Set(PAGE_ROUTES.map((route) => route.description));
 
-  expect(paths.size).toBe(365);
-  expect(titles.size).toBe(365);
-  expect(descriptions.size).toBe(365);
+  expect(paths.size).toBe(366);
+  expect(titles.size).toBe(366);
+  expect(descriptions.size).toBe(366);
 });
 
 test('every description is a sentence a search result shows whole', () => {
@@ -78,7 +78,7 @@ test('every description is a sentence a search result shows whole', () => {
     expect(route.description.length).toBeLessThanOrEqual(DESCRIPTION_MAX);
     checked++;
   }
-  expect(checked).toBe(365);
+  expect(checked).toBe(366);
 });
 
 test('a title leaves room for the site name, which is appended to it', () => {
@@ -89,7 +89,7 @@ test('a title leaves room for the site name, which is appended to it', () => {
     if (route.title.length > longest.length) longest = route.title;
     checked++;
   }
-  expect(checked).toBe(365);
+  expect(checked).toBe(366);
   expect(longest).toBe(
     'Symmetry exercises — point groups, characters, space groups',
   );

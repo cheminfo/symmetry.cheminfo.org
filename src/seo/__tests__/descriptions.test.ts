@@ -33,7 +33,7 @@ test('no description spells a symmetry operation the way a program does', () => 
   }
 
   expect(offenders).toStrictEqual([]);
-  expect(checked).toBe(365);
+  expect(checked).toBe(366);
 });
 
 test('the guard catches the spelling it was written for', () => {

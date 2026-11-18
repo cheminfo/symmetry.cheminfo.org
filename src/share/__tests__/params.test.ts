@@ -16,6 +16,8 @@ test('a link that says nothing leaves every setting at its default', () => {
     setting: 0,
     structure: '',
     supercell: 1,
+    cif: '',
+    packing: 'molecules',
     planeGroup: 'p4m',
     motif: '',
     tiles: 4,

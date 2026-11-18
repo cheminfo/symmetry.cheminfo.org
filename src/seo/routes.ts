@@ -62,6 +62,14 @@ export const FIXED_ROUTES: readonly RouteMeta[] = [
     note: 'name the symmetry of a repeating pattern',
   },
   {
+    path: '/viewer',
+    title: 'Crystal viewer — open a CIF file in 3D',
+    description:
+      'Drop a CIF file and see the crystal in 3D: whole molecules or the atoms of one cell, up to 4×4×4 cells, with its formula, space group and cell.',
+    short: 'Viewer',
+    note: 'open a CIF file and see the crystal',
+  },
+  {
     path: '/tutorial',
     title: 'Symmetry tutorial — from a mirror plane to a space group',
     description:

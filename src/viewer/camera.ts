@@ -11,9 +11,15 @@
 import { Sphere3D } from 'molstar/lib/mol-math/geometry.js';
 import { Vec3 } from 'molstar/lib/mol-math/linear-algebra.js';
 import type { PluginContext } from 'molstar/lib/mol-plugin/context.js';
+import type { Molecule3DCamera } from 'react-cheminfo/molecule3d';
+import type { CameraReference } from 'react-cheminfo/molstar/core';
 import {
   DEFAULT_CAMERA_DURATION,
+  cameraToPose,
+  framedRadius,
+  poseToCamera,
   resetCamera as frameScene,
+  unionSphere,
 } from 'react-cheminfo/molstar/core';
 
 import type { SceneSphere } from './framing.ts';
@@ -75,6 +81,56 @@ export function resetCamera(
     durationMs,
     orientation,
   });
+}
+
+/**
+ * Where the camera stands, measured against what is drawn rather than in
+ * ångström, so a figure opens on the same view in a frame of another size.
+ *
+ * @param plugin - The molstar context.
+ * @returns The camera, or `null` while nothing is drawn to measure it against.
+ */
+export function readCamera(plugin: PluginContext): Molecule3DCamera | null {
+  const canvas = plugin.canvas3d;
+  const reference = sceneReference(plugin);
+  if (canvas === undefined || reference === null) return null;
+  return poseToCamera(
+    canvas.camera.getSnapshot(),
+    reference,
+    canvas.camera.getTargetDistance(reference.radius),
+  );
+}
+
+/**
+ * Put the camera where {@link readCamera} found it, against what is drawn now.
+ *
+ * @param plugin - The molstar context.
+ * @param camera - Where to stand.
+ */
+export function applyCamera(
+  plugin: PluginContext,
+  camera: Molecule3DCamera,
+): void {
+  const canvas = plugin.canvas3d;
+  if (canvas === undefined) return;
+  // Resolves a reframe molstar has queued, which would otherwise land after
+  // this move and undo it.
+  canvas.commit(true);
+  const reference = sceneReference(plugin);
+  if (reference === null) return;
+  const pose = cameraToPose(
+    camera,
+    reference,
+    canvas.camera.getTargetDistance(reference.radius),
+  );
+  canvas.camera.setState({ ...pose, radius: reference.radius }, 0);
+}
+
+/** The sphere a camera is measured against: every part drawn, framed. */
+function sceneReference(plugin: PluginContext): CameraReference | null {
+  const union = unionSphere([...(extents.get(plugin)?.values() ?? [])]);
+  if (union === null || !(union.radius > 0)) return null;
+  return { center: union.center, radius: framedRadius(union.radius) };
 }
 
 /** What each part of the scene reaches, per plugin. */

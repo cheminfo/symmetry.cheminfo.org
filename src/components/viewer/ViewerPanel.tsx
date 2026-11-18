@@ -17,7 +17,7 @@ import { Suspense, lazy, useState } from 'react';
 // what asking first exists to avoid.
 import { probeViewerCapability } from 'react-cheminfo/orbital';
 
-import type { ViewerScene } from './viewerScene.ts';
+import type { ViewerHandle, ViewerScene } from './viewerScene.ts';
 
 const ViewerCanvas = lazy(async () => {
   const module = await import('./ViewerCanvas.tsx');
@@ -29,10 +29,10 @@ export interface ViewerPanelProps {
   /** What to show. */
   scene: ViewerScene;
   /**
-   * How tall the canvas is, in pixels.
+   * How tall the canvas is: pixels, or any CSS length.
    * @default 420
    */
-  height?: number;
+  height?: number | string;
   /**
    * Scene background, `#rrggbb`.
    * @default '#ffffff'
@@ -48,6 +48,12 @@ export interface ViewerPanelProps {
    * @default 'Nothing to show yet.'
    */
   emptyMessage?: string;
+  /**
+   * Called with the means to picture the scene once the canvas exists, and with
+   * `null` once it is gone.
+   * @default undefined
+   */
+  onHandle?: (handle: ViewerHandle | null) => void;
 }
 
 /**
@@ -63,6 +69,7 @@ export function ViewerPanel(props: ViewerPanelProps): ReactElement {
     background,
     caption,
     emptyMessage = 'Nothing to show yet.',
+    onHandle,
   } = props;
   const [capability] = useState(probeViewerCapability);
   const [failure, setFailure] = useState<string | null>(null);
@@ -87,6 +94,7 @@ export function ViewerPanel(props: ViewerPanelProps): ReactElement {
               scene={scene}
               background={background}
               onFailure={setFailure}
+              onHandle={onHandle}
             />
           </Suspense>
         )}

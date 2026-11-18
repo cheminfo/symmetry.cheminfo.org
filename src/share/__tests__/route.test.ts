@@ -1,4 +1,4 @@
-import { beforeEach, expect, test } from 'vitest';
+import { beforeEach, expect, test, vi } from 'vitest';
 
 import { state } from '../../state/index.ts';
 import { formatRoute, parseAddress } from '../../utils/router.ts';
@@ -157,4 +157,44 @@ test('a group named beside a structure is the one that is built', () => {
 
   expect(state.view.crystals.structureId.value).toBe('halite');
   expect(state.view.crystals.spaceGroupNumber.value).toBe(221);
+});
+
+test('what the viewer shows survives the round trip, and its defaults write nothing', () => {
+  expect(open('/viewer')).toBe('/viewer');
+  expect(open('/viewer?supercell=1&packing=molecules')).toBe('/viewer');
+  expect(
+    open('/viewer?structure=aspirin&supercell=2&packing=cell&split=55'),
+  ).toBe('/viewer?structure=aspirin&supercell=2&packing=cell&split=55');
+  expect(state.view.viewer.structureId.value).toBe('aspirin');
+  expect(state.view.viewer.packing.value).toBe('cell');
+});
+
+test('a viewer link with a packing nobody knows opens on whole molecules', () => {
+  expect(open('/viewer?structure=naphthalene&packing=layers')).toBe(
+    '/viewer?structure=naphthalene',
+  );
+  expect(state.view.viewer.packing.value).toBe('molecules');
+});
+
+test('a viewer link naming a CIF by address keeps it in the address', () => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => new Response('', { status: 404 })),
+  );
+  try {
+    expect(
+      open(
+        '/viewer?cif=https%3A%2F%2Fcrystals.cheminfo.org%2Fv1%2Fentries%2F1%2Fcif',
+      ),
+    ).toBe(
+      '/viewer?cif=https%3A%2F%2Fcrystals.cheminfo.org%2Fv1%2Fentries%2F1%2Fcif',
+    );
+    expect(state.view.viewer.cifUrl.value).toBe(
+      'https://crystals.cheminfo.org/v1/entries/1/cif',
+    );
+  } finally {
+    vi.unstubAllGlobals();
+  }
+  expect(open('/viewer')).toBe('/viewer');
+  expect(state.view.viewer.cifUrl.value).toBeNull();
 });

@@ -27,6 +27,7 @@ export const SHARE_PART_IDS = [
   'controls',
   'cell',
   'positions',
+  'details',
   'motif',
   'catalogue',
   'export',
@@ -89,6 +90,12 @@ export const SHARE_PARTS: Record<SharePartId, HideablePart> = {
     key: 'positions',
     label: 'General positions',
     description: 'The coordinate list the cell is generated from.',
+  },
+  details: {
+    key: 'details',
+    label: 'Structure details',
+    description:
+      'The formula, the space group, the cell and where it came from.',
   },
   motif: {
     key: 'motif',
@@ -165,6 +172,7 @@ export const TAB_PARTS: Record<TabId, readonly SharePartId[]> = {
     'export',
   ],
   plane: ['tabs', 'intro', 'operations', 'controls', 'motif', 'export'],
+  viewer: ['tabs', 'intro', 'controls', 'details', 'export'],
   tutorial: ['tabs', 'controls', 'steps', 'text', 'demos'],
   exercises: ['tabs', 'list', 'hints', 'solution'],
   cheatsheet: ['tabs', 'intro'],

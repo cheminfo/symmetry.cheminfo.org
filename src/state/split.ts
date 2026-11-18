@@ -19,3 +19,15 @@ export const DEFAULT_TUTORIAL_SPLIT = 48;
  * view stack: a 3D canvas in half a phone is not a view.
  */
 export const TUTORIAL_STACK_BELOW = 900;
+
+/**
+ * What the 3D view takes beside the viewer's details. The crystal is what the
+ * page is for, and the details are read once, so the view leads.
+ */
+export const DEFAULT_VIEWER_SPLIT = 68;
+
+/**
+ * The narrowest row the viewer still splits, in pixels: the details then go
+ * under the view, which keeps the whole width.
+ */
+export const VIEWER_STACK_BELOW = 800;

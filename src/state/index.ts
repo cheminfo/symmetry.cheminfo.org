@@ -45,7 +45,12 @@ export {
   TILES_RANGE,
   clampToRange,
 } from './ranges.ts';
-export { DEFAULT_TUTORIAL_SPLIT, TUTORIAL_STACK_BELOW } from './split.ts';
+export {
+  DEFAULT_TUTORIAL_SPLIT,
+  DEFAULT_VIEWER_SPLIT,
+  TUTORIAL_STACK_BELOW,
+  VIEWER_STACK_BELOW,
+} from './split.ts';
 export type { CatalogueTabId, TabId } from './tabs.ts';
 export {
   CATALOGUE_TAB_IDS,
@@ -56,7 +61,8 @@ export {
   isCatalogueTab,
   isTabId,
 } from './tabs.ts';
-export { DEFAULT_PLANE_GROUP } from './view.ts';
+export type { ViewerPacking } from './view.ts';
+export { DEFAULT_PLANE_GROUP, VIEWER_PACKINGS } from './view.ts';
 export {
   animateOperation,
   focusCrystalElement,
@@ -66,6 +72,7 @@ export {
   selectSetting,
   selectSpaceGroup,
   selectStructure,
+  selectViewerStructure,
   setActiveExercise,
   setActiveTab,
   setCatalogueItem,
@@ -75,4 +82,7 @@ export {
   setTiles,
   setTutorialSplit,
   setTutorialStep,
+  setViewerPacking,
+  setViewerSplit,
+  setViewerSupercell,
 } from './view.ts';
