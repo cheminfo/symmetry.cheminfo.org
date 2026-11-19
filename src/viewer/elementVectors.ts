@@ -8,11 +8,11 @@
  * made once per kind of vector rather than once per caller.
  */
 
+import type { Point3 } from 'react-cheminfo/crystal3d';
+import { normalToCartesian, toCartesian } from 'react-cheminfo/crystal3d';
+
 import type { Lattice, SymmetryElement } from '../symmetry/core/index.ts';
 import { TWELFTHS_PER_CELL } from '../symmetry/core/index.ts';
-
-import { normalToCartesian, toCartesian } from './latticeBasis.ts';
-import type { Point3 } from './types.ts';
 
 /**
  * The axis `[uvw]`, as a Cartesian direction.

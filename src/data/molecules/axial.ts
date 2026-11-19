@@ -1,4 +1,4 @@
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
+import type { Vec3 } from 'react-cheminfo/crystal3d';
 
 import type { MoleculeAtom } from './build.ts';
 import { expandSeed } from './build.ts';

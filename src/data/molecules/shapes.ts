@@ -1,4 +1,4 @@
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
+import type { Vec3 } from 'react-cheminfo/crystal3d';
 
 import { dedupePositions } from './build.ts';
 

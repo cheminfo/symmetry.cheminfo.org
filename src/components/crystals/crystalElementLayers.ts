@@ -10,9 +10,10 @@
  * sizes.
  */
 
+import type { ElementStyle, SymmetryDrawing } from 'react-cheminfo/crystal3d';
+
 import type { SymmetryElement } from '../../symmetry/core/index.ts';
 import { elementKey } from '../../symmetry/core/index.ts';
-import type { ElementStyle, SymmetryDrawing } from '../../viewer/core.ts';
 import { NO_SHIFT, crystalElementDrawing } from '../../viewer/core.ts';
 
 import { elementBadge, elementLabel } from './crystalLabels.ts';

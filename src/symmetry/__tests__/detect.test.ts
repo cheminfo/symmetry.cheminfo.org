@@ -1,3 +1,8 @@
+import {
+  applyMatrix,
+  multiplyMatrices,
+  rotationMatrix,
+} from 'react-cheminfo/crystal3d';
 import { expect, test } from 'vitest';
 
 import { orbitAtoms } from '../../data/molecules/build.ts';
@@ -10,11 +15,6 @@ import {
   detectPointGroup,
   detectWithOptions,
 } from '../detect.ts';
-import {
-  applyMatrix,
-  multiplyMatrices,
-  rotationMatrix,
-} from '../point/mat3.ts';
 import { operationsOf } from '../pointGroups.ts';
 
 /** Four points in general position: their orbit under G has exactly G. */

@@ -9,11 +9,11 @@
 import { Button } from '@blueprintjs/core';
 import type { ReactElement } from 'react';
 import { downloadText, sanitizeFileName } from 'react-cheminfo/core';
+import type { CrystalScene } from 'react-cheminfo/crystal3d';
+import { toXyzText } from 'react-cheminfo/crystal3d';
 import { PagePart } from 'react-cheminfo/ui';
 
-import { toXyzText } from '../../viewer/core.ts';
 import { Stereogram } from '../plane/index.ts';
-import type { ViewerScene } from '../viewer/index.ts';
 import { ViewerPanel } from '../viewer/index.ts';
 
 import { LayerChips } from './LayerChips.tsx';
@@ -36,7 +36,7 @@ const MOLECULE_LAYERS = [
 export interface MoleculeViewProps {
   readonly analysis: MoleculeAnalysis;
   /** What to draw, already built and referentially stable. */
-  readonly scene: ViewerScene;
+  readonly scene: CrystalScene;
   /** Whether the stereographic projection is drawn under the canvas. */
   readonly stereogram: boolean;
 }

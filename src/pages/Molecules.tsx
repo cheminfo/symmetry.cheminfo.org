@@ -10,6 +10,7 @@
 import { useSignals } from '@preact/signals-react/runtime';
 import type { ReactElement } from 'react';
 import { useMemo, useState } from 'react';
+import type { CrystalScene, SymmetryDrawing } from 'react-cheminfo/crystal3d';
 import { PagePart, useIsHidden } from 'react-cheminfo/ui';
 
 import {
@@ -24,10 +25,8 @@ import { OperationList } from '../components/molecules/OperationList.tsx';
 import { analyseMolecule } from '../components/molecules/assignment.ts';
 import { resolveMolecule } from '../components/molecules/library.ts';
 import { viewerOperationOf } from '../components/molecules/viewerOperation.ts';
-import type { ViewerScene } from '../components/viewer/index.ts';
 import { animateOperation, selectMolecule, state } from '../state/index.ts';
 import { characterTableOf } from '../symmetry/characterTables.ts';
-import type { SymmetryDrawing } from '../viewer/core.ts';
 
 import '../components/molecules/molecules.css';
 
@@ -79,7 +78,7 @@ export function Molecules(): ReactElement {
   const schoenflies = analysis.group?.schoenflies ?? detected;
   const table = characterTableOf(detected);
 
-  const scene = useMemo<ViewerScene>(
+  const scene = useMemo<CrystalScene>(
     () => ({ atoms: analysis.atoms, elements, labels, play }),
     [analysis, elements, labels, play],
   );

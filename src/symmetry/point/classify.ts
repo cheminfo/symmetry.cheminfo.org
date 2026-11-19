@@ -1,16 +1,16 @@
-import { greatestCommonDivisor } from '../core/integerMatrix.ts';
-
-import type { Mat3 } from './mat3.ts';
+import type { Mat3, Vec3 } from 'react-cheminfo/crystal3d';
 import {
   IDENTITY_MATRIX,
   INVERSION_MATRIX,
   matrixDeterminant,
   matrixDistance,
   matrixTrace,
+  normalizeVector,
   scaleMatrix,
-} from './mat3.ts';
-import type { Vec3 } from './vec3.ts';
-import { normalizeVector, vectorNorm } from './vec3.ts';
+  vectorNorm,
+} from 'react-cheminfo/crystal3d';
+
+import { greatestCommonDivisor } from '../core/integerMatrix.ts';
 
 /** What a 3×3 orthogonal matrix turns out to be. */
 export interface MatrixGeometry {

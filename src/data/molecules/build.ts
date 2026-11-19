@@ -1,14 +1,16 @@
-import type { PointOperation } from '../../symmetry/operations.ts';
-import { applyMatrix, rotationMatrix } from '../../symmetry/point/mat3.ts';
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
+import type { Vec3 } from 'react-cheminfo/crystal3d';
 import {
   addVectors,
+  applyMatrix,
   crossProduct,
   normalizeVector,
+  rotationMatrix,
   scaleVector,
   subtractVectors,
   vectorDistance,
-} from '../../symmetry/point/vec3.ts';
+} from 'react-cheminfo/crystal3d';
+
+import type { PointOperation } from '../../symmetry/operations.ts';
 import { operationsOf } from '../../symmetry/pointGroups.ts';
 
 const DEGREE = Math.PI / 180;

@@ -9,6 +9,7 @@
  * is the e2e suite's.
  */
 
+import type { CrystalScene } from 'react-cheminfo/crystal3d';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, test } from 'vitest';
 
@@ -16,7 +17,6 @@ import { draftOf } from '../../../crystal/draft.ts';
 import { structureOf } from '../../../data/structures/index.ts';
 import { setDisplayFlag } from '../../../state/index.ts';
 import { spaceGroup } from '../../../symmetry/spaceGroups.ts';
-import type { ViewerScene } from '../../viewer/index.ts';
 import { CifPanel } from '../CifPanel.tsx';
 import { CrystalView } from '../CrystalView.tsx';
 import { CRYSTAL_LAYERS } from '../crystalLabels.ts';
@@ -25,7 +25,7 @@ const FM3M = spaceGroup(225);
 const HALITE = draftOf(structureOf('halite'), FM3M, 'Halite');
 
 /** Nothing for a static render to draw: the canvas is not reached anyway. */
-const EMPTY_SCENE: ViewerScene = {
+const EMPTY_SCENE: CrystalScene = {
   atoms: [],
   cell: null,
   repeat: [1, 1, 1],

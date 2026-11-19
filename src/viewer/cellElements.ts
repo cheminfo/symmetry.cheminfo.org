@@ -14,16 +14,18 @@
  * invisible without this.
  */
 
-import type { Lattice, SymmetryElement } from '../symmetry/core/index.ts';
+import type { Point3 } from 'react-cheminfo/crystal3d';
 import {
+  cellSection,
+  clipLineToCell,
   crossProduct,
   subtractVectors,
   vectorNorm,
-} from '../symmetry/point/vec3.ts';
+} from 'react-cheminfo/crystal3d';
 
-import { cellSection, clipLineToCell } from './cellClip.ts';
+import type { Lattice, SymmetryElement } from '../symmetry/core/index.ts';
+
 import { elementLocus } from './crystalDrawing.ts';
-import type { Point3 } from './types.ts';
 
 /** A whole-cell shift, in cells along a, b and c. */
 export type CellShift = readonly [number, number, number];

@@ -1,4 +1,4 @@
-import { scaleVector } from '../../symmetry/point/vec3.ts';
+import { scaleVector } from 'react-cheminfo/crystal3d';
 
 import {
   bendArm,

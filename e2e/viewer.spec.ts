@@ -175,7 +175,7 @@ test('Ctrl+C copies the crystal as a figure that opens here again', async ({
 
 /** The canvas, once the structure asked for last is drawn. */
 function drawn(scope: Page | FrameLocator) {
-  return scope.locator('[data-testid="symmetry-3d"][data-drawn="true"]');
+  return scope.locator('[data-testid="crystal-3d"][data-drawn="true"]');
 }
 
 /** A camera as a figure writes it, as numbers. */

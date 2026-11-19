@@ -123,7 +123,7 @@ test('asking for more cells redraws the stack and says so', async ({
   test.setTimeout(240_000);
   await page.goto('/crystals?structure=halite');
 
-  const canvas = page.getByTestId('symmetry-3d').locator('canvas');
+  const canvas = page.getByTestId('crystal-3d').locator('canvas');
   await expect(canvas).toBeVisible({ timeout: VIEWER_TIMEOUT_MS });
   const painted = await waitForPaint(page, canvas, VIEWER_TIMEOUT_MS);
   expect(distinctLevels(painted)).toBeGreaterThan(6);

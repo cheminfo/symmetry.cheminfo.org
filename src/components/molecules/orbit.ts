@@ -7,15 +7,15 @@
  * read the order of the group off the screen.
  */
 
-import type { PointOperation } from '../../symmetry/operations.ts';
-import { applyMatrix } from '../../symmetry/point/mat3.ts';
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
+import type { SymmetryDrawing, Vec3 } from 'react-cheminfo/crystal3d';
 import {
+  applyMatrix,
   normalizeVector,
   scaleVector,
   vectorDistance,
-} from '../../symmetry/point/vec3.ts';
-import type { SymmetryDrawing } from '../../viewer/core.ts';
+} from 'react-cheminfo/crystal3d';
+
+import type { PointOperation } from '../../symmetry/operations.ts';
 
 /*
  * The probe and its images are subject matter, not chrome: they are a quantity

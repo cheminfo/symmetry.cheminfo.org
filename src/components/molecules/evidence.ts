@@ -9,8 +9,9 @@
  * off `the principal C₆` is the comparison the question is asking for.
  */
 
+import { dotProduct, sameAxis } from 'react-cheminfo/crystal3d';
+
 import type { AxisFinding, SymmetryInventory } from '../../symmetry/detect.ts';
-import { dotProduct, sameAxis } from '../../symmetry/point/vec3.ts';
 
 /** How small `û · v̂` has to be for two axes to count as perpendicular. */
 const PERPENDICULAR = 1e-3;

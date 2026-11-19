@@ -8,10 +8,10 @@
  * at.
  */
 
+import type { Point3, SymmetryDrawing, Vec3 } from 'react-cheminfo/crystal3d';
+
 import type { PointOperation } from '../../symmetry/operations.ts';
 import { canonicalSense } from '../../symmetry/operations.ts';
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
-import type { Point3, SymmetryDrawing } from '../../viewer/core.ts';
 
 /** Which kinds of element to draw, and how big. */
 export interface MoleculeElementOptions {

@@ -8,7 +8,6 @@ export type { CifDetailsProps } from './CifDetails.tsx';
 export { CifDetails } from './CifDetails.tsx';
 export type { CifActionsProps, CifDropProps } from './CifOpen.tsx';
 export { CifActions, CifDrop } from './CifOpen.tsx';
-export { viewerCaption } from './caption.ts';
 export { useCrystalFigure } from './useCrystalFigure.ts';
 export type { ViewerCrystal, ViewerState } from './useViewerCrystal.ts';
 export { useViewerCrystal } from './useViewerCrystal.ts';

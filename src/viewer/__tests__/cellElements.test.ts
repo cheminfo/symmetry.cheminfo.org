@@ -1,3 +1,4 @@
+import { cellSection } from 'react-cheminfo/crystal3d';
 import { expect, test } from 'vitest';
 
 import type { SymmetryElement } from '../../symmetry/core/index.ts';
@@ -7,7 +8,6 @@ import {
   parseOperation,
   symmetryElements,
 } from '../../symmetry/core/index.ts';
-import { cellSection } from '../cellClip.ts';
 import { NO_SHIFT, cellShiftFor, cellShifts } from '../cellElements.ts';
 import { elementLocus } from '../crystalDrawing.ts';
 

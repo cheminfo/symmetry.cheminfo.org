@@ -1,4 +1,5 @@
-import { matrixDistance } from './mat3.ts';
+import { matrixDistance } from 'react-cheminfo/crystal3d';
+
 import type { PointOperation } from './operation.ts';
 
 /** Whether two operations are the same to `tolerance`, compared on their matrices. */

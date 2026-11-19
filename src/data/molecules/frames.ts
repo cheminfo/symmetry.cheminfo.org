@@ -1,11 +1,11 @@
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
+import type { Vec3 } from 'react-cheminfo/crystal3d';
 import {
   addVectors,
   crossProduct,
   normalizeVector,
   scaleVector,
   subtractVectors,
-} from '../../symmetry/point/vec3.ts';
+} from 'react-cheminfo/crystal3d';
 
 import type { MoleculeAtom } from './build.ts';
 import { sp3Pair } from './build.ts';

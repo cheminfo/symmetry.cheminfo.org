@@ -1,3 +1,6 @@
+import type { Vec3 } from 'react-cheminfo/crystal3d';
+import { normalizeVector } from 'react-cheminfo/crystal3d';
+
 import type { PointGroup } from '../data/pointGroups.ts';
 import { pointGroupById } from '../data/pointGroups.ts';
 
@@ -13,8 +16,6 @@ import {
   rotationOperation,
 } from './operations.ts';
 import { labelOperations, principalAxisOf } from './point/labels.ts';
-import type { Vec3 } from './point/vec3.ts';
-import { normalizeVector } from './point/vec3.ts';
 
 export { labelOperations, principalAxisOf } from './point/labels.ts';
 

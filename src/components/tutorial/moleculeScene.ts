@@ -8,13 +8,16 @@
  * every element beside the molecule rather than through it.
  */
 
+import type {
+  CrystalScene,
+  Vec3,
+  ViewerOperation,
+} from 'react-cheminfo/crystal3d';
+
 import { moleculeById } from '../../data/molecules.ts';
 import { centreAtoms, detectPointGroup } from '../../symmetry/detect.ts';
 import type { PointOperation } from '../../symmetry/operations.ts';
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
 import { operationByName } from '../../symmetry/validate.ts';
-import type { ViewerOperation } from '../../viewer/core.ts';
-import type { ViewerScene } from '../viewer/index.ts';
 
 import type { MoleculeElementOptions } from './moleculeElements.ts';
 import { moleculeElements, structureRadius } from './moleculeElements.ts';
@@ -36,7 +39,7 @@ export interface MoleculeSceneOptions extends Omit<
 
 /** The scene, and what is needed to caption it. */
 export interface MoleculeSceneResult {
-  readonly scene: ViewerScene;
+  readonly scene: CrystalScene;
   /** The `PointGroup.id` the detector reads off the coordinates. */
   readonly group: string;
   /** Every operation, in the molecule's own frame. */
@@ -125,7 +128,7 @@ export function viewerOperation(
 function playback(
   group: string,
   play: MoleculeSceneOptions['play'],
-): ViewerScene['play'] {
+): CrystalScene['play'] {
   if (play === undefined) return null;
   const operation = operationByName(group, play.name);
   if (operation === undefined) return null;

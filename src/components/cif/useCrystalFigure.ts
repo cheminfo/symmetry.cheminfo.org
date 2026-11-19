@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
+import type { CrystalViewHandle } from 'react-cheminfo/crystal3d';
 import type { Molecule3DCamera } from 'react-cheminfo/molecule3d';
 
 import { crystalFigureStates } from '../../figure/crystalFigure.ts';
 import { registerFigurePage } from '../../figure/figurePage.ts';
 import { state } from '../../state/index.ts';
-import type { ViewerHandle } from '../viewer/index.ts';
 
 import { viewerSource } from './viewerSource.ts';
 
@@ -19,7 +19,7 @@ const FIGURE_SCALE = 2;
  * @param shown - Whether a crystal is on screen.
  */
 export function useCrystalFigure(
-  handle: ViewerHandle | null,
+  handle: CrystalViewHandle | null,
   shown: boolean,
 ): void {
   useEffect(() => {

@@ -6,9 +6,9 @@
  * not what anybody has to type back.
  */
 
-import { primitiveDirection } from '../core/integerMatrix.ts';
+import type { Vec3 } from 'react-cheminfo/crystal3d';
 
-import type { Vec3 } from './vec3.ts';
+import { primitiveDirection } from '../core/integerMatrix.ts';
 
 /** How far a component of a unit axis may sit from a whole direction index. */
 const INDEX_TOLERANCE = 1e-3;

@@ -14,11 +14,14 @@
  * the detector works in and the frame the scene is drawn in.
  */
 
+import type { SymmetryDrawing, Vec3 } from 'react-cheminfo/crystal3d';
+import {
+  ELEMENT_COLOURS,
+  sameAxis,
+  vectorNorm,
+} from 'react-cheminfo/crystal3d';
+
 import type { PointOperation } from '../../symmetry/operations.ts';
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
-import { sameAxis, vectorNorm } from '../../symmetry/point/vec3.ts';
-import type { SymmetryDrawing } from '../../viewer/core.ts';
-import { ELEMENT_COLOURS } from '../../viewer/core.ts';
 
 /** The elements, split the way the layer chips switch them. */
 export interface ElementLayers {

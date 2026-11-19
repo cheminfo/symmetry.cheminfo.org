@@ -9,8 +9,9 @@
  * point of the opposite hand.
  */
 
+import { matrixDeterminant } from 'react-cheminfo/crystal3d';
+
 import type { PointOperation, Vec3 } from '../../symmetry/operations.ts';
-import { matrixDeterminant } from '../../symmetry/point/mat3.ts';
 
 import { rotationGlyphPath } from './glyphs.ts';
 import type { StereogramMirror } from './stereographic.ts';

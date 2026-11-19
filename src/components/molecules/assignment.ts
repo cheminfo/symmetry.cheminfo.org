@@ -10,6 +10,13 @@
  * are, at a stated tolerance, which is the thing the site is teaching.
  */
 
+import type {
+  SymmetryDrawing,
+  Vec3,
+  ViewerAtom,
+} from 'react-cheminfo/crystal3d';
+import { sameAxis } from 'react-cheminfo/crystal3d';
+
 import { flowQuestion } from '../../data/flowchart.ts';
 import type { MoleculeEntry } from '../../data/molecules.ts';
 import type { PointGroup } from '../../data/pointGroups.ts';
@@ -26,9 +33,6 @@ import {
   inventoryOfAtoms,
 } from '../../symmetry/detect.ts';
 import { walkFlowchart } from '../../symmetry/flowchart.ts';
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
-import { sameAxis } from '../../symmetry/point/vec3.ts';
-import type { SymmetryDrawing, ViewerAtom } from '../../viewer/core.ts';
 
 import type { ElementLayers } from './elements.ts';
 import { atomicExtent, linearElements, moleculeElements } from './elements.ts';

@@ -1,26 +1,21 @@
 /**
  * The crystal the viewer draws, derived from the file on screen: read once per
- * file, expanded once per file, packed once per packing, repeated once per
- * stack of cells.
+ * file, expanded once per file, then packed and repeated by react-cheminfo's
+ * `crystalView` once per packing and stack of cells.
  */
 
 import { useSignals } from '@preact/signals-react/runtime';
 import { useMemo } from 'react';
+import type { CrystalScene, CrystalView } from 'react-cheminfo/crystal3d';
+import { crystalView, useCrystalCaption } from 'react-cheminfo/crystal3d';
+import { bondLimit } from 'react-cheminfo/molstar/bonds';
 
 import type { OpenedCif } from '../../crystal/openCif.ts';
 import { openCif } from '../../crystal/openCif.ts';
-import type { PackingResult } from '../../crystal/packing.ts';
-import { packMolecules } from '../../crystal/packing.ts';
-import { largestRepeatThatFits } from '../../crystal/supercell.ts';
 import { figureCamera } from '../../figure/figurePage.ts';
 import { state } from '../../state/index.ts';
-import { fractionalToCartesian } from '../../symmetry/core/index.ts';
-import { bondLimit } from '../../viewer/bondRule.ts';
-import type { ViewerAtom } from '../../viewer/core.ts';
-import { supercellAtoms } from '../../viewer/core.ts';
 import type { CrystalAnalysis } from '../crystals/crystalScene.ts';
 import { analyseCrystal } from '../crystals/crystalScene.ts';
-import type { ViewerScene } from '../viewer/index.ts';
 
 import type { ViewerSource } from './viewerSource.ts';
 import { viewerSource } from './viewerSource.ts';
@@ -30,10 +25,11 @@ export interface ViewerCrystal {
   readonly source: ViewerSource;
   readonly opened: OpenedCif;
   readonly analysis: CrystalAnalysis;
-  readonly packed: PackingResult;
-  /** Cells drawn along each axis: what was asked, or fewer when too many atoms. */
-  readonly cells: number;
-  readonly scene: ViewerScene;
+  /** What is drawn: the atoms, and how many cells of them. */
+  readonly view: CrystalView;
+  readonly scene: CrystalScene;
+  /** One line saying what is on screen. */
+  readonly caption: string;
 }
 
 /** What the viewer has: nothing, a file it could not read, or a crystal. */
@@ -67,46 +63,41 @@ export function useViewerCrystal(): ViewerState {
         : analyseCrystal(opened.draft, opened.setting),
     [opened],
   );
-  const packed = useMemo((): PackingResult | null => {
-    if (analysis === null) return null;
-    return packing === 'molecules'
-      ? packMolecules(analysis.atoms, analysis.lattice, bondLimit)
-      : { atoms: analysis.atoms, molecules: 0, extended: false };
-  }, [analysis, packing]);
-  const cells =
-    packed === null ? 1 : largestRepeatThatFits(packed.atoms.length, asked);
-  const atoms = useMemo((): ViewerAtom[] => {
-    if (analysis === null || packed === null) return [];
-    const oneCell: ViewerAtom[] = [];
-    for (const atom of packed.atoms) {
-      const [x = 0, y = 0, z = 0] = fractionalToCartesian(
-        analysis.lattice,
-        atom.position,
-      );
-      oneCell.push({ element: atom.element, position: [x, y, z] });
-    }
-    return supercellAtoms(oneCell, analysis.lattice.cell, [
-      cells,
-      cells,
-      cells,
-    ]);
-  }, [analysis, packed, cells]);
+  const view = useMemo(
+    () =>
+      analysis === null
+        ? null
+        : crystalView(analysis.atoms, analysis.lattice, {
+            packing,
+            cells: asked,
+            bondLimit,
+          }),
+    [analysis, packing, asked],
+  );
+  const caption = useCrystalCaption(name, view ?? NO_VIEW, asked);
   const scene = useMemo(
-    (): ViewerScene => ({
-      atoms,
+    (): CrystalScene => ({
+      atoms: view?.atoms ?? [],
       cell: unitCell && analysis !== null ? analysis.lattice.cell : null,
-      repeat: [cells, cells, cells],
+      repeat: [view?.cells ?? 1, view?.cells ?? 1, view?.cells ?? 1],
       elements: [],
       labels: false,
       camera,
     }),
-    [atoms, analysis, cells, unitCell, camera],
+    [view, analysis, unitCell, camera],
   );
 
   if (source === null || opened === null) return { kind: 'empty' };
   if (typeof opened === 'string') {
     return { kind: 'unreadable', problem: opened };
   }
-  if (analysis === null || packed === null) return { kind: 'empty' };
-  return { kind: 'crystal', source, opened, analysis, packed, cells, scene };
+  if (analysis === null || view === null) return { kind: 'empty' };
+  return { kind: 'crystal', source, opened, analysis, view, scene, caption };
 }
+
+/** What an empty viewer holds, for a caption nobody reads. */
+const NO_VIEW: Pick<CrystalView, 'molecules' | 'atomsPerCell' | 'cells'> = {
+  molecules: 0,
+  atomsPerCell: 0,
+  cells: 1,
+};

@@ -1,3 +1,14 @@
+import type { Mat3, Vec3 } from 'react-cheminfo/crystal3d';
+import {
+  IDENTITY_MATRIX,
+  INVERSION_MATRIX,
+  multiplyMatrices,
+  normalizeVector,
+  reflectionMatrix,
+  rotationMatrix,
+  transposeMatrix,
+} from 'react-cheminfo/crystal3d';
+
 import {
   canonicalSense,
   improperSymbol,
@@ -6,17 +17,6 @@ import {
   matrixGeometry,
   rationalAngle,
 } from './classify.ts';
-import type { Mat3 } from './mat3.ts';
-import {
-  IDENTITY_MATRIX,
-  INVERSION_MATRIX,
-  multiplyMatrices,
-  reflectionMatrix,
-  rotationMatrix,
-  transposeMatrix,
-} from './mat3.ts';
-import type { Vec3 } from './vec3.ts';
-import { normalizeVector } from './vec3.ts';
 
 /** The five kinds of operation a molecular point group is made of. */
 export type PointOperationKind = 'E' | 'Cn' | 'sigma' | 'i' | 'Sn';

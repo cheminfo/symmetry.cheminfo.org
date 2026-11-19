@@ -1,82 +1,12 @@
 /**
- * The half of the viewer that has never heard of molstar.
+ * The symmetry elements of a crystal, placed in its cell for the 3D view.
  *
- * A page that only *builds* a scene — works out which symmetry elements to
- * draw, repeats a cell, measures what it has — imports this and pays nothing:
- * the 2.8 MB molstar chunk hangs off `index.ts`, which is reached through the
- * lazy canvas and nowhere else.
+ * Everything the view draws them with — the cell, the shapes, the labels, the
+ * canvas — is `react-cheminfo/crystal3d`'s; what stays here reads this site's
+ * own analysis of a space group.
  */
 
-export type { CellSegment } from './cellClip.ts';
-export { cellSection, clipLineToCell } from './cellClip.ts';
 export type { CellShift } from './cellElements.ts';
 export { NO_SHIFT, cellShiftFor, cellShifts } from './cellElements.ts';
-export type { CellEdge } from './cellGeometry.ts';
-export {
-  cellAxes,
-  cellAxisLabelPoints,
-  cellEdges,
-  cellPoint,
-  clampRepeat,
-  latticeShifts,
-} from './cellGeometry.ts';
 export type { CrystalDrawingOptions, ElementLocus } from './crystalDrawing.ts';
 export { crystalElementDrawing, elementLocus } from './crystalDrawing.ts';
-export { mergeDrawings, sameDrawings, withoutDrawings } from './drawingSet.ts';
-export type { ElementGroup } from './elementDrawing.ts';
-export { drawingPrimitives, elementGroups } from './elementDrawing.ts';
-export { drawingLabels } from './elementLabels.ts';
-export { plainName } from './labelText.ts';
-export type { PlaneFrame } from './frame.ts';
-export { perpendicularTo, planeFrame } from './frame.ts';
-export type { SceneSphere } from './framing.ts';
-export { boundingSphereOf, primitivesExtent, unionSpheres } from './framing.ts';
-export type { OrientedScene, ViewOrientation } from './orientation.ts';
-export {
-  principalAxisOf,
-  sceneOrientation,
-  threeQuarterView,
-} from './orientation.ts';
-export type { Matrix4 } from './operationMatrix.ts';
-export {
-  IDENTITY_MATRIX4,
-  ROTATION_PHASE,
-  operationAt,
-  operationIsRigid,
-  operationMatrix,
-} from './operationMatrix.ts';
-export {
-  CELL_COLOUR,
-  ELEMENT_COLOURS,
-  LABEL_COLOUR,
-  drawingColour,
-} from './palette.ts';
-export type {
-  ElementStyle,
-  MeshPrimitive,
-  ResolvedElementStyle,
-  TextItem,
-} from './primitives.ts';
-export {
-  DEFAULT_ELEMENT_STYLE,
-  primitivePoints,
-  resolveElementStyle,
-} from './primitives.ts';
-export { atomName, toXyzText } from './structureText.ts';
-export { supercellAtoms } from './supercell.ts';
-export type {
-  CellRepeat,
-  DrawingBase,
-  GlideDrawing,
-  InversionDrawing,
-  MirrorDrawing,
-  Point3,
-  RotationDrawing,
-  RotoinversionDrawing,
-  ScrewDrawing,
-  SymmetryDrawing,
-  SymmetryDrawingKind,
-  UnitCell,
-  ViewerAtom,
-  ViewerOperation,
-} from './types.ts';

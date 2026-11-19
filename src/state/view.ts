@@ -9,6 +9,7 @@
 
 import { signal } from '@preact/signals-react';
 import { clampSplit } from 'react-cheminfo/core';
+import type { CrystalPacking } from 'react-cheminfo/crystal3d';
 
 import type { SharePartId } from '../share/parts.ts';
 
@@ -29,10 +30,9 @@ export const DEFAULT_PLANE_GROUP = 'p4m';
  * How the viewer fills a cell: each molecule whole, in the cell its centre
  * falls in, or every atom wrapped into the cell, cut where the walls cut it.
  */
-export type ViewerPacking = 'molecules' | 'cell';
+export type ViewerPacking = CrystalPacking;
 
 /** Every packing, in the order the viewer offers them; the first is its default. */
-export const VIEWER_PACKINGS: readonly ViewerPacking[] = ['molecules', 'cell'];
 
 /** The `view` bucket: plain object, signal leaves, never reassigned. */
 export const view = {
@@ -298,3 +298,5 @@ export function setHiddenParts(parts: readonly SharePartId[]): void {
 export function setEmbedded(embedded: boolean): void {
   view.embedded.value = embedded;
 }
+
+export { CRYSTAL_PACKINGS as VIEWER_PACKINGS } from 'react-cheminfo/crystal3d';

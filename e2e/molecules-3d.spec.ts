@@ -80,7 +80,7 @@ test('the viewer draws the structure, and a layer switched off changes it', asyn
     'D6h24 operations',
   );
 
-  const canvas = page.getByTestId('symmetry-3d').locator('canvas');
+  const canvas = page.getByTestId('crystal-3d').locator('canvas');
   await expect(canvas).toBeVisible({ timeout: VIEWER_TIMEOUT_MS });
 
   const painted = await waitForPaint(page, canvas, VIEWER_TIMEOUT_MS);
@@ -153,7 +153,7 @@ test('a link naming a molecule and an operation opens on both', async ({
     workbench.locator('.mol-operation[aria-pressed="true"]'),
   ).toHaveText('S4');
 
-  const canvas = page.getByTestId('symmetry-3d').locator('canvas');
+  const canvas = page.getByTestId('crystal-3d').locator('canvas');
   await expect(canvas).toBeVisible({ timeout: VIEWER_TIMEOUT_MS });
   const painted = await waitForPaint(page, canvas, VIEWER_TIMEOUT_MS);
   expect(distinctLevels(painted)).toBeGreaterThan(6);
@@ -179,7 +179,7 @@ test('the front page opens on a view where the symmetry is visible', async ({
   const workbench = page.getByTestId('page-molecules');
   await expect(workbench.locator('.mol-verdict')).toHaveText('C2v4 operations');
 
-  const canvas = page.getByTestId('symmetry-3d').locator('canvas');
+  const canvas = page.getByTestId('crystal-3d').locator('canvas');
   await expect(canvas).toBeVisible({ timeout: VIEWER_TIMEOUT_MS });
   const settled = await waitForStable(
     page,
@@ -211,7 +211,7 @@ test('the pointer names what the site drew, never what molstar parsed', async ({
 }) => {
   test.setTimeout(240_000);
   await page.goto('/');
-  const canvas = page.getByTestId('symmetry-3d').locator('canvas');
+  const canvas = page.getByTestId('crystal-3d').locator('canvas');
   await expect(canvas).toBeVisible({ timeout: VIEWER_TIMEOUT_MS });
   await waitForPaint(page, canvas, VIEWER_TIMEOUT_MS);
 
@@ -228,7 +228,7 @@ test('the pointer names what the site drew, never what molstar parsed', async ({
       await waitForPick(page);
       const label = await page.evaluate(
         () =>
-          document.querySelector('[data-testid="symmetry-3d-readout"]')
+          document.querySelector('[data-testid="crystal-3d-readout"]')
             ?.textContent ?? '',
       );
       if (label !== '') seen.add(label);

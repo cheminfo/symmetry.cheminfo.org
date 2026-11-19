@@ -24,7 +24,7 @@ export interface CifDetailsProps {
  * @returns The panel.
  */
 export function CifDetails(props: CifDetailsProps): ReactElement {
-  const { opened, analysis, packed, source } = props.crystal;
+  const { opened, analysis, view, source } = props.crystal;
   const { structure, setting } = opened;
   const { cell, volume } = analysis.lattice;
   const formula = structure.formula.replaceAll(/\s+/g, '');
@@ -77,7 +77,7 @@ export function CifDetails(props: CifDetailsProps): ReactElement {
         </span>
       </div>
       <div className="xtl-panel__title">One cell holds</div>
-      <p className="xtl-note">{contents(analysis.atoms.length, packed)}</p>
+      <p className="xtl-note">{contents(analysis.atoms.length, view)}</p>
       {(cod !== undefined || doi !== undefined) && (
         <>
           <div className="xtl-panel__title">Source</div>
@@ -124,7 +124,7 @@ const CELL_PARAMETERS = [
 ] as const;
 
 /** What one cell holds, in a sentence. */
-function contents(atoms: number, packed: ViewerCrystal['packed']): string {
+function contents(atoms: number, packed: ViewerCrystal['view']): string {
   const counted = `${atoms} ${atoms === 1 ? 'atom' : 'atoms'}`;
   if (packed.molecules === 0) {
     return packed.extended

@@ -12,6 +12,7 @@ import { Callout, Spinner } from '@blueprintjs/core';
 import { useSignals } from '@preact/signals-react/runtime';
 import type { DragEvent, ReactElement } from 'react';
 import { useState } from 'react';
+import type { CrystalViewHandle } from 'react-cheminfo/crystal3d';
 import { PagePart, SplitRow } from 'react-cheminfo/ui';
 
 import {
@@ -22,9 +23,7 @@ import {
   openViewerFile,
   useCrystalFigure,
   useViewerCrystal,
-  viewerCaption,
 } from '../components/cif/index.ts';
-import type { ViewerHandle } from '../components/viewer/index.ts';
 import { ViewerPanel } from '../components/viewer/index.ts';
 import {
   DEFAULT_VIEWER_SPLIT,
@@ -46,7 +45,7 @@ export function Viewer(): ReactElement {
   useSignals();
   const crystal = useViewerCrystal();
   const [problem, setProblem] = useState<string | null>(null);
-  const [handle, setHandle] = useState<ViewerHandle | null>(null);
+  const [handle, setHandle] = useState<CrystalViewHandle | null>(null);
   const shown = crystal.kind === 'crystal' ? crystal : null;
   useCrystalFigure(handle, shown !== null);
 
@@ -122,10 +121,7 @@ export function Viewer(): ReactElement {
               <ViewerPanel
                 scene={shown.scene}
                 height={VIEW_HEIGHT}
-                caption={viewerCaption(
-                  shown,
-                  state.view.viewer.supercell.value,
-                )}
+                caption={shown.caption}
                 onHandle={setHandle}
               />
               <PagePart part="controls">

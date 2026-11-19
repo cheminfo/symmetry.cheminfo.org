@@ -1,3 +1,4 @@
+import type { UnitCell } from 'react-cheminfo/crystal3d';
 import { expect, test } from 'vitest';
 
 import type { SymmetryElement } from '../../symmetry/core/index.ts';
@@ -7,7 +8,6 @@ import {
   symmetryElements,
 } from '../../symmetry/core/index.ts';
 import { crystalElementDrawing } from '../crystalDrawing.ts';
-import type { UnitCell } from '../types.ts';
 
 /** P2₁/c, unique axis b: a 2₁ along b, a centre at the origin, a c glide. */
 const P21C = ['x,y,z', '-x,y+1/2,-z+1/2', '-x,-y,-z', 'x,-y+1/2,z+1/2'].map(

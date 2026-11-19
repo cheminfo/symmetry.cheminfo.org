@@ -1,16 +1,16 @@
-import type { Mat3 } from '../point/mat3.ts';
-import { multiplyMatrices, transposeMatrix } from '../point/mat3.ts';
-import type { Vec3 } from '../point/vec3.ts';
+import type { Mat3, Vec3 } from 'react-cheminfo/crystal3d';
 import {
   collinear,
   crossProduct,
   dotProduct,
+  multiplyMatrices,
   normalizeVector,
   scaleVector,
   subtractVectors,
+  transposeMatrix,
   vectorDistance,
   vectorNorm,
-} from '../point/vec3.ts';
+} from 'react-cheminfo/crystal3d';
 
 /** One atom, as the detector sees it: an element and a position from the centroid. */
 export interface DetectedAtom {

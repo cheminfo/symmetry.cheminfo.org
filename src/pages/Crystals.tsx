@@ -17,6 +17,8 @@
 import { useSignals } from '@preact/signals-react/runtime';
 import type { ReactElement } from 'react';
 import { useMemo } from 'react';
+import type { CrystalScene } from 'react-cheminfo/crystal3d';
+import { largestRepeatThatFits } from 'react-cheminfo/crystal3d';
 import { PagePart } from 'react-cheminfo/ui';
 
 import {
@@ -37,14 +39,12 @@ import {
   sceneCaption,
   useCrystalDraft,
 } from '../components/crystals/index.ts';
-import type { ViewerScene } from '../components/viewer/index.ts';
 import {
   withCellParameter,
   withSite,
   withSiteAdded,
   withSiteRemoved,
 } from '../crystal/draft.ts';
-import { largestRepeatThatFits } from '../crystal/supercell.ts';
 import { setSupercell, state } from '../state/index.ts';
 
 import '../components/crystals/crystals.css';
@@ -120,7 +120,7 @@ export function Crystals(): ReactElement {
   const named =
     (labels || focusedName !== null) && elements.length <= LABEL_LIMIT;
   const elementStyle = useMemo(() => crystalElementStyle(analysis), [analysis]);
-  const scene = useMemo<ViewerScene>(
+  const scene = useMemo<CrystalScene>(
     () => ({
       atoms,
       cell: unitCell ? analysis.lattice.cell : null,

@@ -6,10 +6,10 @@
  * allene pass through its own plane and land on itself has seen one.
  */
 
+import type { Vec3, ViewerOperation } from 'react-cheminfo/crystal3d';
+
 import type { PointOperation } from '../../symmetry/operations.ts';
 import { axisLetter } from '../../symmetry/point/labels.ts';
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
-import type { ViewerOperation } from '../../viewer/core.ts';
 
 /** Every operation of a point group fixes the centroid, which is the origin. */
 const ORIGIN: Vec3 = [0, 0, 0];

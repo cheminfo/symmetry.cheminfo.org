@@ -14,6 +14,9 @@
  * `crystalElementLayers.ts`.
  */
 
+import type { ViewerAtom } from 'react-cheminfo/crystal3d';
+import { supercellAtoms } from 'react-cheminfo/crystal3d';
+
 import type { CrystalDraft } from '../../crystal/draft.ts';
 import type { ExpandedAtom, SiteReport } from '../../crystal/expand.ts';
 import {
@@ -35,8 +38,8 @@ import {
   symmetryElements,
 } from '../../symmetry/core/index.ts';
 import { spaceGroupOperations } from '../../symmetry/spaceGroups.ts';
-import type { CellShift, ViewerAtom } from '../../viewer/core.ts';
-import { NO_SHIFT, cellShifts, supercellAtoms } from '../../viewer/core.ts';
+import type { CellShift } from '../../viewer/core.ts';
+import { NO_SHIFT, cellShifts } from '../../viewer/core.ts';
 
 /** Everything one cell is, derived from the draft and the setting in force. */
 export interface CrystalAnalysis {

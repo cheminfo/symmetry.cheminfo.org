@@ -1,8 +1,9 @@
+import type { Vec3 } from 'react-cheminfo/crystal3d';
+import { dotProduct, sameAxis } from 'react-cheminfo/crystal3d';
+
 import { pointGroupById } from '../../data/pointGroups.ts';
 import type { PointOperation } from '../operations.ts';
 import { canonicalSense } from '../operations.ts';
-import type { Vec3 } from '../point/vec3.ts';
-import { dotProduct, sameAxis } from '../point/vec3.ts';
 
 import type { AxisFinding } from './inventory.ts';
 

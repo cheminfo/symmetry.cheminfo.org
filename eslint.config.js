@@ -45,7 +45,8 @@ export default defineConfig(
         {
           patterns: [
             {
-              group: ['molstar', 'molstar/*'],
+              // molstar itself; react-cheminfo's `molstar/*` paths are an API.
+              regex: '^molstar(/|$)',
               message:
                 'Only src/viewer may import molstar. Expose what you need through src/viewer instead.',
             },

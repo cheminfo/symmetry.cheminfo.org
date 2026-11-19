@@ -7,6 +7,13 @@
  * enough that a rod through the origin reaches past the box.
  */
 
+import type {
+  CrystalScene,
+  Point3,
+  SymmetryDrawing,
+  ViewerAtom,
+} from 'react-cheminfo/crystal3d';
+
 import type { Lattice, UnitCell } from '../../symmetry/core/index.ts';
 import {
   createLattice,
@@ -16,9 +23,7 @@ import {
 } from '../../symmetry/core/index.ts';
 import type { SpaceGroupSetting } from '../../symmetry/spaceGroups.ts';
 import { spaceGroupOperations } from '../../symmetry/spaceGroups.ts';
-import type { Point3, SymmetryDrawing, ViewerAtom } from '../../viewer/core.ts';
 import { crystalElementDrawing } from '../../viewer/core.ts';
-import type { ViewerScene } from '../viewer/index.ts';
 
 /** Which layers of the cell the step draws. */
 export interface CrystalSceneOptions {
@@ -42,7 +47,7 @@ export interface CrystalSceneOptions {
 
 /** The scene, and the numbers a caption reads off it. */
 export interface CrystalSceneResult {
-  readonly scene: ViewerScene;
+  readonly scene: CrystalScene;
   /** How many images the probe point has, which is the multiplicity. */
   readonly multiplicity: number;
   /** How many elements were drawn. */

@@ -1,11 +1,12 @@
+import type { Vec3 } from 'react-cheminfo/crystal3d';
+import { INVERSION_MATRIX } from 'react-cheminfo/crystal3d';
+
 import type { SymmetryInventory } from './detect/assign.ts';
 import { assignGroup, inventoryOf } from './detect/assign.ts';
 import type { DetectedAtom, DetectionOptions } from './detect/inventory.ts';
 import { centreAtoms, isLinear, mapsOnto } from './detect/inventory.ts';
 import { closedOperations } from './detect/search.ts';
 import type { PointOperation } from './operations.ts';
-import { INVERSION_MATRIX } from './point/mat3.ts';
-import type { Vec3 } from './point/vec3.ts';
 import { labelOperations } from './pointGroups.ts';
 
 export type {

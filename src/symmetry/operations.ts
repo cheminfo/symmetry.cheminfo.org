@@ -5,8 +5,8 @@
  * directions. The crystallographic counterpart, which is exact integer
  * arithmetic in the crystal basis, is `CrystalOperation` in `src/symmetry/core`.
  */
-export type { Mat3 } from './point/mat3.ts';
-export type { Vec3 } from './point/vec3.ts';
+export type { Mat3 } from 'react-cheminfo/crystal3d';
+export type { Vec3 } from 'react-cheminfo/crystal3d';
 export { canonicalSense } from './point/classify.ts';
 export type { PointOperation, PointOperationKind } from './point/operation.ts';
 export { indexOfOperation, sameOperation } from './point/compare.ts';

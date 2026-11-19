@@ -1,5 +1,5 @@
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
-import { addVectors, scaleVector } from '../../symmetry/point/vec3.ts';
+import type { Vec3 } from 'react-cheminfo/crystal3d';
+import { addVectors, scaleVector } from 'react-cheminfo/crystal3d';
 
 import type { MoleculeAtom } from './build.ts';
 import { expandSeed, planarBond } from './build.ts';

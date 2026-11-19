@@ -1,11 +1,12 @@
+import type { Vec3 } from 'react-cheminfo/crystal3d';
+import { dotProduct, sameAxis } from 'react-cheminfo/crystal3d';
+
 import type { FlowQuestion, FlowTarget } from '../data/flowchart.ts';
 import { FLOW_START, flowQuestion } from '../data/flowchart.ts';
 import { pointGroupById } from '../data/pointGroups.ts';
 
 import type { SymmetryInventory } from './detect/assign.ts';
 import type { AxisFinding } from './detect/inventory.ts';
-import type { Vec3 } from './point/vec3.ts';
-import { dotProduct, sameAxis } from './point/vec3.ts';
 
 /** How small `û · v̂` has to be for two axes to count as perpendicular. */
 const PERPENDICULAR = 1e-3;

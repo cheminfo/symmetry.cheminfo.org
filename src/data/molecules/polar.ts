@@ -1,5 +1,5 @@
-import type { Vec3 } from '../../symmetry/point/vec3.ts';
-import { scaleVector } from '../../symmetry/point/vec3.ts';
+import type { Vec3 } from 'react-cheminfo/crystal3d';
+import { scaleVector } from 'react-cheminfo/crystal3d';
 
 import { dichloroethene } from './bent.ts';
 import type { MoleculeAtom } from './build.ts';

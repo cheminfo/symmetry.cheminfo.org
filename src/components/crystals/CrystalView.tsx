@@ -8,11 +8,11 @@
 
 import { Button, ButtonGroup } from '@blueprintjs/core';
 import type { ReactElement } from 'react';
+import type { CrystalScene } from 'react-cheminfo/crystal3d';
 import { PagePart } from 'react-cheminfo/ui';
 
 import { SUPERCELL_RANGE } from '../../state/index.ts';
 import { LayerChips } from '../molecules/LayerChips.tsx';
-import type { ViewerScene } from '../viewer/index.ts';
 import { ViewerPanel } from '../viewer/index.ts';
 
 import { CRYSTAL_LAYERS } from './crystalLabels.ts';
@@ -22,7 +22,7 @@ import './crystals.css';
 /** Props of {@link CrystalView}. */
 export interface CrystalViewProps {
   /** What to draw, already built and referentially stable. */
-  readonly scene: ViewerScene;
+  readonly scene: CrystalScene;
   /** One line under the canvas saying what is on it. */
   readonly caption: string;
   /** Cells drawn along each axis. */

@@ -9,22 +9,24 @@
  * classic way to draw a monoclinic mirror in the wrong place.
  */
 
-import type { Lattice, SymmetryElement } from '../symmetry/core/index.ts';
-import { elementPoint } from '../symmetry/core/index.ts';
+import type { Point3, SymmetryDrawing } from 'react-cheminfo/crystal3d';
 import {
   addVectors,
+  axisRod,
   dotProduct,
+  faceOf,
   normalizeVector,
-} from '../symmetry/point/vec3.ts';
+  toCartesian,
+} from 'react-cheminfo/crystal3d';
 
-import { axisRod, faceOf } from './elementExtent.ts';
+import type { Lattice, SymmetryElement } from '../symmetry/core/index.ts';
+import { elementPoint } from '../symmetry/core/index.ts';
+
 import {
   axisDirection,
   intrinsicVector,
   planeNormal,
 } from './elementVectors.ts';
-import { toCartesian } from './latticeBasis.ts';
-import type { Point3, SymmetryDrawing } from './types.ts';
 
 /** Drawn where it is, unless the caller asks for a whole-cell shift. */
 const ORIGIN: readonly [number, number, number] = [0, 0, 0];

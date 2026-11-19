@@ -1,3 +1,5 @@
+import type { Vec3 } from 'react-cheminfo/crystal3d';
+import { IDENTITY_MATRIX, matrixDeterminant } from 'react-cheminfo/crystal3d';
 import { expect, test } from 'vitest';
 
 import {
@@ -13,8 +15,6 @@ import {
   rotationOperation,
   sameOperation,
 } from '../operations.ts';
-import { IDENTITY_MATRIX, matrixDeterminant } from '../point/mat3.ts';
-import type { Vec3 } from '../point/vec3.ts';
 
 const Z: Vec3 = [0, 0, 1];
 const X: Vec3 = [1, 0, 0];
