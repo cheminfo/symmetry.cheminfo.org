@@ -20,6 +20,7 @@ import {
   setActiveTab,
   setDisplayFlag,
   setLoaded,
+  setViewerBonds,
   setViewerPacking,
   setViewerSupercell,
   startLoad,
@@ -170,6 +171,7 @@ export function openViewerFigure(opened: OpenedCrystalFigure): void {
     state.view.viewer.cifUrl.value = null;
     setViewerSupercell(view.supercell);
     setViewerPacking(view.packing);
+    setViewerBonds(view.bonds);
     setDisplayFlag('unitCell', view.unitCell);
     figureCamera.value = view.camera;
   });

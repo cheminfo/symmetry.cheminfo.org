@@ -9,7 +9,7 @@
 
 import { signal } from '@preact/signals-react';
 import { clampSplit } from 'react-cheminfo/core';
-import type { CrystalPacking } from 'react-cheminfo/crystal3d';
+import type { CrystalBonds, CrystalPacking } from 'react-cheminfo/crystal3d';
 
 import type { SharePartId } from '../share/parts.ts';
 
@@ -31,6 +31,9 @@ export const DEFAULT_PLANE_GROUP = 'p4m';
  * falls in, or every atom wrapped into the cell, cut where the walls cut it.
  */
 export type ViewerPacking = CrystalPacking;
+
+/** Which bonds the viewer draws: all, all but those to a metal, or none. */
+export type ViewerBonds = CrystalBonds;
 
 /** Every packing, in the order the viewer offers them; the first is its default. */
 
@@ -95,6 +98,8 @@ export const view = {
     supercell: signal(SUPERCELL_RANGE.initial),
     /** How the cell is filled. */
     packing: signal<ViewerPacking>('molecules'),
+    /** Which bonds are drawn. */
+    bonds: signal<ViewerBonds>('all'),
     /**
      * Share of the row the 3D view takes beside the details, as a whole
      * percentage, or `null` while the page sits at its own default.
@@ -252,6 +257,14 @@ export function setViewerPacking(packing: ViewerPacking): void {
 }
 
 /**
+ * Draw every bond of the viewer's crystal, all but those to a metal, or none.
+ * @param bonds - Which bonds are drawn.
+ */
+export function setViewerBonds(bonds: ViewerBonds): void {
+  view.viewer.bonds.value = bonds;
+}
+
+/**
  * Divide the viewer's row between the 3D view and the details.
  * @param split - Share of the row the view takes, or `null` for the default.
  */
@@ -299,4 +312,7 @@ export function setEmbedded(embedded: boolean): void {
   view.embedded.value = embedded;
 }
 
-export { CRYSTAL_PACKINGS as VIEWER_PACKINGS } from 'react-cheminfo/crystal3d';
+export {
+  CRYSTAL_BONDS as VIEWER_BONDS,
+  CRYSTAL_PACKINGS as VIEWER_PACKINGS,
+} from 'react-cheminfo/crystal3d';

@@ -17,7 +17,11 @@ import {
   SUPERCELL_RANGE,
   TILES_RANGE,
 } from '../state/ranges.ts';
-import { DEFAULT_PLANE_GROUP, VIEWER_PACKINGS } from '../state/view.ts';
+import {
+  DEFAULT_PLANE_GROUP,
+  VIEWER_BONDS,
+  VIEWER_PACKINGS,
+} from '../state/view.ts';
 
 /** The longest id a link may name, in characters. */
 const MAX_ID_LENGTH = 64;
@@ -59,6 +63,8 @@ export const SHARE_PARAMS = {
   cif: stringParam({ maxLength: 2048 }),
   /** Whether the viewer draws whole molecules or the atoms its cell cuts. */
   packing: enumParam(VIEWER_PACKINGS, 'molecules'),
+  /** Which bonds the viewer draws: `all`, `noMetal` or `none`. */
+  bonds: enumParam(VIEWER_BONDS, 'all'),
   /** Which wallpaper or frieze group the plane workbench is drawing. */
   planeGroup: stringParam({ default: DEFAULT_PLANE_GROUP, maxLength: 12 }),
   /** Which motif it repeats. */

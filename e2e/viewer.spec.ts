@@ -70,7 +70,9 @@ test('a CIF opened on the viewer is drawn with its molecules whole', async ({
   await page.screenshot({ path: testInfo.outputPath('viewer-aspirin.png') });
 });
 
-test('the packing and the cells are in the address', async ({ page }) => {
+test('the packing, the cells and the bonds are in the address', async ({
+  page,
+}) => {
   await page.goto('/viewer?structure=naphthalene');
   await expect(drawn(page)).toBeAttached({ timeout: VIEWER_TIMEOUT });
   await expect(
@@ -85,6 +87,10 @@ test('the packing and the cells are in the address', async ({ page }) => {
   await expect
     .poll(() => new URL(page.url()).search)
     .toBe('?structure=naphthalene&supercell=2&packing=cell');
+  await page.getByRole('button', { name: 'None', exact: true }).click();
+  await expect
+    .poll(() => new URL(page.url()).search)
+    .toBe('?structure=naphthalene&supercell=2&packing=cell&bonds=none');
 });
 
 test('a framed viewer hands back its crystal as a figure that opens again', async ({
@@ -115,6 +121,7 @@ test('a framed viewer hands back its crystal as a figure that opens again', asyn
   const view = carried?.view?.value as Record<string, unknown>;
   expect(view.supercell).toBe(1);
   expect(view.packing).toBe('molecules');
+  expect(view.bonds).toBe('all');
   expect(view.unitCell).toBe(true);
   const camera = cameraOf(view.camera);
 

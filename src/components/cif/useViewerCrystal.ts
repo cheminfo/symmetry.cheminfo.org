@@ -46,6 +46,7 @@ export function useViewerCrystal(): ViewerState {
   useSignals();
   const source = viewerSource();
   const packing = state.view.viewer.packing.value;
+  const bonds = state.view.viewer.bonds.value;
   const asked = state.view.viewer.supercell.value;
   const unitCell = state.preferences.flags.unitCell.value;
   const camera = figureCamera.value;
@@ -82,9 +83,10 @@ export function useViewerCrystal(): ViewerState {
       repeat: [view?.cells ?? 1, view?.cells ?? 1, view?.cells ?? 1],
       elements: [],
       labels: false,
+      bonds,
       camera,
     }),
-    [view, analysis, unitCell, camera],
+    [view, analysis, unitCell, bonds, camera],
   );
 
   if (source === null || opened === null) return { kind: 'empty' };

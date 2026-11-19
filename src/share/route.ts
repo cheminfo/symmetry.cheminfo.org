@@ -41,6 +41,7 @@ import {
   setTiles,
   setTutorialSplit,
   setTutorialStep,
+  setViewerBonds,
   setViewerPacking,
   setViewerSplit,
   setViewerSupercell,
@@ -156,6 +157,7 @@ function applyPage(route: Route, params: ShareParamSet): void {
     }
     setViewerSupercell(params.supercell);
     setViewerPacking(params.packing);
+    setViewerBonds(params.bonds);
     setViewerSplit(SPLIT.parse(query[SPLIT_PARAM] ?? null));
     return;
   }
@@ -201,12 +203,15 @@ function writePlane(query: Record<string, string>): void {
 }
 
 function writeViewer(query: Record<string, string>): void {
-  const { structureId, cifUrl, supercell, packing, split } = state.view.viewer;
+  const { structureId, cifUrl, supercell, packing, bonds, split } =
+    state.view.viewer;
   writeText(query, 'structure', structureId.value ?? '');
   if (cifUrl.value !== null) query.cif = cifUrl.value;
   writeNumber(query, 'supercell', supercell.value);
   const raw = SHARE_PARAMS.packing.serialize(packing.value);
   if (raw !== null) query.packing = raw;
+  const drawn = SHARE_PARAMS.bonds.serialize(bonds.value);
+  if (drawn !== null) query.bonds = drawn;
   writeSplit(query, split.value);
 }
 

@@ -161,12 +161,19 @@ test('a group named beside a structure is the one that is built', () => {
 
 test('what the viewer shows survives the round trip, and its defaults write nothing', () => {
   expect(open('/viewer')).toBe('/viewer');
-  expect(open('/viewer?supercell=1&packing=molecules')).toBe('/viewer');
+  expect(open('/viewer?supercell=1&packing=molecules&bonds=all')).toBe(
+    '/viewer',
+  );
   expect(
-    open('/viewer?structure=aspirin&supercell=2&packing=cell&split=55'),
-  ).toBe('/viewer?structure=aspirin&supercell=2&packing=cell&split=55');
+    open(
+      '/viewer?structure=aspirin&supercell=2&packing=cell&bonds=none&split=55',
+    ),
+  ).toBe(
+    '/viewer?structure=aspirin&supercell=2&packing=cell&bonds=none&split=55',
+  );
   expect(state.view.viewer.structureId.value).toBe('aspirin');
   expect(state.view.viewer.packing.value).toBe('cell');
+  expect(state.view.viewer.bonds.value).toBe('none');
 });
 
 test('a viewer link with a packing nobody knows opens on whole molecules', () => {

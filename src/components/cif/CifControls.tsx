@@ -8,6 +8,7 @@ import type { ReactElement } from 'react';
 import { CrystalViewControls } from 'react-cheminfo/crystal3d';
 
 import {
+  setViewerBonds,
   setViewerPacking,
   setViewerSupercell,
   state,
@@ -28,6 +29,8 @@ export function CifControls(): ReactElement {
       onUnitCellChange={() => {
         toggleDisplayFlag('unitCell');
       }}
+      bonds={state.view.viewer.bonds.value}
+      onBondsChange={setViewerBonds}
       cells={state.view.viewer.supercell.value}
       onCellsChange={setViewerSupercell}
     />

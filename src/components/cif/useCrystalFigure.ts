@@ -43,6 +43,7 @@ export function useCrystalFigure(
           {
             supercell: state.view.viewer.supercell.peek(),
             packing: state.view.viewer.packing.peek(),
+            bonds: state.view.viewer.bonds.peek(),
             unitCell: state.preferences.flags.unitCell.peek(),
             camera,
           },

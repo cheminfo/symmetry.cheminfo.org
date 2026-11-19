@@ -61,8 +61,8 @@ export {
   isCatalogueTab,
   isTabId,
 } from './tabs.ts';
-export type { ViewerPacking } from './view.ts';
-export { DEFAULT_PLANE_GROUP, VIEWER_PACKINGS } from './view.ts';
+export type { ViewerBonds, ViewerPacking } from './view.ts';
+export { DEFAULT_PLANE_GROUP, VIEWER_BONDS, VIEWER_PACKINGS } from './view.ts';
 export {
   animateOperation,
   focusCrystalElement,
@@ -82,6 +82,7 @@ export {
   setTiles,
   setTutorialSplit,
   setTutorialStep,
+  setViewerBonds,
   setViewerPacking,
   setViewerSplit,
   setViewerSupercell,

@@ -14,7 +14,7 @@ const FIGURE = {
   structureId: 'aspirin',
 };
 
-test('a figure carries its file, its cells, its packing and its camera', () => {
+test('a figure carries its file, its cells, its packing, its bonds and its camera', () => {
   const camera: Molecule3DCamera = {
     rotation: [0, 0.6, 0, 0.8],
     zoom: 1.5,
@@ -23,6 +23,7 @@ test('a figure carries its file, its cells, its packing and its camera', () => {
   const states = crystalFigureStates(FIGURE, {
     supercell: 2,
     packing: 'cell',
+    bonds: 'noMetal',
     unitCell: false,
     camera,
   });
@@ -34,6 +35,7 @@ test('a figure carries its file, its cells, its packing and its camera', () => {
   expect(states.view?.value).toStrictEqual({
     supercell: 2,
     packing: 'cell',
+    bonds: 'noMetal',
     unitCell: false,
     camera: '0,0.6,0,0.8,1.5',
   });
@@ -43,6 +45,7 @@ test('a figure carries its file, its cells, its packing and its camera', () => {
   expect(opened.view).toStrictEqual({
     supercell: 2,
     packing: 'cell',
+    bonds: 'noMetal',
     unitCell: false,
     camera: { rotation: [0, 0.6, 0, 0.8], zoom: 1.5, offset: [0, 0, 0] },
   });
@@ -53,13 +56,19 @@ test('a view this version cannot read opens on the viewer defaults', () => {
     data: { version: CRYSTAL_FIGURE_VERSION, value: FIGURE },
     view: {
       version: 1,
-      value: { supercell: 99, packing: 'layers', unitCell: 'yes' },
+      value: {
+        supercell: 99,
+        packing: 'layers',
+        bonds: 'dotted',
+        unitCell: 'yes',
+      },
     },
   });
 
   expect(opened.view).toStrictEqual({
     supercell: 4,
     packing: 'molecules',
+    bonds: 'all',
     unitCell: true,
     camera: null,
   });

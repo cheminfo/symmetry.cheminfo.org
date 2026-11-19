@@ -1,7 +1,7 @@
 /**
  * What a figure of the viewer carries, so a drawing or a document can hand it
  * back and it opens as it was drawn: the file itself, how the cell was filled,
- * and where the camera stood.
+ * which bonds were drawn, and where the camera stood.
  *
  * The file goes in whole rather than as a library name or an address: a CIF
  * somebody dropped has no address, and a figure must open long after the page
@@ -15,9 +15,10 @@ import {
   parseMolecule3DCamera,
 } from 'react-cheminfo/molecule3d';
 
-import type { ViewerPacking } from '../state/index.ts';
+import type { ViewerBonds, ViewerPacking } from '../state/index.ts';
 import {
   SUPERCELL_RANGE,
+  VIEWER_BONDS,
   VIEWER_PACKINGS,
   clampToRange,
 } from '../state/index.ts';
@@ -43,6 +44,8 @@ export interface CrystalFigureView {
   /** Cells drawn along each axis. */
   readonly supercell: number;
   readonly packing: ViewerPacking;
+  /** Which bonds were drawn; a figure saved before there was a choice drew all. */
+  readonly bonds: ViewerBonds;
   /** Whether the box of the cell was drawn. */
   readonly unitCell: boolean;
   /** Where the camera stood, or `null` for the framing a new structure gets. */
@@ -66,6 +69,7 @@ export function crystalFigureStates(
       value: {
         supercell: view.supercell,
         packing: view.packing,
+        bonds: view.bonds,
         unitCell: view.unitCell,
         camera:
           view.camera === null ? null : formatMolecule3DCamera(view.camera),
@@ -114,19 +118,21 @@ function readView(part: FigureStates['view']): CrystalFigureView {
   const fallback: CrystalFigureView = {
     supercell: SUPERCELL_RANGE.initial,
     packing: 'molecules',
+    bonds: 'all',
     unitCell: true,
     camera: null,
   };
   if (part?.version !== CRYSTAL_VIEW_VERSION || !isRecord(part.value)) {
     return fallback;
   }
-  const { supercell, packing, unitCell, camera } = part.value;
+  const { supercell, packing, bonds, unitCell, camera } = part.value;
   return {
     supercell:
       typeof supercell === 'number' && Number.isFinite(supercell)
         ? clampToRange(Math.round(supercell), SUPERCELL_RANGE)
         : fallback.supercell,
     packing: VIEWER_PACKINGS.find((known) => known === packing) ?? 'molecules',
+    bonds: VIEWER_BONDS.find((known) => known === bonds) ?? fallback.bonds,
     unitCell: typeof unitCell === 'boolean' ? unitCell : fallback.unitCell,
     camera: typeof camera === 'string' ? parseMolecule3DCamera(camera) : null,
   };

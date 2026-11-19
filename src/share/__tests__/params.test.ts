@@ -18,6 +18,7 @@ test('a link that says nothing leaves every setting at its default', () => {
     supercell: 1,
     cif: '',
     packing: 'molecules',
+    bonds: 'all',
     planeGroup: 'p4m',
     motif: '',
     tiles: 4,
