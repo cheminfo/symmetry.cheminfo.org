@@ -1,7 +1,8 @@
 /**
  * What a figure of the viewer carries, so a drawing or a document can hand it
  * back and it opens as it was drawn: the file itself, how the cell was filled,
- * which bonds were drawn, and where the camera stood.
+ * which bonds were drawn, how the atoms were drawn, and where the camera
+ * stood.
  *
  * The file goes in whole rather than as a library name or an address: a CIF
  * somebody dropped has no address, and a figure must open long after the page
@@ -9,9 +10,13 @@
  */
 
 import type { FigureStates } from 'react-cheminfo/core';
-import type { Molecule3DCamera } from 'react-cheminfo/molecule3d';
+import type {
+  Molecule3DCamera,
+  Molecule3DSettings,
+} from 'react-cheminfo/molecule3d';
 import {
   formatMolecule3DCamera,
+  normalizeMolecule3DSettings,
   parseMolecule3DCamera,
 } from 'react-cheminfo/molecule3d';
 
@@ -48,6 +53,11 @@ export interface CrystalFigureView {
   readonly bonds: ViewerBonds;
   /** Whether the box of the cell was drawn. */
   readonly unitCell: boolean;
+  /**
+   * How the atoms were drawn; a figure saved before there was a choice drew
+   * them as the family's default balls and sticks.
+   */
+  readonly display: Molecule3DSettings;
   /** Where the camera stood, or `null` for the framing a new structure gets. */
   readonly camera: Molecule3DCamera | null;
 }
@@ -71,6 +81,7 @@ export function crystalFigureStates(
         packing: view.packing,
         bonds: view.bonds,
         unitCell: view.unitCell,
+        display: view.display,
         camera:
           view.camera === null ? null : formatMolecule3DCamera(view.camera),
       },
@@ -120,12 +131,13 @@ function readView(part: FigureStates['view']): CrystalFigureView {
     packing: 'molecules',
     bonds: 'all',
     unitCell: true,
+    display: normalizeMolecule3DSettings(),
     camera: null,
   };
   if (part?.version !== CRYSTAL_VIEW_VERSION || !isRecord(part.value)) {
     return fallback;
   }
-  const { supercell, packing, bonds, unitCell, camera } = part.value;
+  const { supercell, packing, bonds, unitCell, display, camera } = part.value;
   return {
     supercell:
       typeof supercell === 'number' && Number.isFinite(supercell)
@@ -134,6 +146,7 @@ function readView(part: FigureStates['view']): CrystalFigureView {
     packing: VIEWER_PACKINGS.find((known) => known === packing) ?? 'molecules',
     bonds: VIEWER_BONDS.find((known) => known === bonds) ?? fallback.bonds,
     unitCell: typeof unitCell === 'boolean' ? unitCell : fallback.unitCell,
+    display: normalizeMolecule3DSettings(isRecord(display) ? display : {}),
     camera: typeof camera === 'string' ? parseMolecule3DCamera(camera) : null,
   };
 }

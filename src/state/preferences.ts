@@ -17,6 +17,7 @@ import {
 
 import type { DisplayFlagKey } from './displayFlags.ts';
 import { DISPLAY_FLAGS } from './displayFlags.ts';
+import { viewer } from './viewerSettings.ts';
 
 /** How a symmetry element is named on screen. */
 export type Notation = 'schoenflies' | 'hermann-mauguin';
@@ -59,8 +60,11 @@ const exercises = persistSignalBucket({
   },
 });
 
-/** The `preferences` bucket: plain object, signal leaves, never reassigned. */
-export const preferences = { ...display, exercises };
+/**
+ * The `preferences` bucket: plain object, signal leaves, never reassigned.
+ * `viewer` is how the 3D views draw their atoms, in a key of its own.
+ */
+export const preferences = { ...display, exercises, viewer };
 
 /**
  * Flip one layer.

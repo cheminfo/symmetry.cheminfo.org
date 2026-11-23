@@ -54,6 +54,7 @@ import { FLAGS, FLAGS_PARAM } from './flags.ts';
 import type { ShareParamSet } from './params.ts';
 import { SHARE_PARAMS } from './params.ts';
 import { isSharePartId } from './parts.ts';
+import { applyLinkedViewer, viewerQuery } from './viewerParams.ts';
 import { SITE_VOCABULARY, readShareConfig } from './vocabulary.ts';
 
 /** The query name of the space group, so the two readers cannot disagree. */
@@ -87,6 +88,7 @@ export function currentRoute(): Route {
   if (tab === 'space-groups') writeNumber(query, 'setting', settingIndex());
   if (tab === 'tutorial') writeSplit(query, state.view.tutorial.split.value);
   if (drawsLayers(tab)) writeFlags(query);
+  if (drawsAtoms(tab)) Object.assign(query, viewerQuery());
   if (state.view.embedded.value) query[EMBED_PARAM] = '1';
   const hidden = formatHiddenParts(state.view.hidden.value, PARTS);
   if (hidden !== '') query[HIDE_PARAM] = hidden;
@@ -109,6 +111,7 @@ export function applyRoute(route: Route): void {
     setEmbedded(embed);
     setHiddenParts(hidden.filter((key) => isSharePartId(key)));
     applyFlags(route.query[FLAGS_PARAM]);
+    applyLinkedViewer(route.query);
     setActiveTab(route.tab);
     applyPage(route, params);
   });
@@ -246,6 +249,19 @@ function settingIndex(): number {
 
 function drawsLayers(tab: TabId): boolean {
   return tab !== 'exercises' && tab !== 'cheatsheet' && tab !== 'about';
+}
+
+/** The pages with a 3D view, whose display options a link carries. */
+const ATOM_PAGES: ReadonlySet<TabId> = new Set([
+  'molecules',
+  'crystals',
+  'viewer',
+  'tutorial',
+  'exercises',
+]);
+
+function drawsAtoms(tab: TabId): boolean {
+  return ATOM_PAGES.has(tab);
 }
 
 /** The second path segment of a page, for the pages that address an entry. */

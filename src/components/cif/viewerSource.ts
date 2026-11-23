@@ -22,6 +22,7 @@ import {
   setLoaded,
   setViewerBonds,
   setViewerPacking,
+  setViewerSettings,
   setViewerSupercell,
   startLoad,
   state,
@@ -173,6 +174,7 @@ export function openViewerFigure(opened: OpenedCrystalFigure): void {
     setViewerPacking(view.packing);
     setViewerBonds(view.bonds);
     setDisplayFlag('unitCell', view.unitCell);
+    setViewerSettings(view.display);
     figureCamera.value = view.camera;
   });
 }

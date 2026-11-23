@@ -1,4 +1,5 @@
 import type { Molecule3DCamera } from 'react-cheminfo/molecule3d';
+import { DEFAULT_MOLECULE_3D_SETTINGS } from 'react-cheminfo/molecule3d';
 import { expect, test } from 'vitest';
 
 import { structureCif } from '../../data/structures/index.ts';
@@ -8,13 +9,19 @@ import {
   readCrystalFigure,
 } from '../crystalFigure.ts';
 
+const SPACEFILL_WRAPPED = {
+  ...DEFAULT_MOLECULE_3D_SETTINGS,
+  representation: 'spacefill' as const,
+  showSurface: true,
+};
+
 const FIGURE = {
   name: 'Aspirin',
   cif: structureCif('aspirin'),
   structureId: 'aspirin',
 };
 
-test('a figure carries its file, its cells, its packing, its bonds and its camera', () => {
+test('a figure carries its file, its cells, its packing, its bonds, its display and its camera', () => {
   const camera: Molecule3DCamera = {
     rotation: [0, 0.6, 0, 0.8],
     zoom: 1.5,
@@ -25,6 +32,7 @@ test('a figure carries its file, its cells, its packing, its bonds and its camer
     packing: 'cell',
     bonds: 'noMetal',
     unitCell: false,
+    display: SPACEFILL_WRAPPED,
     camera,
   });
 
@@ -37,6 +45,7 @@ test('a figure carries its file, its cells, its packing, its bonds and its camer
     packing: 'cell',
     bonds: 'noMetal',
     unitCell: false,
+    display: SPACEFILL_WRAPPED,
     camera: '0,0.6,0,0.8,1.5',
   });
 
@@ -47,6 +56,7 @@ test('a figure carries its file, its cells, its packing, its bonds and its camer
     packing: 'cell',
     bonds: 'noMetal',
     unitCell: false,
+    display: SPACEFILL_WRAPPED,
     camera: { rotation: [0, 0.6, 0, 0.8], zoom: 1.5, offset: [0, 0, 0] },
   });
 });
@@ -61,6 +71,7 @@ test('a view this version cannot read opens on the viewer defaults', () => {
         packing: 'layers',
         bonds: 'dotted',
         unitCell: 'yes',
+        display: 'sticks',
       },
     },
   });
@@ -70,6 +81,7 @@ test('a view this version cannot read opens on the viewer defaults', () => {
     packing: 'molecules',
     bonds: 'all',
     unitCell: true,
+    display: DEFAULT_MOLECULE_3D_SETTINGS,
     camera: null,
   });
 });

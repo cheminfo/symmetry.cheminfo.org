@@ -98,7 +98,6 @@ export function crystalScene(
       cell: unitCell ? cell : null,
       elements,
       labels,
-      representation: 'spacefill',
     },
   };
 }

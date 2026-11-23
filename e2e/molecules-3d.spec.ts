@@ -248,3 +248,41 @@ test('the pointer names what the site drew, never what molstar parsed', async ({
     'the sweep must land on an atom, which is the label that was wrong',
   ).toBe(true);
 });
+
+test('the gear draws the molecule as spacefill, the address keeps it, and the viewer draws the same', async ({
+  page,
+}) => {
+  test.setTimeout(240_000);
+  await page.goto('/?molecule=benzene');
+
+  const canvas = page.getByTestId('crystal-3d').locator('canvas');
+  await expect(canvas).toBeVisible({ timeout: VIEWER_TIMEOUT_MS });
+  const painted = await waitForPaint(page, canvas, VIEWER_TIMEOUT_MS);
+  const ballAndStick = await waitForStable(page, canvas, painted);
+
+  await page.getByRole('button', { name: 'Display options' }).click();
+  await expect(
+    page.getByRole('radio', { name: 'Ball and stick' }),
+  ).toHaveAttribute('aria-checked', 'true');
+  await page.getByRole('radio', { name: 'Spacefill' }).click();
+  await expect(page).toHaveURL(/\?molecule=benzene&representation=spacefill$/);
+  await page.keyboard.press('Escape');
+  const spacefill = await waitForChange(page, canvas, ballAndStick, 60_000);
+  expect(changedFraction(ballAndStick, spacefill)).toBeGreaterThan(
+    MINIMUM_CHANGE,
+  );
+
+  // One set of display options for the site: the crystal viewer opens on it.
+  await page.goto('/viewer?structure=aspirin');
+  await expect(page).toHaveURL(
+    /\/viewer\?structure=aspirin&representation=spacefill$/,
+  );
+  await expect(page.getByTestId('crystal-3d').locator('canvas')).toBeVisible({
+    timeout: VIEWER_TIMEOUT_MS,
+  });
+  await page.getByRole('button', { name: 'Display options' }).click();
+  await expect(page.getByRole('radio', { name: 'Spacefill' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+});

@@ -4,7 +4,7 @@ import type { Molecule3DCamera } from 'react-cheminfo/molecule3d';
 
 import { crystalFigureStates } from '../../figure/crystalFigure.ts';
 import { registerFigurePage } from '../../figure/figurePage.ts';
-import { state } from '../../state/index.ts';
+import { state, viewerSettings } from '../../state/index.ts';
 
 import { viewerSource } from './viewerSource.ts';
 
@@ -13,8 +13,8 @@ const FIGURE_SCALE = 2;
 
 /**
  * Hand the crystal on screen to a host asking for the figure, and to Ctrl+C:
- * the picture of the view, carrying the file, the cells, the packing and the
- * camera it was taken at.
+ * the picture of the view, carrying the file, the cells, the packing, how the
+ * atoms were drawn and the camera it was taken at.
  * @param handle - The canvas's means to picture itself, once it exists.
  * @param shown - Whether a crystal is on screen.
  */
@@ -45,6 +45,7 @@ export function useCrystalFigure(
             packing: state.view.viewer.packing.peek(),
             bonds: state.view.viewer.bonds.peek(),
             unitCell: state.preferences.flags.unitCell.peek(),
+            display: viewerSettings(),
             camera,
           },
         );

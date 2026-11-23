@@ -37,6 +37,7 @@ export {
   setShowSolution,
   toggleDisplayFlag,
 } from './preferences.ts';
+export { setViewerSettings, viewerSettings } from './viewerSettings.ts';
 export type { NumberRange } from './ranges.ts';
 export {
   SETTING_RANGE,

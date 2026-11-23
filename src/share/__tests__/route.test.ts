@@ -1,6 +1,7 @@
+import { DEFAULT_MOLECULE_3D_SETTINGS } from 'react-cheminfo/molecule3d';
 import { beforeEach, expect, test, vi } from 'vitest';
 
-import { state } from '../../state/index.ts';
+import { setViewerSettings, state } from '../../state/index.ts';
 import { formatRoute, parseAddress } from '../../utils/router.ts';
 import { DEFAULT_LAYERS } from '../flags.ts';
 import { applyRoute, currentRoute } from '../route.ts';
@@ -20,6 +21,21 @@ beforeEach(() => {
   // The layers are stored preferences, so one test's link would otherwise be
   // in force in the next.
   open(`/?flags=${DEFAULT_LAYERS.join(',')}`);
+  setViewerSettings(DEFAULT_MOLECULE_3D_SETTINGS);
+});
+
+test('how the atoms are drawn travels with every page that draws them', () => {
+  expect(open('/?molecule=ammonia&representation=spacefill&surface=1')).toBe(
+    '/?molecule=ammonia&representation=spacefill&surface=1',
+  );
+  expect(state.preferences.viewer.representation.value).toBe('spacefill');
+  expect(state.preferences.viewer.showSurface.value).toBe(true);
+  // A preference: a link that names none leaves the visitor's own in force.
+  expect(open('/viewer?structure=aspirin')).toBe(
+    '/viewer?structure=aspirin&representation=spacefill&surface=1',
+  );
+  // A page without a 3D view leaves it out of its address.
+  expect(open('/plane')).toBe('/plane');
 });
 
 test('a plain visit keeps a plain address', () => {
