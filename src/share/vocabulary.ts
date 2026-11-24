@@ -11,7 +11,7 @@ import { formatQueryString, parseShareConfig } from 'react-cheminfo/core';
 import type { TabId } from '../state/tabs.ts';
 
 import type { ShareParams } from './params.ts';
-import { SHARE_PARAMS } from './params.ts';
+import { OPENED_ON_PARAMS, SHARE_PARAMS } from './params.ts';
 import { SHARE_PARTS, SHARE_PART_IDS, partsOf } from './parts.ts';
 
 /**
@@ -40,10 +40,24 @@ export const SITE_VOCABULARY: ShareVocabulary<ShareParams> = {
  * @param tab - Page the link points at.
  * @returns What its links can say.
  */
-export function shareVocabularyOf(tab: TabId): ShareVocabulary<ShareParams> {
+export function shareVocabularyOf(tab: TabId): ShareVocabulary<DialogParams> {
   const parts = partsOf(tab).map((id) => SHARE_PARTS[id]);
-  return { parts, params: SHARE_PARAMS, legacyEmbedParts: LEGACY_EMBED_PARTS };
+  return { parts, params: DIALOG_PARAMS, legacyEmbedParts: LEGACY_EMBED_PARTS };
 }
+
+/** The settings the dialog's own draft carries. */
+type DialogParams = Omit<ShareParams, (typeof OPENED_ON_PARAMS)[number]>;
+
+/**
+ * Every setting but those naming the picture a link opens on, which the
+ * dialog's "Opens on" writes: a draft holding them too would write them back
+ * over the example a teacher picked.
+ */
+const DIALOG_PARAMS = Object.fromEntries(
+  Object.entries(SHARE_PARAMS).filter(
+    ([key]) => !(OPENED_ON_PARAMS as readonly string[]).includes(key),
+  ),
+) as DialogParams;
 
 /**
  * Read what a link says: whether it is framed, the parts it leaves out, and

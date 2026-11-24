@@ -12,6 +12,8 @@
 import type { Signal } from '@preact/signals-react';
 import { signal } from '@preact/signals-react';
 
+import type { ReciprocalPhoto } from './reciprocal.ts';
+
 /** Where a workbench is in reading what it was given. */
 export type LoadStatus = 'idle' | 'loading' | 'ready' | 'error';
 
@@ -32,6 +34,8 @@ export interface SourceBucket {
 export const data = {
   molecule: createSource(),
   crystal: createSource(),
+  /** The picture opened on the reciprocal-space workbench, for the session. */
+  reciprocalPhoto: signal<ReciprocalPhoto | null>(null),
 };
 
 /**

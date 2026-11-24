@@ -52,6 +52,32 @@ export {
   TUTORIAL_STACK_BELOW,
   VIEWER_STACK_BELOW,
 } from './split.ts';
+export type { ReciprocalPhoto, ReciprocalSource } from './reciprocal.ts';
+export {
+  DEFAULT_MASK_RADIUS,
+  DEFAULT_PHASE_FROM,
+  MASK_RADIUS_RANGE,
+  changeLattice,
+  openReciprocalExample,
+  openReciprocalPhoto,
+  pickSpot,
+  rebuiltImage,
+  setContrast,
+  setMaskKind,
+  setMaskRadius,
+  setPhaseFrom,
+  setPhaseMode,
+  setReciprocalRegion,
+  setReciprocalSplit2,
+  setReciprocalSplit,
+  setSpectrumView,
+  setSpots,
+  setZoom,
+  shownLattice,
+  sourceImage,
+  spectrum,
+  transformedImage,
+} from './reciprocal.ts';
 export type { CatalogueTabId, TabId } from './tabs.ts';
 export {
   CATALOGUE_TAB_IDS,

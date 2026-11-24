@@ -29,6 +29,12 @@ export const SHARE_PART_IDS = [
   'positions',
   'details',
   'motif',
+  'examples',
+  'lattice',
+  'filter',
+  'phases',
+  'rebuilt',
+  'notes',
   'catalogue',
   'export',
   'steps',
@@ -102,6 +108,38 @@ export const SHARE_PARTS: Record<SharePartId, HideablePart> = {
     label: 'Motif editor',
     description: 'The motif and the group picker, so the pattern is fixed.',
   },
+  examples: {
+    key: 'examples',
+    label: 'Example picker',
+    description: 'The example pictures and Open, so the picture cannot change.',
+  },
+  lattice: {
+    key: 'lattice',
+    label: 'Lattice settings',
+    description:
+      'The boxes setting a, b, γ, the motif, the size and the noise.',
+  },
+  filter: {
+    key: 'filter',
+    label: 'Transform tools',
+    description: 'The mask, the amplitude or phase choice and the contrast.',
+  },
+  phases: {
+    key: 'phases',
+    label: 'Phase tools',
+    description:
+      'The choices replacing the phases before the image is rebuilt.',
+  },
+  rebuilt: {
+    key: 'rebuilt',
+    label: 'Rebuilt image',
+    description: 'The third figure; the other two then share the row.',
+  },
+  notes: {
+    key: 'notes',
+    label: 'Notes',
+    description: 'What to look at, and the numbers read off the lattice.',
+  },
   catalogue: {
     key: 'catalogue',
     label: 'Catalogue browser',
@@ -172,6 +210,16 @@ export const TAB_PARTS: Record<TabId, readonly SharePartId[]> = {
     'export',
   ],
   plane: ['tabs', 'intro', 'operations', 'controls', 'motif', 'export'],
+  reciprocal: [
+    'tabs',
+    'intro',
+    'examples',
+    'lattice',
+    'filter',
+    'phases',
+    'rebuilt',
+    'notes',
+  ],
   viewer: ['tabs', 'intro', 'controls', 'details', 'export'],
   tutorial: ['tabs', 'controls', 'steps', 'text', 'demos'],
   exercises: ['tabs', 'list', 'hints', 'solution'],

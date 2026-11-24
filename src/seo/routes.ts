@@ -29,7 +29,7 @@ export type { LessonEntry } from './lessonRoutes.ts';
 export { exerciseRoutes, tutorialRoutes } from './lessonRoutes.ts';
 
 /**
- * The pages that exist whatever the data says: the three workbenches, the four
+ * The pages that exist whatever the data says: the four workbenches, the four
  * catalogue indexes, the tutorial, the exercises, the cheatsheet and the About.
  *
  * They are also the crawl path — a menu names the space groups, not all 230 of
@@ -60,6 +60,14 @@ export const FIXED_ROUTES: readonly RouteMeta[] = [
       'Draw a repeating pattern and name its plane group: 17 wallpaper groups and 7 frieze groups, with their mirrors, glides and rotation centres drawn on.',
     short: 'Plane',
     note: 'name the symmetry of a repeating pattern',
+  },
+  {
+    path: '/reciprocal',
+    title: 'Reciprocal space — an image and its Fourier transform',
+    description:
+      'An image beside its Fourier transform: a lattice and its reciprocal lattice, Friedel’s law, Fourier filtering, spot width and the phase problem.',
+    short: 'Reciprocal',
+    note: 'an image beside its Fourier transform',
   },
   {
     path: '/viewer',

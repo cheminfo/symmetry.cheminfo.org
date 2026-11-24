@@ -111,6 +111,7 @@ test('every address the site answers round-trips through both directions', () =>
     '/crystals?spaceGroup=14',
     '/plane',
     '/plane?planeGroup=p4g&tiles=6',
+    '/reciprocal?example=glide&mask=spots&spots=0,0,0,8',
     '/point-groups',
     '/point-groups/c2v',
     '/space-groups',

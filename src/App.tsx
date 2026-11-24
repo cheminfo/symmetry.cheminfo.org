@@ -19,7 +19,7 @@ import { useEffect } from 'react';
 import { BUILD_INFO } from 'react-cheminfo/build-info';
 import { startDocumentMeta } from 'react-cheminfo/core';
 import { useHostConnection } from 'react-cheminfo/host';
-import { SiteShell } from 'react-cheminfo/ui';
+import { SiteShell, useOpensOnShare } from 'react-cheminfo/ui';
 
 import { ABOUT } from './about.ts';
 import { Catalogue } from './pages/Catalogue.tsx';
@@ -28,9 +28,15 @@ import { Crystals } from './pages/Crystals.tsx';
 import { Exercises } from './pages/Exercises.tsx';
 import { Molecules } from './pages/Molecules.tsx';
 import { Plane } from './pages/Plane.tsx';
+import { Reciprocal } from './pages/Reciprocal.tsx';
 import { Tutorial } from './pages/Tutorial.tsx';
 import { Viewer } from './pages/Viewer.tsx';
 import { PAGE_ROUTES } from './seo/routes.ts';
+import { LATTICE_PARAMS } from './share/params.ts';
+import {
+  RECIPROCAL_SHARE_EXAMPLES,
+  reciprocalOnScreen,
+} from './share/reciprocalShare.ts';
 import { applyRoute, currentRoute } from './share/route.ts';
 import { shareVocabularyOf } from './share/vocabulary.ts';
 import type { TabId } from './state/index.ts';
@@ -63,6 +69,14 @@ export function App(): ReactElement {
   const activeTab = state.view.activeTab.value;
 
   useRouteSync();
+  // The reciprocal-space workbench comes with examples, and a link can open on
+  // any of them, whatever is on screen.
+  const opensOn = useOpensOnShare({
+    active: activeTab === 'reciprocal',
+    examples: RECIPROCAL_SHARE_EXAMPLES,
+    onScreen: reciprocalOnScreen,
+    openedOn: LATTICE_PARAMS,
+  });
   // A drawing or a document framing the viewer takes its crystal as a figure,
   // and hands one back to be changed (`tool.ts`).
   useHostConnection(TOOL, {
@@ -109,6 +123,7 @@ export function App(): ReactElement {
         vocabulary: shareVocabularyOf(activeTab),
         title: TAB_LABELS[activeTab],
         frameHeight: FRAME_HEIGHT,
+        ...opensOn,
       }}
       // The one `page-<tab>` marker the end-to-end tests locate a page by. It
       // lives on the shell, where exactly one exists at a time — a page adding
@@ -149,6 +164,7 @@ function PageBody(props: { tab: TabId }): ReactElement {
   const { tab } = props;
   if (tab === 'crystals') return <Crystals />;
   if (tab === 'plane') return <Plane />;
+  if (tab === 'reciprocal') return <Reciprocal />;
   if (tab === 'viewer') return <Viewer />;
   if (tab === 'tutorial') return <Tutorial />;
   if (tab === 'exercises') return <Exercises />;

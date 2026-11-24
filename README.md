@@ -14,27 +14,28 @@ the bundle.
 
 ## The pages
 
-| Address                  | What it is                                                               |
-| ------------------------ | ------------------------------------------------------------------------ |
-| `/`                      | the molecule workbench: pick a molecule, get its point group in 3D       |
-| `/crystals`              | the crystal workbench: a cell in any of the 230 space groups             |
-| `/plane`                 | the plane workbench: a motif repeated under a wallpaper or frieze group  |
-| `/tutorial`              | eighteen guided steps, from a mirror plane to a space group              |
-| `/tutorial/<step>`       | one step, e.g. `/tutorial/glide-and-screw`                               |
-| `/exercises`             | twenty-nine checked exercises, with hints and an answer                  |
-| `/exercises/<id>`        | one exercise, e.g. `/exercises/point-group-water`                        |
-| `/cheatsheet`            | the printable reference, two sides                                       |
-| `/point-groups`          | the catalogue of the 53 point groups                                     |
-| `/point-groups/<slug>`   | one group, e.g. `/point-groups/c2v`; the linear two are `cinfv`, `dinfh` |
-| `/space-groups`          | the catalogue of the 230 space groups                                    |
-| `/space-groups/<number>` | one group by its International Tables number, e.g. `/space-groups/225`   |
-| `/wallpaper`             | the catalogue of the 17 wallpaper groups                                 |
-| `/wallpaper/<id>`        | one group, e.g. `/wallpaper/p4g`                                         |
-| `/frieze`                | the catalogue of the 7 frieze groups                                     |
-| `/frieze/<id>`           | one group, e.g. `/frieze/p2mg`                                           |
-| `/about`                 | what the tool computes, what it borrows, and how to cite it              |
+| Address                  | What it is                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------- |
+| `/`                      | the molecule workbench: pick a molecule, get its point group in 3D              |
+| `/crystals`              | the crystal workbench: a cell in any of the 230 space groups                    |
+| `/plane`                 | the plane workbench: a motif repeated under a wallpaper or frieze group         |
+| `/reciprocal`            | a picture beside its Fourier transform, and the picture rebuilt from part of it |
+| `/tutorial`              | eighteen guided steps, from a mirror plane to a space group                     |
+| `/tutorial/<step>`       | one step, e.g. `/tutorial/glide-and-screw`                                      |
+| `/exercises`             | twenty-nine checked exercises, with hints and an answer                         |
+| `/exercises/<id>`        | one exercise, e.g. `/exercises/point-group-water`                               |
+| `/cheatsheet`            | the printable reference, two sides                                              |
+| `/point-groups`          | the catalogue of the 53 point groups                                            |
+| `/point-groups/<slug>`   | one group, e.g. `/point-groups/c2v`; the linear two are `cinfv`, `dinfh`        |
+| `/space-groups`          | the catalogue of the 230 space groups                                           |
+| `/space-groups/<number>` | one group by its International Tables number, e.g. `/space-groups/225`          |
+| `/wallpaper`             | the catalogue of the 17 wallpaper groups                                        |
+| `/wallpaper/<id>`        | one group, e.g. `/wallpaper/p4g`                                                |
+| `/frieze`                | the catalogue of the 7 frieze groups                                            |
+| `/frieze/<id>`           | one group, e.g. `/frieze/p2mg`                                                  |
+| `/about`                 | what the tool computes, what it borrows, and how to cite it                     |
 
-The bar carries the first six; the four catalogues are addresses of their own,
+The bar carries the first seven; the four catalogues are addresses of their own,
 linked from the tool. A space group is addressed by its **number** — its 521
 settings are carried in `?setting=`, so 230 pages are indexed rather than 521.
 
@@ -88,6 +89,59 @@ The twelve names are `axes`, `mirrors`, `inversion`, `improper`, `orbit`,
 Leaving the parameter out leaves the reader's own stored layers alone, and a
 link that says exactly the site defaults does not carry it at all.
 
+## Reciprocal space
+
+`/reciprocal` puts three squares of 256 × 256 pixels in a row: a picture, the
+amplitude (or the phase) of its Fourier transform, and the picture rebuilt from
+the part of the transform that is kept. It comes with nineteen pictures — six
+openings of the kind a laser is shone through, four drawings chosen for their
+symmetry, and nine crystals — and takes any picture dropped, pasted or opened.
+
+- **A lattice and its reciprocal lattice.** A crystal is drawn with **a** and
+  **b**, its transform with **a\*** and **b\***; changing a, b or γ moves both,
+  and the notes give the two cells side by side.
+- **A spot is a set of planes.** Pointing at the transform reads the spacing of
+  the waves the point stands for and, on a crystal, its indices (h k). Clicking
+  a spot rebuilds the picture from that spot, its Friedel mate and the centre:
+  the fringes it carries.
+- **Fourier filtering.** Low-pass keeps a disk about the centre, high-pass
+  drops it, and picked spots clean a lattice of its noise.
+- **A smaller crystal, broader spots.** Dragging over the picture transforms
+  that part alone; the rest counts as black.
+- **Phases carry the picture.** The rebuilt picture can take zero phases, unit
+  amplitudes, or the phases of another example.
+
+The transform is `ml-spectra-processing`'s, one pass over the rows and one over
+the columns (`src/reciprocal/fourier.ts`). A crystal's dots fade over the outer
+third of its radius, so its spots are not ringed by the transform of a sharp
+edge; every atom of a cell takes the cell's brightness, so a centring or a glide
+still cancels its spots exactly.
+
+| Parameter                   | Value                                                                                                                                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `example`                   | one of the nineteen pictures, e.g. `slit`, `letter-f`, `glide`; `square-lattice` by default                                                                                                 |
+| `a`, `b`, `gamma`           | a crystal of the lattice generator: lengths 6 to 64 px, angle 30 to 150°. Any one of the six makes the picture a crystal; the others stay as `example` has them, or at the square lattice's |
+| `basis`, `crystal`, `noise` | its motif (`dot`, `pair`, `centred`, `f`, `glide`), its diameter (10 to 100 % of the picture), its noise (0 to 200 %)                                                                       |
+| `region`                    | the part transformed, `x,y,width,height` in pixels                                                                                                                                          |
+| `mask`, `radius`, `spots`   | `all`, `low`, `high` or `spots`; the disk's radius, 1 to 128 px; the spots kept, `u,v,u,v` from the centre, up to 24 of them                                                                |
+| `phase`, `phaseFrom`        | `measured`, `zero`, `unit` or `swap`; the example lending its phases                                                                                                                        |
+| `show`, `zoom`, `contrast`  | `amplitude` or `phase`; the middle of the transform enlarged `1`, `2` or `4` times; 1 to 6 decades shown                                                                                    |
+| `split`, `split2`           | where the row is divided: the picture from the transform, the transform from the rebuilt picture                                                                                            |
+
+A picture somebody opened lives in no address, so a link to it opens the
+default example. To hand out the glide, zoomed, with the fringes of one spot:
+
+```html
+<iframe
+  src="https://symmetry.cheminfo.org/reciprocal?example=glide&zoom=4&mask=spots&spots=0,0,0,16&embed=1&hide=lattice"
+  title="Reciprocal space — SymmeTry"
+  width="100%"
+  height="700"
+  style="border: 1px solid #ddd; border-radius: 8px"
+  loading="lazy"
+></iframe>
+```
+
 ## Embedding
 
 A link on a course page is rarely the whole site: it is one figure. `?embed`
@@ -115,9 +169,10 @@ and nothing a visitor could use to replace the molecule.
 ></iframe>
 ```
 
-The eighteen regions are `tabs`, `intro`, `picker`, `flowchart`, `operations`,
-`characters`, `controls`, `cell`, `positions`, `motif`, `catalogue`, `export`,
-`steps`, `text`, `demos`, `list`, `hints` and `solution`. Which apply depends on
+The twenty-five regions are `tabs`, `intro`, `picker`, `flowchart`,
+`operations`, `characters`, `controls`, `cell`, `positions`, `details`, `motif`,
+`examples`, `lattice`, `filter`, `phases`, `rebuilt`, `notes`, `catalogue`,
+`export`, `steps`, `text`, `demos`, `list`, `hints` and `solution`. Which apply depends on
 the page — the share dialog only offers the ones it has, and a name it does not
 know is ignored rather than fatal. The dialog opens with `intro`, `catalogue`
 and `export` already switched off, whichever of them the open page has.

@@ -54,6 +54,7 @@ import { FLAGS, FLAGS_PARAM } from './flags.ts';
 import type { ShareParamSet } from './params.ts';
 import { SHARE_PARAMS } from './params.ts';
 import { isSharePartId } from './parts.ts';
+import { applyReciprocal, writeReciprocal } from './reciprocalParams.ts';
 import { applyLinkedViewer, viewerQuery } from './viewerParams.ts';
 import { SITE_VOCABULARY, readShareConfig } from './vocabulary.ts';
 
@@ -84,6 +85,7 @@ export function currentRoute(): Route {
   if (tab === 'molecules') writeMolecules(query);
   if (tab === 'crystals') writeCrystals(query);
   if (tab === 'plane') writePlane(query);
+  if (tab === 'reciprocal') writeReciprocal(query);
   if (tab === 'viewer') writeViewer(query);
   if (tab === 'space-groups') writeNumber(query, 'setting', settingIndex());
   if (tab === 'tutorial') writeSplit(query, state.view.tutorial.split.value);
@@ -147,6 +149,10 @@ function applyPage(route: Route, params: ShareParamSet): void {
     selectPlaneGroup(params.planeGroup);
     selectMotif(params.motif === '' ? null : params.motif);
     setTiles(params.tiles);
+    return;
+  }
+  if (tab === 'reciprocal') {
+    applyReciprocal(query, params);
     return;
   }
   if (tab === 'viewer') {
@@ -248,8 +254,16 @@ function settingIndex(): number {
 }
 
 function drawsLayers(tab: TabId): boolean {
-  return tab !== 'exercises' && tab !== 'cheatsheet' && tab !== 'about';
+  return !LAYERLESS_PAGES.has(tab);
 }
+
+/** The pages that draw no symmetry element, whose links carry no layers. */
+const LAYERLESS_PAGES: ReadonlySet<TabId> = new Set([
+  'reciprocal',
+  'exercises',
+  'cheatsheet',
+  'about',
+]);
 
 /** The pages with a 3D view, whose display options a link carries. */
 const ATOM_PAGES: ReadonlySet<TabId> = new Set([

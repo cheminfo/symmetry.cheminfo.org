@@ -45,6 +45,13 @@ const PAGES: Record<string, PageContent> = {
       'The formula, the space group, the six cell parameters and the source the file names are read beside it, and the picture can be added to a drawing or a document.',
     ],
   },
+  '/reciprocal': {
+    heading: 'An image beside its Fourier transform',
+    paragraphs: [
+      'Pick a picture — a hole, a slit, a letter, a crystal — and see its Fourier transform beside it: the diffraction pattern it would give. A lattice of dots gives a lattice of spots, its reciprocal lattice, with a* perpendicular to b.',
+      'Keep part of the transform and see the image rebuilt from it: low-pass, high-pass, or a few spots that leave the lattice without its noise. Select part of the image to see a small crystal give broad spots, and swap phases between two pictures to see why phases matter.',
+    ],
+  },
   '/plane': {
     heading: 'Name a plane pattern: 17 wallpaper groups and 7 friezes',
     paragraphs: [

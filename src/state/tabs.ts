@@ -1,7 +1,7 @@
 /**
  * Every page the site routes to, and what each is called.
  *
- * The bar lists seven; the four catalogues and the About are routed pages that it
+ * The bar lists eight; the four catalogues and the About are routed pages that it
  * does not. Kept apart from the state bucket so the router can name a page
  * without pulling the signals in with it.
  */
@@ -9,13 +9,15 @@
 /**
  * The pages the header lists, in its own order: the three workbenches first —
  * a molecule, then a crystal, then a pattern, which is the order the subject
- * itself grows in — then the viewer any crystal file opens in, then the guided
+ * itself grows in — then the transform of a pattern, which is what a crystal
+ * diffracts as, then the viewer any crystal file opens in, then the guided
  * tour, the practice and the reference.
  */
 export const NAV_TAB_IDS = [
   'molecules',
   'crystals',
   'plane',
+  'reciprocal',
   'viewer',
   'tutorial',
   'exercises',
@@ -29,7 +31,7 @@ export const NAV_TAB_IDS = [
  * They are routed pages with a title and a description of their own — that is
  * the whole point, since a search for a space-group symbol has to land on ours
  * — but they are reached from the workbench they belong to rather than from the
- * bar, which stays seven items wide.
+ * bar, which stays eight items wide.
  *
  * Wallpaper and frieze are separate namespaces on purpose: `p1`, `p2` and
  * `p1m1` each name a group in *both* sets, so one `/plane/<id>` namespace would
@@ -43,7 +45,7 @@ export const CATALOGUE_TAB_IDS = [
 ] as const;
 
 /**
- * Every routed page: the seven of the bar, the four catalogues, and the About.
+ * Every routed page: the eight of the bar, the four catalogues, and the About.
  *
  * The About is a page like any other — a real address, indexed and printable —
  * but it is about the site rather than a place in the tool, so it sits with the
@@ -62,6 +64,7 @@ export const TAB_LABELS: Record<TabId, string> = {
   molecules: 'Molecules',
   crystals: 'Crystals',
   plane: 'Plane',
+  reciprocal: 'Reciprocal',
   viewer: 'Viewer',
   tutorial: 'Tutorial',
   exercises: 'Exercises',

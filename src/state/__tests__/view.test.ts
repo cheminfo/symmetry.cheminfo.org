@@ -18,11 +18,12 @@ import {
   view,
 } from '../view.ts';
 
-test('the bar lists seven pages, and the site routes twelve', () => {
+test('the bar lists eight pages, and the site routes thirteen', () => {
   expect(NAV_TAB_IDS).toStrictEqual([
     'molecules',
     'crystals',
     'plane',
+    'reciprocal',
     'viewer',
     'tutorial',
     'exercises',
@@ -34,9 +35,9 @@ test('the bar lists seven pages, and the site routes twelve', () => {
     'wallpaper',
     'frieze',
   ]);
-  expect(TAB_IDS).toHaveLength(12);
+  expect(TAB_IDS).toHaveLength(13);
   expect(DEFAULT_TAB).toBe('molecules');
-  expect(Object.keys(TAB_LABELS)).toHaveLength(12);
+  expect(Object.keys(TAB_LABELS)).toHaveLength(13);
 });
 
 test('a page name is narrowed, and a catalogue is told apart', () => {

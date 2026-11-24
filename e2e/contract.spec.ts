@@ -7,7 +7,7 @@
  * that the shell mounted the page the address names and that the console stayed
  * silent: a page that throws is a page a visitor sees half of.
  *
- * The 366 addresses are walked in chunks rather than in one test, so they run
+ * The 367 addresses are walked in chunks rather than in one test, so they run
  * side by side on the workers and a failure names a range instead of a
  * catalogue.
  */
@@ -69,14 +69,14 @@ for (const route of PAGE_ROUTES) {
 
 test('the table holds every fixed page and every catalogue entry', () => {
   // A route table that silently shrank would make every walk below pass while
-  // covering nothing, so the counts are pinned: 11 pages, 53 point groups, 230
+  // covering nothing, so the counts are pinned: 13 pages, 53 point groups, 230
   // space groups, 17 wallpaper groups, 7 frieze groups, 18 tutorial steps and
   // 29 exercises.
-  expect(FIXED_ROUTES).toHaveLength(12);
+  expect(FIXED_ROUTES).toHaveLength(13);
   expect(
     [...ROUTE_GROUPS].map(([group, paths]) => `${group}: ${paths.length}`),
   ).toStrictEqual([
-    'the pages: 12',
+    'the pages: 13',
     '/point-groups/<id>: 53',
     '/space-groups/<id>: 230',
     '/wallpaper/<id>: 17',
@@ -84,7 +84,7 @@ test('the table holds every fixed page and every catalogue entry', () => {
     '/tutorial/<id>: 18',
     '/exercises/<id>: 29',
   ]);
-  expect(PAGE_ROUTES).toHaveLength(366);
+  expect(PAGE_ROUTES).toHaveLength(367);
 });
 
 for (const [group, paths] of ROUTE_GROUPS) {
@@ -124,7 +124,7 @@ function walk(group: string, paths: readonly string[], first: number): void {
     });
 
     /* eslint-disable no-await-in-loop -- the slice is walked one address at a
-       time on purpose: opening 366 pages at once would starve the dev server
+       time on purpose: opening 367 pages at once would starve the dev server
        and lose which address an error came from. */
     for (const path of slice) {
       current = path;
@@ -144,13 +144,14 @@ function walk(group: string, paths: readonly string[], first: number): void {
 test('every page carries its own title, and no two are the same', async ({
   page,
 }) => {
-  // Thirteen addresses, one per kind, rather than all 366: what a crawler reads
+  // Fourteen addresses, one per kind, rather than all 367: what a crawler reads
   // off the served HTML is `src/__tests__/routes.test.ts`, and what matters here
   // is that the running app retitles the tab after a move.
   const sample = [
     '/',
     '/crystals',
     '/plane',
+    '/reciprocal',
     '/viewer',
     '/tutorial',
     '/exercises',
@@ -186,7 +187,7 @@ test('every page carries its own title, and no two are the same', async ({
  *
  * `npm run dev` is what serves these, and it pre-bundles a dependency the first
  * time something imports one it has not seen — then reloads the page, which
- * aborts the navigation in flight with `ERR_ABORTED`. Walking 366 addresses
+ * aborts the navigation in flight with `ERR_ABORTED`. Walking 367 addresses
  * against a server that started a minute ago sets that off a few times, always
  * on the first pass and never on the second. So the address is asked for again,
  * and every retry is written onto the test: a page that genuinely never loads

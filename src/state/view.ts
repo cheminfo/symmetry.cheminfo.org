@@ -20,6 +20,7 @@ import {
   TILES_RANGE,
   clampToRange,
 } from './ranges.ts';
+import { reciprocalView } from './reciprocal.ts';
 import type { TabId } from './tabs.ts';
 import { DEFAULT_TAB } from './tabs.ts';
 
@@ -114,6 +115,8 @@ export const view = {
     /** Cells repeated along each direction. */
     tiles: signal(TILES_RANGE.initial),
   },
+  /** The reciprocal-space workbench, in `src/state/reciprocal.ts`. */
+  reciprocal: reciprocalView,
   /**
    * Regions the link asks the page to leave out, from `?hide=`. How the page is
    * being shown, not what the student did, so it is never persisted — an

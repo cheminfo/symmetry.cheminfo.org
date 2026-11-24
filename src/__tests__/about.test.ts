@@ -10,7 +10,10 @@ test('the About record is short enough for anyone to read it', () => {
 test('what a visitor can do here is six lines, each starting on a verb', () => {
   expect(ABOUT.can).toHaveLength(6);
   expect(ABOUT.can[0]).toBe(
-    'Assign the point group of any molecule, one flowchart question at a time.',
+    'Assign the point group of a molecule and watch each operation act on it in 3D.',
+  );
+  expect(ABOUT.can[4]).toBe(
+    'See a picture’s Fourier transform, and rebuild it from the spots you keep.',
   );
   expect(ABOUT.can[5]).toBe(
     'Work through checked exercises, and print the cheatsheet.',
@@ -24,6 +27,7 @@ test('every borrowed work the site runs on is named, and resolves', () => {
     'react',
     'vite',
     'ml-matrix',
+    'ml-spectra-processing',
     'react-mf',
     'ml-xsadd',
     'cif-to-json',
@@ -39,6 +43,7 @@ test('every borrowed work the site runs on is named, and resolves', () => {
     'React',
     'Vite',
     'ml-matrix',
+    'ml-spectra-processing',
     'react-mf',
     'ml-xsadd',
     'cif-to-json',

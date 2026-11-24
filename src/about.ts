@@ -18,11 +18,11 @@ export const ABOUT: AboutContent = {
   build: BUILD_INFO,
   what: 'Assign the point group of a molecule, build a crystal from its space group, and name the symmetry of a pattern.',
   can: [
-    'Assign the point group of any molecule, one flowchart question at a time.',
-    'Watch every symmetry operation act on the structure in 3D.',
+    'Assign the point group of a molecule and watch each operation act on it in 3D.',
     'Read a character table, reduce a representation, predict the infrared bands.',
     'Build a cell in any of the 230 space groups and export it as CIF.',
     'Name the 17 wallpaper groups and the 7 frieze groups from the pattern.',
+    'See a picture’s Fourier transform, and rebuild it from the spots you keep.',
     'Work through checked exercises, and print the cheatsheet.',
   ],
   paragraphs: [
@@ -37,6 +37,7 @@ export const ABOUT: AboutContent = {
     'react',
     'vite',
     'ml-matrix',
+    'ml-spectra-processing',
     'react-mf',
     'ml-xsadd',
     'cif-to-json',

@@ -22,6 +22,22 @@ test('a link that says nothing leaves every setting at its default', () => {
     planeGroup: 'p4m',
     motif: '',
     tiles: 4,
+    example: 'square-lattice',
+    a: 16,
+    b: 16,
+    gamma: 90,
+    basis: 'dot',
+    crystal: 90,
+    noise: 0,
+    region: '',
+    mask: 'all',
+    radius: 16,
+    spots: '',
+    phase: 'measured',
+    phaseFrom: 'arrow',
+    show: 'amplitude',
+    zoom: '1',
+    contrast: 3,
   });
 });
 
