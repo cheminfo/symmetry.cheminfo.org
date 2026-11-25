@@ -10,16 +10,6 @@
   box-sizing: border-box;
 }
 
-/*
- * Blueprint's own focus selectors (.bp6-tag:focus and friends) out-specify a
- * plain universal rule, so an interactive tag keeps a blue ring on click
- * without the !important here.
- */
-*:focus,
-*:focus-visible {
-  outline: none !important;
-}
-
 html,
 body,
 #root {
