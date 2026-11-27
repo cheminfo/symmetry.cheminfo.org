@@ -1,5 +1,6 @@
+import type { Dimension, IntegerMatrix } from 'react-cheminfo/crystal';
+
 import { classifyRotation } from './elementGeometry.ts';
-import type { Dimension, IntegerMatrix } from './types.ts';
 
 /** The ten operation types of the three-dimensional crystallographic groups, in signature order. */
 const TYPES_3D = [

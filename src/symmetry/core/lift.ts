@@ -1,5 +1,6 @@
+import type { CrystalOperation } from 'react-cheminfo/crystal';
+
 import type { UnitCell } from './lattice.ts';
-import type { CrystalOperation } from './types.ts';
 
 /** The three parameters of a two-dimensional cell: two edges in Å, one angle in degrees. */
 export interface UnitCell2D {

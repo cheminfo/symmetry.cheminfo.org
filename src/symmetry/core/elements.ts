@@ -1,3 +1,6 @@
+import type { CrystalOperation, Dimension } from 'react-cheminfo/crystal';
+import { TWELFTHS_PER_CELL } from 'react-cheminfo/crystal';
+
 import {
   classifyRotation,
   elementAxis,
@@ -15,9 +18,7 @@ import {
   multiplyMatrixVector,
 } from './integerMatrix.ts';
 import { reduceIntrinsic } from './intrinsic.ts';
-import { wrapTwelfths } from './operation.ts';
-import type { CrystalOperation, Dimension } from './types.ts';
-import { TWELFTHS_PER_CELL } from './types.ts';
+import { wrapTwelfths } from './twelfths.ts';
 
 export type { SymmetryElementKind } from './elementSymbol.ts';
 

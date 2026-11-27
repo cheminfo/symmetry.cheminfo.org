@@ -49,21 +49,21 @@ export {
 } from './lattice.ts';
 export type { UnitCell2D } from './lift.ts';
 export { liftCell, liftOperation, projectOperation } from './lift.ts';
-export { centringTranslations, closure, distinctRotations } from './group.ts';
+export { centringTranslations, distinctRotations } from './group.ts';
 export {
   apply,
+  closure,
   compose,
-  dimensionOf,
   identityOperation,
   inverse,
   isIdentity,
   operationKey,
   orbit,
+  parseOperation,
   sameSite,
   wrapFractional,
-  wrapTwelfths,
-} from './operation.ts';
-export { parseOperation } from './parseOperation.ts';
+} from 'react-cheminfo/crystal';
+export { AXIS_NAMES, wrapTwelfths } from './twelfths.ts';
 export {
   operationType,
   pointGroupName,
@@ -71,5 +71,9 @@ export {
 } from './pointGroupName.ts';
 export type { SiteSymmetry } from './siteSymmetry.ts';
 export { fixes, siteSymmetry } from './siteSymmetry.ts';
-export type { CrystalOperation, Dimension, IntegerMatrix } from './types.ts';
-export { AXIS_NAMES, TWELFTHS_PER_CELL } from './types.ts';
+export type {
+  CrystalOperation,
+  Dimension,
+  IntegerMatrix,
+} from 'react-cheminfo/crystal';
+export { TWELFTHS_PER_CELL } from 'react-cheminfo/crystal';

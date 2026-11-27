@@ -1,5 +1,6 @@
+import { TWELFTHS_PER_CELL } from 'react-cheminfo/crystal';
+
 import { formatTranslation } from './formatOperation.ts';
-import { TWELFTHS_PER_CELL } from './types.ts';
 
 /** What kind of geometric object an operation is, as a student sees it. */
 export type SymmetryElementKind =

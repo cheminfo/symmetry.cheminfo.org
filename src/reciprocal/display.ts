@@ -9,6 +9,8 @@
  * phase of a coefficient too weak to matter stays dark.
  */
 
+import { xMinMaxValues } from 'ml-spectra-processing';
+
 import type { Spectrum } from './fourier.ts';
 import { FIELD_CENTRE, FIELD_SIZE } from './fourier.ts';
 
@@ -33,12 +35,7 @@ export type SpectrumView = (typeof SPECTRUM_VIEWS)[number];
  * @returns RGBA bytes, four per pixel.
  */
 export function imagePixels(image: Float64Array): Uint8ClampedArray {
-  let min = Infinity;
-  let max = -Infinity;
-  for (const value of image) {
-    if (value < min) min = value;
-    if (value > max) max = value;
-  }
+  const { min, max } = xMinMaxValues(image);
   const span = max - min;
   const pixels = new Uint8ClampedArray(image.length * 4);
   for (let i = 0; i < image.length; i++) {

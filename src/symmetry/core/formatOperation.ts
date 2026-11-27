@@ -1,6 +1,8 @@
+import type { CrystalOperation, Dimension } from 'react-cheminfo/crystal';
+import { TWELFTHS_PER_CELL } from 'react-cheminfo/crystal';
+
 import { greatestCommonDivisor } from './integerMatrix.ts';
-import type { CrystalOperation, Dimension } from './types.ts';
-import { AXIS_NAMES, TWELFTHS_PER_CELL } from './types.ts';
+import { AXIS_NAMES } from './twelfths.ts';
 
 /**
  * The canonical triplet of an operation: `x,y,z`, `-x+1/2,-y,z+1/2`,

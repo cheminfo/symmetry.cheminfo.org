@@ -8,9 +8,10 @@
  * failing: a link written against another build must still open.
  */
 
+import type { SpaceGroupSetting } from 'react-cheminfo/crystal';
+
 import type { PointGroup } from '../../data/pointGroups.ts';
 import { crystallographicPointGroups } from '../../data/pointGroups.ts';
-import type { SpaceGroupSetting } from '../../data/spaceGroups.ts';
 import { count } from '../../seo/describe.ts';
 import type { SymmetryElement } from '../../symmetry/core/index.ts';
 import { symmetryElements } from '../../symmetry/core/index.ts';

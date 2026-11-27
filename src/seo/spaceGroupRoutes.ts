@@ -15,8 +15,8 @@
 
 import type { RouteMeta } from 'react-cheminfo/core';
 import { fitDescription } from 'react-cheminfo/core';
+import type { Centring, SpaceGroupSetting } from 'react-cheminfo/crystal';
 
-import type { Centring, SpaceGroupSetting } from '../data/spaceGroups.ts';
 import {
   SPACE_GROUP_COUNT,
   spaceGroup,

@@ -7,10 +7,8 @@
  * itself is derived from its operation list rather than transcribed.
  */
 
-import type {
-  CrystalSystem,
-  SpaceGroupSetting,
-} from '../../data/spaceGroups.ts';
+import type { CrystalSystem, SpaceGroupSetting } from 'react-cheminfo/crystal';
+
 import { count } from '../../seo/describe.ts';
 
 import type { EntryFact, SettingChoice } from './types.ts';

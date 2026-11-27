@@ -1,9 +1,8 @@
-import { expect, test } from 'vitest';
-
 import {
   SPACE_GROUP_SETTINGS,
   SPACE_GROUP_SETTINGS_BY_NUMBER,
-} from '../spaceGroups.ts';
+} from 'react-cheminfo/crystal';
+import { expect, test } from 'vitest';
 
 test('the table holds 521 settings of 230 numbers and 7244 operations', () => {
   expect(SPACE_GROUP_SETTINGS).toHaveLength(521);

@@ -1,4 +1,4 @@
-import { TWELFTHS_PER_CELL } from './types.ts';
+import { TWELFTHS_PER_CELL } from 'react-cheminfo/crystal';
 
 /** The intrinsic translation reduced into the element's own locus. */
 export interface ReducedIntrinsic {

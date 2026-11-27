@@ -1,3 +1,6 @@
+import type { Dimension, IntegerMatrix } from 'react-cheminfo/crystal';
+import { TWELFTHS_PER_CELL } from 'react-cheminfo/crystal';
+
 import type { SymmetryElementKind } from './elementSymbol.ts';
 import {
   greatestCommonDivisor,
@@ -11,8 +14,6 @@ import {
   multiplyMatrixVector,
   primitiveDirection,
 } from './integerMatrix.ts';
-import type { Dimension, IntegerMatrix } from './types.ts';
-import { TWELFTHS_PER_CELL } from './types.ts';
 
 /**
  * The (determinant, trace) table of International Tables §11.2, complete in both

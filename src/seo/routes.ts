@@ -15,12 +15,13 @@
  */
 
 import type { RouteMeta } from 'react-cheminfo/core';
+import { plainProse } from 'react-cheminfo/core';
 
 import { EXERCISES } from '../data/exercises/index.ts';
 import { TUTORIAL_STEPS } from '../data/tutorial/index.ts';
 
 import { exerciseRoutes, tutorialRoutes } from './lessonRoutes.ts';
-import { firstSentence, plainProse } from './lessonSummary.ts';
+import { firstSentence } from './lessonSummary.ts';
 import { friezeRoutes, wallpaperRoutes } from './planeGroupRoutes.ts';
 import { pointGroupRoutes } from './pointGroupRoutes.ts';
 import { spaceGroupRoutes } from './spaceGroupRoutes.ts';

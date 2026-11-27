@@ -1,12 +1,12 @@
-import { expect, test } from 'vitest';
-
-import { spaceGroup } from '../../symmetry/spaceGroups.ts';
-import type { CrystalStructure } from '../cif/index.ts';
 import {
   operationsBelong,
   resolveStructureSetting,
   settingOfOperations,
-} from '../resolve.ts';
+} from 'react-cheminfo/crystal';
+import { expect, test } from 'vitest';
+
+import { spaceGroup } from '../../symmetry/spaceGroups.ts';
+import type { CrystalStructure } from '../cif/index.ts';
 
 const CELL = { a: 5, b: 5, c: 5, alpha: 90, beta: 90, gamma: 90 };
 

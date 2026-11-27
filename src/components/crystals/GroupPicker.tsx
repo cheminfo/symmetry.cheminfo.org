@@ -12,8 +12,8 @@
 import { HTMLSelect, InputGroup } from '@blueprintjs/core';
 import type { ReactElement } from 'react';
 import { useState } from 'react';
+import { SPACE_GROUP_SETTINGS } from 'react-cheminfo/crystal';
 
-import { SPACE_GROUP_SETTINGS } from '../../data/spaceGroups.ts';
 import type { SpaceGroupSetting } from '../../symmetry/spaceGroups.ts';
 import {
   resolveSpaceGroup,

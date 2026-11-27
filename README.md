@@ -189,8 +189,8 @@ usable with no `localStorage`, which is what a third-party frame often gets.
 - **The 230 space groups** — 521 settings and their 7244 general positions,
   extracted from cheminfo's own crystallography view and checked against the
   International Tables for Crystallography, volume A.
-  `node scripts/generateSpaceGroups.ts` compiles them into
-  `src/data/spaceGroupRows.ts`. Crystal system, Laue class, unique axis, and
+  `node scripts/generateSpaceGroups.ts` compiles them into the table
+  `react-cheminfo/crystal` publishes, which this site reads. Crystal system, Laue class, unique axis, and
   whether a group is centrosymmetric, Sohncke or symmorphic are **derived from
   the operations**, never typed: 92 centrosymmetric, 65 Sohncke, 73 symmorphic,
   32 crystal classes. Every operation prints back byte for byte, which is a
@@ -232,7 +232,7 @@ npm run test-e2e     # playwright, needs a browser: npx playwright install chrom
 npm run build        # prerenders one HTML file per address, plus sitemap.xml
 
 npm run og-image                    # redraw public/og.png, the card a link unfurls into
-node scripts/generateSpaceGroups.ts # regenerate src/data/spaceGroupRows.ts
+node scripts/generateSpaceGroups.ts # regenerate react-cheminfo's space-group table
 ```
 
 `src/symmetry/**` and `src/crystal/**` are the part that has to be right, so

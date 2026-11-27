@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 
 import { formatOperation } from '../formatOperation.ts';
-import { parseOperation } from '../parseOperation.ts';
+import { parseOperation } from '../index.ts';
 
 test('the identity of three dimensions', () => {
   expect(parseOperation('x,y,z', 3)).toStrictEqual({

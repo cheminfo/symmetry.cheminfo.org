@@ -6,7 +6,7 @@ import {
   symmetryElement,
   symmetryElements,
 } from '../elements.ts';
-import { parseOperation } from '../parseOperation.ts';
+import { parseOperation } from '../index.ts';
 
 import { p4gOperations, settingOperations } from './fixture.ts';
 

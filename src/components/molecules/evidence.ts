@@ -9,12 +9,15 @@
  * off `the principal C₆` is the comparison the question is asking for.
  */
 
-import { dotProduct, sameAxis } from 'react-cheminfo/crystal3d';
+import { sameAxis } from 'react-cheminfo/crystal3d';
 
+import {
+  countAxes,
+  highestOrder,
+  perpendicularTwofolds,
+  verticalPlanes,
+} from '../../symmetry/detect/counts.ts';
 import type { AxisFinding, SymmetryInventory } from '../../symmetry/detect.ts';
-
-/** How small `û · v̂` has to be for two axes to count as perpendicular. */
-const PERPENDICULAR = 1e-3;
 
 const SUBSCRIPTS = '₀₁₂₃₄₅₆₇₈₉';
 
@@ -52,21 +55,21 @@ export function questionEvidence(
     }
     case 'multi-high-axis': {
       return `${count(
-        axesWhere(inventory, (axis) => axis.order > 2),
+        countAxes(inventory, (axis) => axis.order > 2),
         'axis above two-fold',
         'axes above two-fold',
       )}.`;
     }
     case 'has-c5': {
       return `${count(
-        axesWhere(inventory, (axis) => axis.order === 5),
+        countAxes(inventory, (axis) => axis.order === 5),
         `${symbol('C', 5)} axis`,
         `${symbol('C', 5)} axes`,
       )}.`;
     }
     case 'has-c4': {
       return `${count(
-        axesWhere(inventory, (axis) => axis.order === 4),
+        countAxes(inventory, (axis) => axis.order === 4),
         `${symbol('C', 4)} axis`,
         `${symbol('C', 4)} axes`,
       )}.`;
@@ -90,7 +93,7 @@ export function questionEvidence(
       if (principal === null) return NO_PRINCIPAL;
       const against = `perpendicular to the ${name(principal)}`;
       return `${count(
-        perpendicularAxes(inventory, principal),
+        perpendicularTwofolds(inventory, principal),
         `${symbol('C', 2)} axis ${against}`,
         `${symbol('C', 2)} axes ${against}`,
       )}.`;
@@ -156,48 +159,4 @@ function count(total: number, one: string, many: string): string {
  */
 function name(principal: AxisFinding): string {
   return `principal ${symbol('C', principal.order)}`;
-}
-
-function highestOrder(inventory: SymmetryInventory): number {
-  let highest = 0;
-  for (const axis of inventory.properAxes) {
-    if (axis.order > highest) highest = axis.order;
-  }
-  return highest;
-}
-
-function axesWhere(
-  inventory: SymmetryInventory,
-  test: (axis: AxisFinding) => boolean,
-): number {
-  let total = 0;
-  for (const axis of inventory.properAxes) {
-    if (test(axis)) total++;
-  }
-  return total;
-}
-
-function perpendicularAxes(
-  inventory: SymmetryInventory,
-  principal: AxisFinding,
-): number {
-  let total = 0;
-  for (const axis of inventory.properAxes) {
-    if (axis.order !== 2) continue;
-    if (Math.abs(dotProduct(axis.axis, principal.axis)) < PERPENDICULAR) {
-      total++;
-    }
-  }
-  return total;
-}
-
-function verticalPlanes(
-  inventory: SymmetryInventory,
-  principal: AxisFinding,
-): number {
-  let total = 0;
-  for (const normal of inventory.planes) {
-    if (Math.abs(dotProduct(normal, principal.axis)) < PERPENDICULAR) total++;
-  }
-  return total;
 }

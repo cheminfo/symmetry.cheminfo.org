@@ -1,20 +1,11 @@
 import type { Vec3 } from 'react-cheminfo/crystal3d';
-import { dotProduct, sameAxis } from 'react-cheminfo/crystal3d';
+import { sameAxis } from 'react-cheminfo/crystal3d';
 
-import { pointGroupById } from '../../data/pointGroups.ts';
 import type { PointOperation } from '../operations.ts';
 import { canonicalSense } from '../operations.ts';
 
+import { groupOrder, perpendicularTwofolds, verticalPlanes } from './counts.ts';
 import type { AxisFinding } from './inventory.ts';
-
-/**
- * How small `û · v̂` has to be for two axes to count as perpendicular.
- *
- * Not machine zero: an axis found at a distance tolerance is off by a few parts
- * in 10⁵, and at `1e-6` the three `C₂` of a `D₃` stop being perpendicular to its
- * `C₃` and the molecule is assigned `C₃`.
- */
-const PERPENDICULAR = 1e-3;
 
 /** What a group holds, read off its operations rather than off the geometry. */
 export interface SymmetryInventory {
@@ -98,7 +89,7 @@ export function assignGroup(inventory: SymmetryInventory): {
     if (candidate.order !== highest) continue;
     const group = assignAxial(inventory, candidate);
     const answer = { group, principal: candidate.axis };
-    if (orderOf(group) === inventory.order) return answer;
+    if (groupOrder(group) === inventory.order) return answer;
     fallback ??= answer;
   }
   return fallback ?? { group: 'C1', principal: null };
@@ -127,23 +118,11 @@ function assignAxial(
   principal: AxisFinding,
 ): string {
   const n = principal.order;
-  let perpendicular = 0;
-  for (const axis of inventory.properAxes) {
-    if (axis.order !== 2) continue;
-    if (Math.abs(dotProduct(axis.axis, principal.axis)) < PERPENDICULAR) {
-      perpendicular++;
-    }
-  }
+  const perpendicular = perpendicularTwofolds(inventory, principal);
+  const vertical = verticalPlanes(inventory, principal);
   let horizontal = false;
-  let vertical = 0;
   for (const normal of inventory.planes) {
-    if (sameAxis(normal, principal.axis)) {
-      horizontal = true;
-      continue;
-    }
-    if (Math.abs(dotProduct(normal, principal.axis)) < PERPENDICULAR) {
-      vertical++;
-    }
+    if (sameAxis(normal, principal.axis)) horizontal = true;
   }
   if (perpendicular === n) {
     if (horizontal) return `D${n}h`;
@@ -157,13 +136,4 @@ function assignAxial(
     }
   }
   return `C${n}`;
-}
-
-/** |G| of a named group, or 0 when the catalogue does not hold it. */
-function orderOf(group: string): number {
-  try {
-    return pointGroupById(group).order;
-  } catch {
-    return 0;
-  }
 }

@@ -1,4 +1,4 @@
-import type { Centring, CrystalSystem } from '../data/spaceGroups.ts';
+import type { Centring, CrystalSystem } from 'react-cheminfo/crystal';
 
 import type { CrystalOperation, IntegerMatrix } from './core/index.ts';
 import {

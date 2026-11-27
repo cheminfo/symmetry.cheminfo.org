@@ -7,8 +7,8 @@
  */
 
 import type { PageContent, PageTable } from 'react-cheminfo/core';
+import type { Centring, SpaceGroupSetting } from 'react-cheminfo/crystal';
 
-import type { Centring, SpaceGroupSetting } from '../data/spaceGroups.ts';
 import { spaceGroup, spaceGroupSettings } from '../symmetry/spaceGroups.ts';
 
 import { count } from './describe.ts';

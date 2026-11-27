@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { parseOperation } from '../parseOperation.ts';
-import type { CrystalOperation } from '../types.ts';
+import type { CrystalOperation } from '../index.ts';
+import { parseOperation } from '../index.ts';
 
 /** One entry of the extracted International Tables table, as it is on disk. */
 export interface RawSetting {

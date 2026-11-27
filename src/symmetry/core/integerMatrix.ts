@@ -1,4 +1,4 @@
-import type { IntegerMatrix } from './types.ts';
+import type { IntegerMatrix } from 'react-cheminfo/crystal';
 
 /**
  * The product `a · b` of two square integer matrices of the same size.

@@ -12,7 +12,8 @@
  * forces it.
  */
 
-import type { SpaceGroupSetting } from '../data/spaceGroups.ts';
+import type { SpaceGroupSetting } from 'react-cheminfo/crystal';
+
 import type { UnitCell } from '../symmetry/core/index.ts';
 
 /** One of the six numbers that describe a cell. */

@@ -8,14 +8,14 @@
  */
 
 import type { Lattice } from '../../symmetry/core/index.ts';
-import type {
-  PlaneElementTable,
-  PlaneLine,
-} from '../../symmetry/planeElements.ts';
+import type { PlaneElementTable } from '../../symmetry/planeElements.ts';
 import type { DiagramGlyph, DiagramLine } from '../plane/index.ts';
-import { cellBasis, rotationGlyphPath } from '../plane/index.ts';
+import {
+  cellBasis,
+  clipLineToRect,
+  rotationGlyphPath,
+} from '../plane/index.ts';
 
-import type { StripPoint } from './friezeFrame.ts';
 import { STRIP_REACH, stripPoint } from './friezeFrame.ts';
 
 /** How far a fractional coordinate may sit outside the strip and still be in it. */
@@ -36,7 +36,12 @@ export function friezeLines(
   const basis = cellBasis(lattice);
   const lines: DiagramLine[] = [];
   for (const line of table.lines) {
-    const segment = clipToStrip(line, periods);
+    const segment = clipLineToRect(line, {
+      uMin: 0,
+      uMax: periods,
+      vMin: -STRIP_REACH,
+      vMax: STRIP_REACH,
+    });
     if (segment === null) continue;
     const [first, second] = segment;
     const [x1, y1] = stripPoint(basis, first);
@@ -84,48 +89,6 @@ export function friezeGlyphs(
     });
   }
   return glyphs;
-}
-
-/**
- * The part of `h·u + k·v = offset` that lies on the strip, in fractional
- * coordinates. `null` when the line misses it or only touches a corner.
- */
-function clipToStrip(
-  line: PlaneLine,
-  periods: number,
-): [StripPoint, StripPoint] | null {
-  const h = line.normal[0] ?? 0;
-  const k = line.normal[1] ?? 0;
-  const square = h * h + k * k;
-  if (square === 0) return null;
-  const originU = (h * line.offset) / square;
-  const originV = (k * line.offset) / square;
-  const directionU = -k;
-  const directionV = h;
-  let low = Number.NEGATIVE_INFINITY;
-  let high = Number.POSITIVE_INFINITY;
-  // Each edge as `distance + rate · t ≥ 0`, so the segment is the interval on
-  // which all four hold.
-  const edges: Array<readonly [number, number]> = [
-    [originU, directionU],
-    [periods - originU, -directionU],
-    [originV + STRIP_REACH, directionV],
-    [STRIP_REACH - originV, -directionV],
-  ];
-  for (const [distance, rate] of edges) {
-    if (rate === 0) {
-      if (distance < -TOLERANCE) return null;
-      continue;
-    }
-    const bound = -distance / rate;
-    if (rate > 0) low = Math.max(low, bound);
-    else high = Math.min(high, bound);
-  }
-  if (!(high - low > TOLERANCE)) return null;
-  return [
-    [originU + low * directionU, originV + low * directionV],
-    [originU + high * directionU, originV + high * directionV],
-  ];
 }
 
 function inside(value: number, low: number, high: number): boolean {

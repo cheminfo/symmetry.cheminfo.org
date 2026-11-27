@@ -172,15 +172,7 @@ a {
 
 /* Students print the cheatsheet. Let them, without the chrome. */
 @media print {
-  .no-print {
-    display: none !important;
-  }
-
   body {
     background: var(--surface);
-  }
-
-  a[href]::after {
-    content: '';
   }
 }

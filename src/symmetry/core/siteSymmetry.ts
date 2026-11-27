@@ -1,6 +1,11 @@
-import { apply } from './operation.ts';
+import type {
+  CrystalOperation,
+  Dimension,
+  IntegerMatrix,
+} from 'react-cheminfo/crystal';
+import { apply } from 'react-cheminfo/crystal';
+
 import { pointGroupName } from './pointGroupName.ts';
-import type { CrystalOperation, Dimension, IntegerMatrix } from './types.ts';
 
 /** How far an image may sit from the position and still count as fixed. */
 const DEFAULT_TOLERANCE = 1e-4;

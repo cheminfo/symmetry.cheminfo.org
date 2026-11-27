@@ -1,6 +1,9 @@
+import {
+  SPACE_GROUP_SETTINGS,
+  spaceGroupOperations,
+} from 'react-cheminfo/crystal';
 import { expect, test } from 'vitest';
 
-import { SPACE_GROUP_SETTINGS } from '../../data/spaceGroups.ts';
 import {
   distinctRotations,
   formatOperation,
@@ -16,7 +19,6 @@ import {
   laueClassOf,
   uniqueAxisOf,
 } from '../spaceGroupDerivation.ts';
-import { spaceGroupOperations } from '../spaceGroupOperations.ts';
 
 // These sweep all 521 settings; on a loaded machine they run past the 5 s
 // default.

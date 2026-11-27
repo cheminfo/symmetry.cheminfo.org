@@ -8,7 +8,8 @@
  * `?setting=`.
  */
 
-import type { SpaceGroupSetting } from '../../data/spaceGroups.ts';
+import type { SpaceGroupSetting } from 'react-cheminfo/crystal';
+
 import { count } from '../../seo/describe.ts';
 import { SPACE_GROUP_SETTINGS } from '../../symmetry/spaceGroups.ts';
 

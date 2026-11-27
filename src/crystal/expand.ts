@@ -8,41 +8,22 @@
  * *this chlorine is the one the c glide made*.
  */
 
-import type { CrystalOperation, Dimension } from '../symmetry/core/index.ts';
-import { orbit, siteSymmetry } from '../symmetry/core/index.ts';
+import type {
+  AsymmetricSite,
+  CrystalOperation,
+  Dimension,
+  ExpandedAtom,
+} from 'react-cheminfo/crystal';
+import { WRITTEN_SITE_TOLERANCE } from 'react-cheminfo/crystal';
 
-/** One line of the asymmetric unit, as a CIF or the atom table gives it. */
-export interface AsymmetricSite {
-  /** `Na1` — the label the file uses, unique within the structure. */
-  readonly label: string;
-  /** Chemical symbol, `Na`. */
-  readonly element: string;
-  /** Fractional coordinate along **a**. */
-  readonly x: number;
-  /** Fractional coordinate along **b**. */
-  readonly y: number;
-  /** Fractional coordinate along **c**. */
-  readonly z: number;
-  /**
-   * How much of the site this atom occupies.
-   * @default 1
-   */
-  readonly occupancy?: number;
-}
+import { siteSymmetry } from '../symmetry/core/index.ts';
 
-/** One atom of the filled cell, and where it came from. */
-export interface ExpandedAtom {
-  /** The label of the site it came from. */
-  readonly label: string;
-  readonly element: string;
-  /** Fractional position, wrapped into [0, 1). */
-  readonly position: readonly [number, number, number];
-  /** Index into the asymmetric unit it was generated from. */
-  readonly siteIndex: number;
-  /** Index into the operation list of the operation that generated it. */
-  readonly operationIndex: number;
-  readonly occupancy: number;
-}
+export type { AsymmetricSite, ExpandedAtom } from 'react-cheminfo/crystal';
+export {
+  WRITTEN_SITE_TOLERANCE,
+  expandSite,
+  expandStructure,
+} from 'react-cheminfo/crystal';
 
 /** What one line of the asymmetric unit turns out to be. */
 export interface SiteReport {
@@ -59,65 +40,6 @@ export interface SiteReport {
 }
 
 /**
- * Every atom of one cell, in fractional coordinates.
- *
- * @param sites - The asymmetric unit, in the order the file lists it.
- * @param operations - The full coset list of the setting, centring included.
- * @param tolerance - Fractional distance below which two images are one atom.
- *   @default 1e-4
- * @returns The atoms, grouped by the site they came from, each carrying the
- *   index of the operation that generated it.
- */
-export function expandStructure(
-  sites: readonly AsymmetricSite[],
-  operations: ReadonlyArray<CrystalOperation<Dimension>>,
-  tolerance?: number,
-): ExpandedAtom[] {
-  const atoms: ExpandedAtom[] = [];
-  for (let index = 0; index < sites.length; index++) {
-    const site = sites[index];
-    if (site === undefined) continue;
-    atoms.push(...expandSite(site, index, operations, tolerance));
-  }
-  return atoms;
-}
-
-/**
- * The orbit of one site.
- *
- * @param site - The line of the asymmetric unit.
- * @param siteIndex - Where it sits in that list, carried onto every atom.
- * @param operations - The full coset list.
- * @param tolerance - As {@link expandStructure}.
- *   @default 1e-4
- * @returns One atom per distinct image, the site's own position first.
- */
-export function expandSite(
-  site: AsymmetricSite,
-  siteIndex: number,
-  operations: ReadonlyArray<CrystalOperation<Dimension>>,
-  tolerance?: number,
-): ExpandedAtom[] {
-  const images = orbit([site.x, site.y, site.z], operations, tolerance);
-  const atoms: ExpandedAtom[] = [];
-  for (const image of images) {
-    atoms.push({
-      label: site.label,
-      element: site.element,
-      position: [
-        image.position[0] ?? 0,
-        image.position[1] ?? 0,
-        image.position[2] ?? 0,
-      ],
-      siteIndex,
-      operationIndex: image.operationIndex,
-      occupancy: site.occupancy ?? 1,
-    });
-  }
-  return atoms;
-}
-
-/**
  * What each line of the asymmetric unit is: how many copies of it the cell
  * holds, and the point group of the operations that leave it alone.
  *
@@ -127,13 +49,14 @@ export function expandSite(
  *
  * @param sites - The asymmetric unit.
  * @param operations - The full coset list.
- * @param tolerance - As {@link expandStructure}.
- *   @default 1e-4
+ * @param tolerance - Fractional distance below which two images are one atom,
+ *   as {@link expandStructure} takes it.
+ *   @default WRITTEN_SITE_TOLERANCE
  */
 export function describeSites(
   sites: readonly AsymmetricSite[],
   operations: ReadonlyArray<CrystalOperation<Dimension>>,
-  tolerance?: number,
+  tolerance = WRITTEN_SITE_TOLERANCE,
 ): SiteReport[] {
   const reports: SiteReport[] = [];
   for (const site of sites) {

@@ -1,6 +1,6 @@
+import { SPACE_GROUP_SETTINGS } from 'react-cheminfo/crystal';
 import { expect, test } from 'vitest';
 
-import { SPACE_GROUP_SETTINGS } from '../../data/spaceGroups.ts';
 import { coefficientsIn } from '../reflectionClasses.ts';
 import type { ReflectionCondition } from '../spaceGroupAbsences.ts';
 import {

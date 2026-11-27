@@ -6,9 +6,9 @@
  * disagree about which element they are talking about.
  */
 
+import type { SpaceGroupSetting } from 'react-cheminfo/crystal';
 import { SUPERCELL_ATOM_CAP } from 'react-cheminfo/crystal3d';
 
-import type { SpaceGroupSetting } from '../../data/spaceGroups.ts';
 import type { SymmetryElement } from '../../symmetry/core/index.ts';
 
 /**

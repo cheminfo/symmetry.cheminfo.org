@@ -14,6 +14,7 @@
  * `crystalElementLayers.ts`.
  */
 
+import type { SpaceGroupSetting } from 'react-cheminfo/crystal';
 import type { ViewerAtom } from 'react-cheminfo/crystal3d';
 import { supercellAtoms } from 'react-cheminfo/crystal3d';
 
@@ -24,7 +25,6 @@ import {
   describeSites,
   expandStructure,
 } from '../../crystal/expand.ts';
-import type { SpaceGroupSetting } from '../../data/spaceGroups.ts';
 import type {
   CrystalOperation,
   Lattice,

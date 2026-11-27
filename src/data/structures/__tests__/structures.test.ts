@@ -1,7 +1,7 @@
+import { resolveStructureSetting } from 'react-cheminfo/crystal';
 import { expect, test } from 'vitest';
 
 import { describeSites, expandStructure } from '../../../crystal/expand.ts';
-import { resolveStructureSetting } from '../../../crystal/resolve.ts';
 import { spaceGroupOperations } from '../../../symmetry/spaceGroups.ts';
 import {
   STRUCTURES,

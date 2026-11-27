@@ -1,11 +1,10 @@
-import { expect, test } from 'vitest';
-
-import { SPACE_GROUP_SETTINGS } from '../../data/spaceGroups.ts';
 import {
+  SPACE_GROUP_SETTINGS,
   normalizeSpaceGroupSymbol,
   resolveSpaceGroup,
   resolveSpaceGroups,
-} from '../spaceGroupSymbols.ts';
+} from 'react-cheminfo/crystal';
+import { expect, test } from 'vitest';
 
 function found(query: string | number): string {
   const setting = resolveSpaceGroup(query);

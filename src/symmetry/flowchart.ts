@@ -1,15 +1,17 @@
 import type { Vec3 } from 'react-cheminfo/crystal3d';
-import { dotProduct, sameAxis } from 'react-cheminfo/crystal3d';
+import { sameAxis } from 'react-cheminfo/crystal3d';
 
 import type { FlowQuestion, FlowTarget } from '../data/flowchart.ts';
 import { FLOW_START, flowQuestion } from '../data/flowchart.ts';
-import { pointGroupById } from '../data/pointGroups.ts';
 
 import type { SymmetryInventory } from './detect/assign.ts';
+import {
+  countAxes,
+  groupOrder,
+  perpendicularTwofolds,
+  verticalPlanes,
+} from './detect/counts.ts';
 import type { AxisFinding } from './detect/inventory.ts';
-
-/** How small `û · v̂` has to be for two axes to count as perpendicular. */
-const PERPENDICULAR = 1e-3;
 
 /** What a walk down the tree found, and how it got there. */
 export interface FlowWalk {
@@ -34,7 +36,7 @@ export function walkFlowchart(inventory: SymmetryInventory): FlowWalk {
   let fallback: FlowWalk | null = null;
   for (const principal of candidates) {
     const walk = walkWith(inventory, principal);
-    if (orderOf(walk.group) === inventory.order) return walk;
+    if (groupOrder(walk.group) === inventory.order) return walk;
     fallback ??= walk;
   }
   return fallback ?? { group: 'C1', path: [], principalAxis: null };
@@ -80,7 +82,7 @@ export function answerQuestion(
     case 'perp-c2': {
       return (
         principal !== null &&
-        perpendicularAxes(inventory, principal) === principal.order
+        perpendicularTwofolds(inventory, principal) === principal.order
       );
     }
     case 'd-sigma-h':
@@ -158,52 +160,4 @@ function principalCandidates(
     if (axis.order > highest) highest = axis.order;
   }
   return inventory.properAxes.filter((axis) => axis.order === highest);
-}
-
-/** How many two-fold axes are perpendicular to the principal one. */
-function perpendicularAxes(
-  inventory: SymmetryInventory,
-  principal: AxisFinding,
-): number {
-  let count = 0;
-  for (const axis of inventory.properAxes) {
-    if (axis.order !== 2) continue;
-    if (Math.abs(dotProduct(axis.axis, principal.axis)) < PERPENDICULAR) {
-      count++;
-    }
-  }
-  return count;
-}
-
-/** How many planes hold the principal axis. */
-function verticalPlanes(
-  inventory: SymmetryInventory,
-  principal: AxisFinding,
-): number {
-  let count = 0;
-  for (const normal of inventory.planes) {
-    if (Math.abs(dotProduct(normal, principal.axis)) < PERPENDICULAR) count++;
-  }
-  return count;
-}
-
-/** How many axes satisfy a test. */
-function countAxes(
-  inventory: SymmetryInventory,
-  test: (axis: AxisFinding) => boolean,
-): number {
-  let count = 0;
-  for (const axis of inventory.properAxes) {
-    if (test(axis)) count++;
-  }
-  return count;
-}
-
-/** |G| of a named group, or 0 when the catalogue does not hold it. */
-function orderOf(group: string): number {
-  try {
-    return pointGroupById(group).order;
-  } catch {
-    return 0;
-  }
 }

@@ -6,13 +6,13 @@
  * so a file one of them reads is a file the other reads too.
  */
 
-import type { SpaceGroupSetting } from '../data/spaceGroups.ts';
+import type { SpaceGroupSetting } from 'react-cheminfo/crystal';
+import { resolveStructureSetting } from 'react-cheminfo/crystal';
 
 import type { CrystalStructure } from './cif/index.ts';
 import { readCif } from './cif/index.ts';
 import type { CrystalDraft } from './draft.ts';
 import { draftOf } from './draft.ts';
-import { resolveStructureSetting } from './resolve.ts';
 
 /** A file read, and what it is built in. */
 export interface OpenedCif {

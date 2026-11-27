@@ -9,6 +9,8 @@
  * the outer eighth of each side, and the cross is gone.
  */
 
+import { xMean } from 'ml-spectra-processing';
+
 import { FIELD_SIZE } from './fourier.ts';
 
 /** The share of each side faded into the mean. */
@@ -63,9 +65,7 @@ export async function readPhoto(file: Blob): Promise<Float64Array> {
  * @returns A new image, the same in its centre, the mean along its border.
  */
 export function fadeEdges(image: Float64Array): Float64Array {
-  let sum = 0;
-  for (const value of image) sum += value;
-  const mean = sum / image.length;
+  const mean = xMean(image);
   const weights = edgeWeights();
   const faded = new Float64Array(image.length);
   for (let row = 0; row < FIELD_SIZE; row++) {

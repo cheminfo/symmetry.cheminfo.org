@@ -10,7 +10,8 @@ export type { PatternSvgProps } from './PatternSvg.tsx';
 export { PatternSvg } from './PatternSvg.tsx';
 export type { StereogramProps } from './Stereogram.tsx';
 export { Stereogram } from './Stereogram.tsx';
-export { clipToBlock } from './clip.ts';
+export type { ClipRectangle } from './clip.ts';
+export { clipLineToRect, clipToBlock } from './clip.ts';
 export type {
   DiagramCell,
   DiagramGlyph,

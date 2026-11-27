@@ -2,6 +2,7 @@ import { expect, test } from 'vitest';
 
 import { symmetryElement } from '../elements.ts';
 import { formatOperation } from '../formatOperation.ts';
+import { parseOperation } from '../index.ts';
 import {
   greatestCommonDivisor,
   identityMatrix,
@@ -15,7 +16,6 @@ import {
   primitiveDirection,
 } from '../integerMatrix.ts';
 import { liftCell, liftOperation, projectOperation } from '../lift.ts';
-import { parseOperation } from '../parseOperation.ts';
 
 import { RAW_SETTINGS, p4gOperations } from './fixture.ts';
 

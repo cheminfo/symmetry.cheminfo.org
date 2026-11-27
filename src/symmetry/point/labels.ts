@@ -2,13 +2,11 @@ import type { Vec3 } from 'react-cheminfo/crystal3d';
 import { dotProduct, sameAxis } from 'react-cheminfo/crystal3d';
 
 import type { PointGroup } from '../../data/pointGroups.ts';
+import { PERPENDICULAR } from '../detect/counts.ts';
 import type { PointOperation } from '../operations.ts';
 import { relabelOperation } from '../operations.ts';
 
 import { axisLetter } from './direction.ts';
-
-/** Two axes count as perpendicular below this `|û · v̂|`. */
-const PERPENDICULAR = 1e-3;
 
 const Z_AXIS: Vec3 = [0, 0, 1];
 

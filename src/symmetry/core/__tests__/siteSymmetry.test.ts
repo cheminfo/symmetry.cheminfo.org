@@ -1,8 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { distinctRotations } from '../group.ts';
-import { orbit } from '../operation.ts';
-import { parseOperation } from '../parseOperation.ts';
+import { distinctRotations, orbit, parseOperation } from '../index.ts';
 import { pointGroupName, pointGroupSignature } from '../pointGroupName.ts';
 import { fixes, siteSymmetry } from '../siteSymmetry.ts';
 

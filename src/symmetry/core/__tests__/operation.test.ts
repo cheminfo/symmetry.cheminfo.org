@@ -1,18 +1,20 @@
 import { expect, test } from 'vitest';
 
 import { formatOperation } from '../formatOperation.ts';
-import { centringTranslations, closure, distinctRotations } from '../group.ts';
 import {
   apply,
+  centringTranslations,
+  closure,
   compose,
+  distinctRotations,
   identityOperation,
   inverse,
   isIdentity,
   operationKey,
   orbit,
+  parseOperation,
   wrapFractional,
-} from '../operation.ts';
-import { parseOperation } from '../parseOperation.ts';
+} from '../index.ts';
 
 import { P4G_POSITIONS, p4gOperations, settingOperations } from './fixture.ts';
 

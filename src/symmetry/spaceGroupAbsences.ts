@@ -1,4 +1,5 @@
-import type { SpaceGroupSetting } from '../data/spaceGroups.ts';
+import type { SpaceGroupSetting } from 'react-cheminfo/crystal';
+import { spaceGroupOperations } from 'react-cheminfo/crystal';
 
 import { centringTranslations, wrapTwelfths } from './core/index.ts';
 import {
@@ -8,7 +9,6 @@ import {
 } from './reflectionClasses.ts';
 import type { ReflectionCondition } from './reflectionConditions.ts';
 import { conditionOf } from './reflectionConditions.ts';
-import { spaceGroupOperations } from './spaceGroupOperations.ts';
 
 export type { ReflectionCondition } from './reflectionConditions.ts';
 

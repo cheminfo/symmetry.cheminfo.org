@@ -5,8 +5,7 @@ import {
   formatOperation,
   formatTranslation,
 } from '../formatOperation.ts';
-import { operationKey } from '../operation.ts';
-import { parseOperation } from '../parseOperation.ts';
+import { operationKey, parseOperation } from '../index.ts';
 
 import { RAW_SETTINGS } from './fixture.ts';
 

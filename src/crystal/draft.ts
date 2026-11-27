@@ -12,7 +12,8 @@
  * they cannot contradict the group.
  */
 
-import type { SpaceGroupSetting } from '../data/spaceGroups.ts';
+import type { SpaceGroupSetting } from 'react-cheminfo/crystal';
+
 import type { UnitCell } from '../symmetry/core/index.ts';
 
 import type { CellParameter } from './cellConstraints.ts';
