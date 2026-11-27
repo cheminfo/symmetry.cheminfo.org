@@ -30,7 +30,6 @@ import {
   StepPanel,
   StepStage,
   StepText,
-  SymmetryGlossary,
   layersOfMode,
   openStepInWorkbench,
   resolveStepIndex,
@@ -68,61 +67,59 @@ export function Tutorial(): ReactElement {
     !isHidden('text') || !isHidden('demos') || stepHasPanel(step);
 
   return (
-    <SymmetryGlossary>
-      <section className="tutorial">
-        <PagePart part="steps">
-          <Card compact className="tutorial__steps no-print">
-            <TutorialStepStrip
-              steps={TUTORIAL_STEPS}
-              activeIndex={index}
-              levelLabels={TUTORIAL_LEVEL_LABELS}
-              onSelect={(position) => {
-                setTutorialStep(TUTORIAL_STEPS[position]?.id ?? null);
-              }}
-            />
-          </Card>
-        </PagePart>
+    <section className="tutorial">
+      <PagePart part="steps">
+        <Card compact className="tutorial__steps no-print">
+          <TutorialStepStrip
+            steps={TUTORIAL_STEPS}
+            activeIndex={index}
+            levelLabels={TUTORIAL_LEVEL_LABELS}
+            onSelect={(position) => {
+              setTutorialStep(TUTORIAL_STEPS[position]?.id ?? null);
+            }}
+          />
+        </Card>
+      </PagePart>
 
-        <SplitRow
-          ratio={state.view.tutorial.split.value}
-          defaultRatio={DEFAULT_TUTORIAL_SPLIT}
-          stackBelow={TUTORIAL_STACK_BELOW}
-          onRatio={setTutorialSplit}
-          start={
-            hasProse ? (
-              <div className="tutorial__prose">
-                <PagePart part="text">
-                  <StepText
-                    step={step}
-                    position={index + 1}
-                    total={TUTORIAL_STEPS.length}
-                  />
-                </PagePart>
-                <PagePart part="demos">
-                  <Button
-                    icon="share"
-                    intent="primary"
-                    text={`Open ${workbenchName(step)} with this`}
-                    onClick={() => {
-                      openStepInWorkbench(step);
-                    }}
-                  />
-                </PagePart>
-                <StepPanel step={step} />
-              </div>
-            ) : null
-          }
-          end={
-            <div className="tutorial__stage">
-              <PagePart part="controls">
-                <LayerChips keys={layersOfMode(objectRefMode(step.object))} />
+      <SplitRow
+        ratio={state.view.tutorial.split.value}
+        defaultRatio={DEFAULT_TUTORIAL_SPLIT}
+        stackBelow={TUTORIAL_STACK_BELOW}
+        onRatio={setTutorialSplit}
+        start={
+          hasProse ? (
+            <div className="tutorial__prose">
+              <PagePart part="text">
+                <StepText
+                  step={step}
+                  position={index + 1}
+                  total={TUTORIAL_STEPS.length}
+                />
               </PagePart>
-              <StepStage key={step.id} step={step} />
+              <PagePart part="demos">
+                <Button
+                  icon="share"
+                  intent="primary"
+                  text={`Open ${workbenchName(step)} with this`}
+                  onClick={() => {
+                    openStepInWorkbench(step);
+                  }}
+                />
+              </PagePart>
+              <StepPanel step={step} />
             </div>
-          }
-        />
-      </section>
-    </SymmetryGlossary>
+          ) : null
+        }
+        end={
+          <div className="tutorial__stage">
+            <PagePart part="controls">
+              <LayerChips keys={layersOfMode(objectRefMode(step.object))} />
+            </PagePart>
+            <StepStage key={step.id} step={step} />
+          </div>
+        }
+      />
+    </section>
   );
 }
 

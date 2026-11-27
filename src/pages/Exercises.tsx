@@ -13,7 +13,6 @@ import type { ReactElement } from 'react';
 import { PagePart } from 'react-cheminfo/ui';
 
 import { ExerciseCard, ExerciseDeck } from '../components/exercises/index.ts';
-import { SymmetryGlossary } from '../components/tutorial/index.ts';
 import { EXERCISES, exerciseById } from '../data/exercises/index.ts';
 import { setActiveExercise, state } from '../state/index.ts';
 
@@ -27,27 +26,25 @@ export function Exercises(): ReactElement {
   const exercise = activeId === null ? undefined : exerciseById(activeId);
 
   return (
-    <SymmetryGlossary>
-      <section className="exercises-layout">
-        <PagePart part="list">
-          <div className="exercises-sidebar">
-            <ExerciseDeck
-              activeId={exercise?.id ?? null}
-              onSelect={setActiveExercise}
-            />
-          </div>
-        </PagePart>
-
-        <div className="exercises-open">
-          {exercise === undefined ? (
-            <Callout intent="primary" icon="properties" title="Pick a question">
-              {`${EXERCISES.length} questions, easiest first. Each one is marked against the engine rather than against a stored answer, so several right answers are all right.`}
-            </Callout>
-          ) : (
-            <ExerciseCard key={exercise.id} exercise={exercise} />
-          )}
+    <section className="exercises-layout">
+      <PagePart part="list">
+        <div className="exercises-sidebar">
+          <ExerciseDeck
+            activeId={exercise?.id ?? null}
+            onSelect={setActiveExercise}
+          />
         </div>
-      </section>
-    </SymmetryGlossary>
+      </PagePart>
+
+      <div className="exercises-open">
+        {exercise === undefined ? (
+          <Callout intent="primary" icon="properties" title="Pick a question">
+            {`${EXERCISES.length} questions, easiest first. Each one is marked against the engine rather than against a stored answer, so several right answers are all right.`}
+          </Callout>
+        ) : (
+          <ExerciseCard key={exercise.id} exercise={exercise} />
+        )}
+      </div>
+    </section>
   );
 }

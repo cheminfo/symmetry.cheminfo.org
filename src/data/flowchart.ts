@@ -41,7 +41,7 @@ export const ASSIGNMENT_FLOW: readonly FlowQuestion[] = [
   {
     id: 'linear-i',
     question: 'Is there a [[centre of inversion]] at the middle of the line?',
-    hint: 'Ask whether the molecule reads the same from both ends: CO₂ does, OCS does not.',
+    hint: 'Ask whether the molecule reads the same from both ends: {{CO2}} does, {{OCS}} does not.',
     yes: { kind: 'group', id: 'Dinfh' },
     no: { kind: 'group', id: 'Cinfv' },
   },
@@ -55,7 +55,7 @@ export const ASSIGNMENT_FLOW: readonly FlowQuestion[] = [
   {
     id: 'has-c5',
     question: 'Are there six C₅ axes?',
-    hint: 'An icosahedron or a truncated one: C₆₀, B₁₂H₁₂²⁻, dodecahedrane.',
+    hint: 'An icosahedron or a truncated one: {{C60}}, {{B12H12(2-)}}, dodecahedrane.',
     yes: { kind: 'question', id: 'icosa-i' },
     no: { kind: 'question', id: 'has-c4' },
   },
@@ -69,7 +69,7 @@ export const ASSIGNMENT_FLOW: readonly FlowQuestion[] = [
   {
     id: 'has-c4',
     question: 'Are there three C₄ axes?',
-    hint: 'A proper four-fold rotation, not an S₄. SF₆ has three; methane has none.',
+    hint: 'A proper four-fold rotation, not an S₄. {{SF6}} has three; methane has none.',
     yes: { kind: 'question', id: 'octa-i' },
     no: { kind: 'question', id: 'tetra-mirror' },
   },
@@ -104,7 +104,7 @@ export const ASSIGNMENT_FLOW: readonly FlowQuestion[] = [
   {
     id: 'lone-mirror',
     question: 'Is there a mirror plane?',
-    hint: 'No axis, one plane: SOCl₂, CH₂ClBr, NHF₂.',
+    hint: 'No axis, one plane: {{SOCl2}}, {{CH2ClBr}}, {{NHF2}}.',
     yes: { kind: 'group', id: 'Cs' },
     no: { kind: 'question', id: 'lone-i' },
   },

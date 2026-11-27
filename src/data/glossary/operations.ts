@@ -125,7 +125,7 @@ export const OPERATION_TERMS: Record<string, SymmetryGlossaryEntry> = {
     examples: [
       {
         object: 'molecule:allene',
-        observation: 'Two σd, each holding one CH2 group',
+        observation: 'Two σd, each holding one {{CH2}} group',
       },
       {
         object: 'molecule:ethane-staggered',
@@ -145,7 +145,7 @@ export const OPERATION_TERMS: Record<string, SymmetryGlossaryEntry> = {
       {
         object: 'molecule:carbon-dioxide',
         observation: 'The centre is at the carbon',
-        note: 'This is what makes CO2 D∞h while OCS is only C∞v.',
+        note: 'This is what makes {{CO2}} D∞h while {{OCS}} is only C∞v.',
       },
       {
         object: 'molecule:water',

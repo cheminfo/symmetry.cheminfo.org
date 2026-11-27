@@ -47,7 +47,7 @@ export const BEGINNER_STEPS: readonly TutorialStep[] = [
     observe:
       'Drag the probe point: its image is always on the far side of the sulfur, at the same distance.',
     description:
-      '[[inversion|Inversion]] sends the point (x, y, z) to (−x, −y, −z) through a single centre. SF₆ has one, and each fluorine maps onto the fluorine opposite. That one operation already decides two experiments: anything with an inversion centre is never [[chirality|chiral]] and never [[polarity|polar]]. Water has no inversion centre, which is why it has a dipole moment and SF₆ has none.',
+      '[[inversion|Inversion]] sends the point (x, y, z) to (−x, −y, −z) through a single centre. {{SF6}} has one, and each fluorine maps onto the fluorine opposite. That one operation already decides two experiments: anything with an inversion centre is never [[chirality|chiral]] and never [[polarity|polar]]. Water has no inversion centre, which is why it has a dipole moment and {{SF6}} has none.',
   },
   {
     id: 'improper-allene',
@@ -93,6 +93,6 @@ export const BEGINNER_STEPS: readonly TutorialStep[] = [
     observe:
       'No mirror, no inversion, no Sn: only E. Load trans-dichloroethene and all three appear.',
     description:
-      'A molecule is [[chirality|chiral]] exactly when its group holds no improper operation — no mirror, no inversion centre, no Sₙ. It is [[polarity|polar]] exactly when its group is C₁, Cs, Cₙ or Cₙᵥ, because only there does a direction survive every operation. CHFClBr is [[c1|C₁]] and is both. Load trans-1,2-dichloroethene, which is [[c2h|C₂ₕ]], and both properties vanish at once.',
+      'A molecule is [[chirality|chiral]] exactly when its group holds no improper operation — no mirror, no inversion centre, no Sₙ. It is [[polarity|polar]] exactly when its group is C₁, Cs, Cₙ or Cₙᵥ, because only there does a direction survive every operation. {{CHFClBr}} is [[c1|C₁]] and is both. Load trans-1,2-dichloroethene, which is [[c2h|C₂ₕ]], and both properties vanish at once.',
   },
 ];

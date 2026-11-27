@@ -12,6 +12,7 @@
  */
 
 import type { PageContent, PageTable } from 'react-cheminfo/core';
+import { plainProse } from 'react-cheminfo/core';
 
 import { moleculesOfGroup } from '../data/molecules.ts';
 import type { PointGroup } from '../data/pointGroups.ts';
@@ -108,7 +109,9 @@ function moleculeList(group: PointGroup): string[] | undefined {
   if (molecules.length === 0) return undefined;
   const items: string[] = [];
   for (const molecule of molecules) {
-    items.push(`${molecule.name} (${molecule.formula}): ${molecule.why}`);
+    items.push(
+      `${molecule.name} (${molecule.formula}): ${plainProse(molecule.why)}`,
+    );
   }
   return items;
 }

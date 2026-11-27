@@ -4,8 +4,8 @@
  *
  * The character table, the flowchart and the chip bar are the workbench's, from
  * `../molecules`: a step must show a student exactly what the tool will.
- * `SymmetryGlossary` is the Exercises page's too — a glossary mounted twice
- * would define a term two ways.
+ * `SymmetryGlossary` wraps every page, once, from the shell — a glossary
+ * mounted twice would define a term two ways.
  */
 
 import './tutorial.css';

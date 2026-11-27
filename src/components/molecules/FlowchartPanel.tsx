@@ -11,6 +11,7 @@
 import { Button, Tag } from '@blueprintjs/core';
 import type { ReactElement } from 'react';
 import { useState } from 'react';
+import { InlineText } from 'react-cheminfo/ui';
 
 import { Prose } from './Prose.tsx';
 import { SymbolText } from './SymbolText.tsx';
@@ -60,7 +61,9 @@ export function FlowchartPanel(props: FlowchartPanelProps): ReactElement {
             <div className="mol-flow__question">
               <Prose text={open.question} />
             </div>
-            <div className="mol-flow__hint">{open.hint}</div>
+            <div className="mol-flow__hint">
+              <InlineText text={open.hint} />
+            </div>
             <div className="mol-flow__answer">
               <Button
                 size="small"
@@ -136,7 +139,7 @@ function AnsweredStep(props: {
         </div>
         {pick !== null && pick !== step.answer && (
           <div className="mol-flow__hint">
-            You chose {pick ? 'yes' : 'no'}. {step.hint}
+            You chose {pick ? 'yes' : 'no'}. <InlineText text={step.hint} />
           </div>
         )}
       </div>

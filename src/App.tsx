@@ -22,6 +22,7 @@ import { useHostConnection } from 'react-cheminfo/host';
 import { SiteShell, useOpensOnShare } from 'react-cheminfo/ui';
 
 import { ABOUT } from './about.ts';
+import { SymmetryGlossary } from './components/tutorial/SymmetryGlossary.tsx';
 import { Catalogue } from './pages/Catalogue.tsx';
 import { Cheatsheet } from './pages/Cheatsheet.tsx';
 import { Crystals } from './pages/Crystals.tsx';
@@ -132,7 +133,9 @@ export function App(): ReactElement {
       mainTestId={`page-${activeTab}`}
       mainClassName={mainClassName(activeTab)}
     >
-      <PageBody tab={activeTab} />
+      <SymmetryGlossary>
+        <PageBody tab={activeTab} />
+      </SymmetryGlossary>
     </SiteShell>
   );
 }

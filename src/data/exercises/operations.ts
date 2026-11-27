@@ -56,7 +56,7 @@ export const OPERATION_EXERCISES: readonly Exercise[] = [
     id: 'chfclbr-operations',
     kind: 'select',
     level: 'beginner',
-    title: 'What symmetry does CHFClBr have?',
+    title: 'What symmetry does {{CHFClBr}} have?',
     domain: 'operation',
     object: 'molecule:bromochlorofluoromethane',
     description:

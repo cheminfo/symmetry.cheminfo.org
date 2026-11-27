@@ -8,6 +8,8 @@
  * disagree with the workbench on the tab next to it.
  */
 
+import { plainProse } from 'react-cheminfo/core';
+
 import { characterTableOf } from '../../data/characterTables.ts';
 import type { MoleculeEntry } from '../../data/molecules.ts';
 import { moleculesOfGroup } from '../../data/molecules.ts';
@@ -54,7 +56,7 @@ export function pointGroupEntry(slug: string): CatalogueEntryView | null {
         : [
             {
               label: `Open ${first.name} in the workbench`,
-              detail: first.why,
+              detail: plainProse(first.why),
               target: { page: 'molecules', moleculeId: first.id },
             },
           ],

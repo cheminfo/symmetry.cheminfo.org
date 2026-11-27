@@ -121,7 +121,7 @@ export const CRYSTAL_EXERCISES: readonly Exercise[] = [
     given: [{ element: 'Na', x: 0, y: 0, z: 0 }],
     asked: { element: 'Cl', count: 1 },
     description:
-      'A sodium already sits at the origin of an Fm-3m cell. Place one chlorine so the structure the group generates is NaCl: equal numbers of each, a chlorine on a site of symmetry m-3m, and nothing closer than 2 Å. More than one position works, and the constraints accept any of them.',
+      'A sodium already sits at the origin of an Fm-3m cell. Place one chlorine so the structure the group generates is {{NaCl}}: equal numbers of each, a chlorine on a site of symmetry m-3m, and nothing closer than 2 Å. More than one position works, and the constraints accept any of them.',
     constraints: [
       {
         kind: 'composition',

@@ -96,7 +96,7 @@ export const AXIAL_MOLECULES: readonly MoleculeEntry[] = [
       name: 'Allene',
       formula: 'C3H4',
       pointGroup: 'D2d',
-      why: 'The two CH2 planes are perpendicular, so the long axis is an S4, not a C4.',
+      why: 'The two {{CH2}} planes are perpendicular, so the long axis is an S4, not a C4.',
       geometrySource: 'C=C 1.308, C–H 1.087 Å, H–C–H 118.2°.',
       smiles: 'C=C=C',
     },

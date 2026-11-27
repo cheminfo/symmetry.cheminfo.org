@@ -75,11 +75,11 @@ export const COUNT_EXERCISES: readonly Exercise[] = [
     id: 'co2-vibrations',
     kind: 'count',
     level: 'advanced',
-    title: 'How many vibrations does CO₂ have?',
+    title: 'How many vibrations does {{CO2}} have?',
     object: 'molecule:carbon-dioxide',
     asked: ['vibrations'],
     description:
-      'CO₂ is linear, so it has 3N − 5 vibrations and not 3N − 6. Work out how many. Two of them are [[degenerate]] and share one band, which is why the spectrum shows fewer lines than there are modes.',
+      '{{CO2}} is linear, so it has 3N − 5 vibrations and not 3N − 6. Work out how many. Two of them are [[degenerate]] and share one band, which is why the spectrum shows fewer lines than there are modes.',
     answer: { vibrations: 4 },
     hints: [
       'A linear molecule needs only two angles to fix its orientation, not three.',

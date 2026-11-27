@@ -189,7 +189,7 @@ export const GENERATED_ROUTES: readonly RouteMeta[] = [
   ...exerciseRoutes(
     EXERCISES.map((exercise) => ({
       id: exercise.id,
-      title: exercise.title,
+      title: plainProse(exercise.title),
       summary: firstSentence(exercise.description),
     })),
   ),

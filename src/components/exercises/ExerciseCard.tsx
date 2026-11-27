@@ -19,6 +19,7 @@ import {
   ExerciseLevelTag,
   GlossaryText,
   HintLadder,
+  InlineText,
   PagePart,
 } from 'react-cheminfo/ui';
 
@@ -81,7 +82,9 @@ export function ExerciseCard(props: ExerciseCardProps): ReactElement {
   return (
     <Card className="exercise-card">
       <div className="exercise-card__heading">
-        <h1>{exercise.title}</h1>
+        <h1>
+          <InlineText text={exercise.title} />
+        </h1>
         <ExerciseLevelTag level={exercise.level} />
         <Tag minimal round>
           {KIND_LABEL[exercise.kind]}

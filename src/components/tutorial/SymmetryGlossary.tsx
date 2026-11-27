@@ -2,17 +2,19 @@
  * The site's glossary, and what an example of it does when clicked.
  *
  * An example here is not a line of code: it is an object and what to look at in
- * it, so the definition of a glide plane opens the group that has one. Wrap the
- * prose of a page in this once and every `[[term]]` under it resolves — a step,
- * an exercise statement, a revealed hint.
+ * it, so the definition of a glide plane opens the group that has one. The
+ * shell wraps every page in this once, so every `[[term]]` and every `{{CO2}}`
+ * under it resolves — a step, an exercise statement, a revealed hint, a
+ * cheatsheet line.
  */
 
 import { Button } from '@blueprintjs/core';
 import type { ReactElement, ReactNode } from 'react';
-import { GlossaryProvider } from 'react-cheminfo/ui';
+import { GlossaryProvider, InlineText } from 'react-cheminfo/ui';
 
 import { GLOSSARY } from '../../data/glossary/index.ts';
 import type { SymmetryExample } from '../../data/glossary/types.ts';
+import { renderMf } from '../shared/prose.tsx';
 
 import { openObject } from './stepState.ts';
 
@@ -31,7 +33,11 @@ export function SymmetryGlossary(props: SymmetryGlossaryProps): ReactElement {
   const { children } = props;
 
   return (
-    <GlossaryProvider glossary={GLOSSARY} renderExample={renderExample}>
+    <GlossaryProvider
+      glossary={GLOSSARY}
+      renderExample={renderExample}
+      renderMf={renderMf}
+    >
       {children}
     </GlossaryProvider>
   );
@@ -41,9 +47,13 @@ export function SymmetryGlossary(props: SymmetryGlossaryProps): ReactElement {
 function renderExample(example: SymmetryExample): ReactNode {
   return (
     <div className="glossary-example">
-      <span>{example.observation}</span>
+      <span>
+        <InlineText text={example.observation} />
+      </span>
       {example.note !== undefined && (
-        <span className="glossary-example__note">{example.note}</span>
+        <span className="glossary-example__note">
+          <InlineText text={example.note} />
+        </span>
       )}
       <Button
         size="small"

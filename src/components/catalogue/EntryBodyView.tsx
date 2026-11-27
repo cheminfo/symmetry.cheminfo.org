@@ -1,3 +1,4 @@
+import { InlineText } from 'react-cheminfo/ui';
 import { MF } from 'react-mf';
 
 import {
@@ -114,7 +115,11 @@ export function EntryBodyView(props: EntryBodyViewProps) {
                 <CatalogueAnchor target={link.target}>
                   <LinkLabel link={link} />
                 </CatalogueAnchor>
-                {link.detail === undefined ? null : <span>{link.detail}</span>}
+                {link.detail === undefined ? null : (
+                  <span>
+                    <InlineText text={link.detail} />
+                  </span>
+                )}
               </li>
             ))}
           </ul>

@@ -67,7 +67,7 @@ export const ASSIGNMENT_EXERCISES: readonly Exercise[] = [
     title: 'Assign boron trifluoride',
     molecule: 'boron-trifluoride',
     description:
-      'BF₃ is trigonal planar. Find the principal axis, then ask the two questions that separate the D groups from the C groups: are there n C₂ axes across it, and is there a [[sigma-h|σₕ]]?',
+      '{{BF3}} is trigonal planar. Find the principal axis, then ask the two questions that separate the D groups from the C groups: are there n C₂ axes across it, and is there a [[sigma-h|σₕ]]?',
     nearMisses: [
       {
         group: 'C3v',
@@ -96,7 +96,7 @@ export const ASSIGNMENT_EXERCISES: readonly Exercise[] = [
     title: 'Assign carbon dioxide',
     molecule: 'carbon-dioxide',
     description:
-      'CO₂ is linear, which settles question one of the flowchart. Question two is the only one left: is there an [[inversion|inversion centre]]? Load carbonyl sulfide afterwards and ask it again.',
+      '{{CO2}} is linear, which settles question one of the flowchart. Question two is the only one left: is there an [[inversion|inversion centre]]? Load carbonyl sulfide afterwards and ask it again.',
     nearMisses: [
       {
         group: 'Cinfv',
@@ -109,7 +109,7 @@ export const ASSIGNMENT_EXERCISES: readonly Exercise[] = [
     ],
     hints: [
       'A linear molecule has only two possible point groups.',
-      'The two ends of CO2 are identical; the two ends of OCS are not.',
+      'The two ends of {{CO2}} are identical; the two ends of {{OCS}} are not.',
       'Linear with a centre of inversion is D∞h.',
     ],
     solution: 'Dinfh',
@@ -122,7 +122,7 @@ export const ASSIGNMENT_EXERCISES: readonly Exercise[] = [
     molecule: 'allene',
     requiredDisplay: ['improper'],
     description:
-      'The two CH₂ groups of allene are perpendicular to each other. Find the principal axis, then look for an [[improper rotation]] along it before deciding which D group this is.',
+      'The two {{CH2}} groups of allene are perpendicular to each other. Find the principal axis, then look for an [[improper rotation]] along it before deciding which D group this is.',
     nearMisses: [
       {
         group: 'D2h',
@@ -167,7 +167,7 @@ export const ASSIGNMENT_EXERCISES: readonly Exercise[] = [
       },
     ],
     hints: [
-      'Rotate one CH3 group and watch which mirror planes survive.',
+      'Rotate one {{CH3}} group and watch which mirror planes survive.',
       'In the staggered form the plane between the carbons is not a mirror: an H above it has no partner below.',
       'No σh but three σd bisecting the C2 axes: D3d, order 12, and it holds an inversion centre.',
     ],

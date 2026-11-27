@@ -212,7 +212,7 @@ export const GROUP_TERMS: Record<string, SymmetryGlossaryEntry> = {
     examples: [
       {
         object: 'molecule:allene',
-        observation: 'The two CH2 groups are perpendicular',
+        observation: 'The two {{CH2}} groups are perpendicular',
         note: 'Ethene, which is flat, is D2h instead.',
       },
     ],

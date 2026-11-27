@@ -8,6 +8,7 @@
 
 import { Callout, Tag } from '@blueprintjs/core';
 import type { ReactElement } from 'react';
+import { InlineText } from 'react-cheminfo/ui';
 import { MF } from 'react-mf';
 
 import { SymbolText } from './SymbolText.tsx';
@@ -37,7 +38,7 @@ export function GroupSummary(props: GroupSummaryProps): ReactElement {
         <span className="mol-note">{orderText(detection.order)}</span>
       </div>
       <div className="mol-note">
-        <MF mf={entry.formula} /> — {entry.why}
+        <MF mf={entry.formula} /> — <InlineText text={entry.why} />
       </div>
       <div className="mol-facts">
         {group !== undefined && (

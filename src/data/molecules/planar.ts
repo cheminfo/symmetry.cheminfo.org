@@ -90,7 +90,7 @@ export const PLANAR_MOLECULES: readonly MoleculeEntry[] = [
       name: 'Diborane',
       formula: 'B2H6',
       pointGroup: 'D2h',
-      why: 'The two bridging hydrogens sit on the C2 perpendicular to the BH2 planes.',
+      why: 'The two bridging hydrogens sit on the C2 perpendicular to the {{BH2}} planes.',
       geometrySource:
         'B–H terminal 1.19, bridging 1.33 Å, B···B 1.77 Å; terminal H–B–H idealised at 121.5°.',
     },

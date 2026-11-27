@@ -7,7 +7,7 @@
  */
 
 import type { ReactElement, ReactNode } from 'react';
-import { GlossaryText } from 'react-cheminfo/ui';
+import { GlossaryText, InlineText } from 'react-cheminfo/ui';
 
 import type { SymmetryExample } from '../../data/glossary/index.ts';
 import { GLOSSARY, splitObjectRef } from '../../data/glossary/index.ts';
@@ -38,7 +38,7 @@ function renderExample(example: SymmetryExample): ReactNode {
   return (
     <span>
       <strong>{splitObjectRef(example.object).id}</strong> —{' '}
-      {example.observation}
+      <InlineText text={example.observation} />
     </span>
   );
 }
